@@ -1,0 +1,3 @@
+# General
+
+DB code generator to come - idea of mine...
