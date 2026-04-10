@@ -8,3 +8,6 @@ repository = "https://github.com/sdoerig/carpathia"
 homepage = "https://github.com/sdoerig/carpathia"
 
 [dependencies]
+serde = "1.0"
+sqlx = "0.8"
+clap = { version = "4.4", features = ["derive"] }
