@@ -8,6 +8,10 @@ repository = "https://github.com/sdoerig/carpathia"
 homepage = "https://github.com/sdoerig/carpathia"
 
 [dependencies]
+tokio = {version = "1", features = ["rt-multi-thread", "macros"]}
 serde = "1.0"
-sqlx = "0.8"
+sqlx = { version = "0.8", features = [ "postgres", "runtime-tokio", "tls-native-tls" ] }
+
 clap = { version = "4.4", features = ["derive"] }
+log = "0.4"
+env_logger = "0.10"

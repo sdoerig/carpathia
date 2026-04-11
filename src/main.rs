@@ -1,6 +1,7 @@
 use clap::Parser;
-
-/// Simple program to greet a person
+use log::{info, warn, error};
+use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+/// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
 #[command(
     author = "Stefan Dörig, sdoerig@bluewin.ch",
@@ -10,9 +11,12 @@ use clap::Parser;
 )]
 
 struct Args {
-    /// Database URL in the format: postgres://user:password@localhost:5432/database
+    /// Database URL in the format - JUST host and port NOT the database name: postgres://user:password@localhost:5432
     #[arg( long)]
-    database_url: String,
+    db_url: String,
+    /// Database name you would like to generate code for - just the name NOT the full URL: my_database
+    #[arg( long)]
+    db_name: String,
     /// Forces the generator to overwirite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
     #[arg(short, long, default_value_t = false)]
     force: bool,
@@ -23,11 +27,18 @@ struct Args {
     #[arg( long, default_value = "./src/db_layer")]
     output_directory: String,
 }
-fn main() {
-    let args = Args::parse();
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    env_logger::init();
+        let args = Args::parse();
     if args.force {
-        println!("Force option is enabled. Existing files will be overwritten.");
+        info!("Force option is enabled. Existing files will be overwritten.");
     } else {
-        println!("Force option is disabled. Existing files will not be overwritten.");
+        info!("Force option is disabled. Existing files will not be overwritten.");
     }
+    info!("Database URL: {}", &args.db_url);
+    info!("Database Name: {}", &args.db_name);
+    info!("Output Format: {}", &args.output_format);
+    info!("Output Directory: {}", &args.output_directory);
+    Ok(())
 }
