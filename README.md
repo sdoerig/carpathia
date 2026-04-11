@@ -1,6 +1,12 @@
 # General
 
-DB code generator to come - idea of mine... proposed CLI:
+## Idea of mine
+
+* Command line interface
+* Generating programmable DB-Layer to avoid boilerplate
+* Motivation of mine: intressting problem, learning
+
+## Proposed CLI:
 
 ```
 Datebase layer generator for Rust. It generates code for database access based on a given schema.
