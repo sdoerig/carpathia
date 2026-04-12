@@ -1,11 +1,12 @@
 [package]
 name = "carpathia"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 license = "AGPL-3.0-or-later"
-description = "DB code generator - to come..."
+description = "Drafty DB code generator for postgres - learing"
 repository = "https://github.com/sdoerig/carpathia"
 homepage = "https://github.com/sdoerig/carpathia"
+categories = ["command line utilities", "database interfaces"]
 
 [dependencies]
 tokio = {version = "1", features = ["rt-multi-thread", "macros"]}

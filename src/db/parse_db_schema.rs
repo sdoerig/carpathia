@@ -110,3 +110,18 @@ impl DbSchemaParser {
         Ok(table_info_map)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;   
+    #[tokio::test]
+    async fn test_db_schema_parser() {
+        // This is a placeholder test. You would need to set up a test database and populate it with test data to make this meaningful.
+        let db_url = "postgres://doerig:doerig@127.0.2.15:5432".to_string();
+        let db_name = "carpathia".to_string();
+        let parser = DbSchemaParser::new(db_url, db_name).await;
+        let schema = parser.parse_schema().await.unwrap();
+        // Add assertions here based on your test database schema
+        assert!(!schema.is_empty(), "Schema should not be empty");
+    }
+}
