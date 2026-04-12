@@ -3,22 +3,60 @@
 /// intermeditate data structures to hold the extracted schema information. 
 /// 
 /// 
+use log::info;
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
+
+// scratch code for testing the database connection and schema extraction
+// pk
+//SELECT table_name, column_name, data_type, is_nullable
+//FROM information_schema.columns
+//WHERE table_schema = 'public'
+//ORDER BY table_name, ordinal_position;
+//
+// fk
+//SELECT kcu.table_name, kcu.column_name
+//FROM information_schema.table_constraints tco
+//JOIN information_schema.key_column_usage kcu ON kcu.constraint_name = tco.constraint_name
+//WHERE tco.constraint_type = 'PRIMARY KEY' AND tco.table_schema = 'public';
+
+const SCHEMA_QUERY: &str = r#"
+SELECT
+    table_name,
+    column_name,
+    data_type,
+    is_nullable,
+    column_default,
+    character_maximum_length,
+    numeric_precision,
+    numeric_scale,
+    is_identity,
+    identity_generation,
+    is_generated,
+    generation_expression
+FROM
+    information_schema.columns
+WHERE
+    table_schema = 'public'
+ORDER BY
+    table_name,
+    ordinal_position;
+"#;
+
 pub(crate) struct DbSchemaParser {
     // You can add fields here if needed, for example, to hold configuration or state
-    db_url: String,
     db_name: String,
     pool: Pool<Postgres>
 }
 
 impl DbSchemaParser {
     pub(crate) async fn new(db_url: String, db_name: String) -> Self {
+        let full_db_url = format!("{}/{}", db_url, db_name);
+        info!("Connecting to database at URL: {}", &full_db_url);
         let pool = PgPoolOptions::new()
-            .connect(&format!("{}/{}", db_url, db_name))
+            .connect(&full_db_url)
             .await
             .expect("Failed to connect to the database");
         Self {
-            db_url,
             db_name,
             pool,
         }
@@ -28,6 +66,7 @@ impl DbSchemaParser {
         // Here you would implement the logic to query the database for its schema
         // and populate your data structures with the extracted information.
         // This is just a placeholder for demonstration purposes.
+        info!("Parsing schema for database: {}", &self.db_name);
         Ok(())
     }
 }

@@ -1,7 +1,6 @@
 use clap::Parser;
-use log::{error, info, warn};
+use log::info;
 mod db;
-use db::parse_db_schema::DbSchemaParser;
 
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
@@ -42,5 +41,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Database Name: {}", &args.db_name);
     info!("Output Format: {}", &args.output_format);
     info!("Output Directory: {}", &args.output_directory);
+    let db_schema_parser = db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name).await;
+    db_schema_parser.parse_schema().await?;
+
     Ok(())
 }
