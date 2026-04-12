@@ -1,6 +1,8 @@
 use clap::Parser;
 use log::{error, info, warn};
-use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
+mod db;
+use db::parse_db_schema::DbSchemaParser;
+
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
 #[command(
