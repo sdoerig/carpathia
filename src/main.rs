@@ -10,7 +10,6 @@ mod db;
     about = "Datebase layer generator for Rust",
     long_about = "Datebase layer generator for Rust. It generates code for database access based on a given schema."
 )]
-
 struct Args {
     /// Database URL in the format - JUST host and port NOT the database name: postgres://user:password@localhost:5432
     #[arg(long)]
@@ -41,8 +40,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Database Name: {}", &args.db_name);
     info!("Output Format: {}", &args.output_format);
     info!("Output Directory: {}", &args.output_directory);
-    let db_schema_parser = db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name).await;
-    db_schema_parser.parse_schema().await?;
-
+    let db_schema_parser =
+        db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name).await;
+    let table_info_map = db_schema_parser.parse_schema().await?;
+    info!(
+        "Successfully parsed database schema. Found {} tables.",
+        table_info_map.len()
+    );
     Ok(())
 }
