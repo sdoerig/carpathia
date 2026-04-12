@@ -103,7 +103,7 @@ impl DbSchemaParser {
             );
             table_info_map
                 .entry(row.table_name.clone())
-                .or_insert_with(Vec::new)
+                .or_default()
                 .push(row);
         }
 
