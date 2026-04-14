@@ -21,17 +21,4 @@ pub(crate) struct ColumnInfo {
     pub referenced_column: Option<String>,
 }
 
-impl ColumnInfo {
-    pub(crate) fn to_json_hash(&self) -> Result<String, Box<dyn std::error::Error>> {
-        // Serialize to JSON string
-        let json = serde_json::to_string(self)?;
-        
-        // Compute SHA-256 hash
-        let mut hasher = Sha256::new();
-        hasher.update(json.as_bytes());
-        let hash = hasher.finalize();
-        
-        // Encode hash as hex string
-        Ok(hex::encode(hash))
-    }
-}
+
