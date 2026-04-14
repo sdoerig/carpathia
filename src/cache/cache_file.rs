@@ -1,6 +1,7 @@
 use crate::db::db_schema_structs::ColumnInfo;
-use std::collections::HashMap;
-
+use log::{error, info};
+use sha2::{Sha256, Digest};
+use std::{collections::HashMap, fs};
 pub(crate) struct Cache {
     path: String,
     content: HashMap<String, String>,
@@ -19,13 +20,14 @@ impl Cache {
         let content = serde_json::from_str(&file_content).unwrap_or_default();
         Self { path, content }
     }
-    pub(crate) fn get_changed_enties(
+    pub(crate) fn get_changed_entities(
         &self,
-        new_content: &HashMap<String, ColumnInfo>,
+        new_content: &HashMap<String, Vec<ColumnInfo>>,
     ) -> Vec<String> {
         let mut entries_to_remove: Vec<String> = Vec::new();
-        let mut new_entries_not_in_old: HashMap<String, ColumnInfo> = new_content.clone();
+        let mut new_entries_not_in_old: HashMap<String, Vec<ColumnInfo>> = new_content.clone();
         let mut changed_new_entries: Vec<String> = Vec::new();
+        let mut new_cache_content: HashMap<String, String> = HashMap::new();
         for (key) in self.content.keys() {
             if !new_content.contains_key(key) {
                 entries_to_remove.push(key.clone());
@@ -36,39 +38,105 @@ impl Cache {
                 None => &"NO_OLD_HASH".to_string(), // This case is already handled by the previous check
             };
             let new_hash = match new_content.get(key) {
-                Some(column_info) => match column_info.to_json_hash() {
+                Some(column_info) => match to_json_hash(column_info) {
                     Ok(hash) => hash,
                     Err(e) => "NO_NEW_HASH".to_string(),
                 },
                 None => "NO_NEW_HASH".to_string(), // This case is already handled by the previous check
             };
+            new_cache_content.insert(key.clone(), new_hash.clone());
+            if old_hash != &new_hash {
+                changed_new_entries.push(key.clone());
+            }
         }
+        for (key, column_info) in new_entries_not_in_old.iter() {
+            let new_hash = match to_json_hash(column_info){
+                Ok(hash) => hash,
+                Err(e) => "NO_NEW_HASH".to_string(),
+            };
+            new_cache_content.insert(key.clone(), new_hash);
+            changed_new_entries.push(key.clone());
+        }
+
+        match fs::create_dir_all(&self.path) {
+            Ok(_) => {
+                let cache_file_path = format!("{}/carpathia_cache.json", &self.path);
+                let cache_content_json = serde_json::to_string_pretty(&new_cache_content).unwrap();
+                match fs::write(&cache_file_path, cache_content_json) {
+                    Ok(_) => info!("Cache file updated successfully at {}", &cache_file_path),
+                    Err(e) => error!("Failed to write cache file: {}", e),
+                }
+            }
+            Err(e) => error!("Failed to create cache directory: {}", e),
+        }
+
         changed_new_entries
     }
 
-    pub(crate) fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let json_content = serde_json::to_string_pretty(&self.content)?;
-        std::fs::write(&self.path, json_content)?;
-        Ok(())
-    }
+    
+}
+
+fn to_json_hash(column_info: &Vec<ColumnInfo>) -> Result<String, Box<dyn std::error::Error>> {
+    let json_string = serde_json::to_string(column_info)?;
+    let mut hasher = Sha256::new();
+    hasher.update(json_string.as_bytes());
+    let hash_result = hasher.finalize();
+    Ok(format!("{:x}", hash_result))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
-    fn test_cache() {
-        let cache_path = "test_cache.json".to_string();
-        let mut cache = Cache::new(cache_path.clone());
-        cache
-            .content
-            .insert("key1".to_string(), "value1".to_string());
-        cache
-            .content
-            .insert("key2".to_string(), "value2".to_string());
-        cache.save().unwrap();
-        let loaded_cache = Cache::new(cache_path.clone());
-        assert_eq!(cache.content, loaded_cache.content);
-        std::fs::remove_file(cache_path).unwrap();
+    fn test_get_changed_entities() {
+        let cache = Cache :: new("test_cache".to_string());
+        let mut new_content: HashMap<String, Vec<ColumnInfo>> = HashMap::new();
+        new_content.insert("test_table".to_string(), vec![ColumnInfo {
+            table_name: "test_table".to_string(),
+            column_name: "test_column".to_string(),
+            data_type: "VARCHAR".to_string(),
+            is_nullable: "YES".to_string(),
+            column_default: None,
+            character_maximum_length: Some(255),
+            numeric_precision: None,
+            numeric_scale: None,
+            is_identity: "NO".to_string(),
+            identity_generation: None,
+            is_generated: "NO".to_string(),
+            generation_expression: None,
+            constraint_name: None,
+            constraint_type: None,
+            referenced_table: None,
+            referenced_column: None,
+        }]);
+        let changed_entities = cache.get_changed_entities(&new_content);
+        assert_eq!(changed_entities.len(), 1);
+        assert_eq!(changed_entities[0], "test_table".to_string());
+    }   
+
+    #[test]
+    fn test_to_json_hash() {
+        let column_info = vec![ColumnInfo {
+            table_name: "test_table".to_string(),
+            column_name: "test_column".to_string(),
+            data_type: "VARCHAR".to_string(),
+            is_nullable: "YES".to_string(),
+            column_default: None,
+            character_maximum_length: Some(255),
+            numeric_precision: None,
+            numeric_scale: None,
+            is_identity: "NO".to_string(),
+            identity_generation: None,
+            is_generated: "NO".to_string(),
+            generation_expression: None,
+            constraint_name: None,
+            constraint_type: None,
+            referenced_table: None,
+            referenced_column: None,
+        }];
+        let hash = to_json_hash(&column_info).unwrap();
+        assert!(!hash.is_empty());
     }
+
+
 }
