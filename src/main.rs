@@ -1,6 +1,7 @@
 use clap::Parser;
 use log::info;
 mod db;
+mod cache;
 
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
@@ -27,6 +28,9 @@ struct Args {
     /// NOT IMPLEMENTED: Output directory for the generated code   
     #[arg(long, default_value = "./src/db_layer")]
     output_directory: String,
+    /// directory containing the carpatia_cache.json. The cache file contains hashes of the previously generated database entities   
+    #[arg(long, default_value = ".")]
+    cache_directory: String,
 }
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -44,6 +48,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let db_schema_parser =
         db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name).await;
     let table_info_map = db_schema_parser.parse_schema().await?;
+
     info!(
         "Successfully parsed database schema. Found {} tables.",
         table_info_map.len()

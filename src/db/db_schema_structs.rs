@@ -1,4 +1,7 @@
-#[derive(sqlx::FromRow)]
+use sha2::{Digest, Sha256};
+use serde_json;
+
+#[derive(sqlx::FromRow, serde::Serialize, Clone)]
 pub(crate) struct ColumnInfo {
     pub table_name: String,
     pub column_name: String,
@@ -16,4 +19,19 @@ pub(crate) struct ColumnInfo {
     pub constraint_type: Option<String>,
     pub referenced_table: Option<String>,
     pub referenced_column: Option<String>,
+}
+
+impl ColumnInfo {
+    pub(crate) fn to_json_hash(&self) -> Result<String, Box<dyn std::error::Error>> {
+        // Serialize to JSON string
+        let json = serde_json::to_string(self)?;
+        
+        // Compute SHA-256 hash
+        let mut hasher = Sha256::new();
+        hasher.update(json.as_bytes());
+        let hash = hasher.finalize();
+        
+        // Encode hash as hex string
+        Ok(hex::encode(hash))
+    }
 }
