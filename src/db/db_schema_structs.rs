@@ -1,5 +1,3 @@
-use sha2::{Digest, Sha256};
-use serde_json;
 
 #[derive(sqlx::FromRow, serde::Serialize, Clone)]
 pub(crate) struct ColumnInfo {

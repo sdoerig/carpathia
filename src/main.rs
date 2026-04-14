@@ -48,8 +48,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let db_schema_parser =
         db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name).await;
     let table_info_map = db_schema_parser.parse_schema().await?;
-    let mut cache = cache::cache_file::Cache::new(args.cache_directory);
-    let changed_entries = cache.get_changed_entities(&table_info_map);
+    let cache = cache::cache_file::Cache::new(args.cache_directory);
+    let _changed_entries = cache.get_changed_entities(&table_info_map);
     info!(
         "Successfully parsed database schema. Found {} tables.",
         table_info_map.len()
