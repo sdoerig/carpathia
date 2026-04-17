@@ -1,4 +1,3 @@
-
 #[derive(sqlx::FromRow, serde::Serialize, Clone)]
 pub(crate) struct ColumnInfo {
     pub table_name: String,
@@ -18,5 +17,3 @@ pub(crate) struct ColumnInfo {
     pub referenced_table: Option<String>,
     pub referenced_column: Option<String>,
 }
-
-

@@ -113,7 +113,7 @@ impl DbSchemaParser {
 
 #[cfg(test)]
 mod tests {
-    use super::*;   
+    use super::*;
     #[tokio::test]
     async fn test_db_schema_parser() {
         // This is a placeholder test. You would need to set up a test database and populate it with test data to make this meaningful.

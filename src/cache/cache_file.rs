@@ -133,9 +133,8 @@ mod tests {
 
     #[test]
     fn test_get_changed_entities_but_no_changes() {
-        
         let cache = Cache::new("test_cache".to_string());
-        
+
         let mut new_content: HashMap<String, Vec<ColumnInfo>> = HashMap::new();
         new_content.insert(
             "test_table".to_string(),
@@ -163,8 +162,7 @@ mod tests {
         let cache_after_first_run = Cache::new("test_cache".to_string());
         let changed_entities = cache_after_first_run.get_changed_entities(&new_content);
         assert_eq!(changed_entities.len(), 0);
-        cache_after_first_run.remove_cache_file();        
-
+        cache_after_first_run.remove_cache_file();
     }
 
     #[test]
