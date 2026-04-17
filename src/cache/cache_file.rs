@@ -1,4 +1,5 @@
 use crate::db::db_schema_structs::ColumnInfo;
+use core::hash;
 use log::{error, info};
 use sha2::{Digest, Sha256};
 use std::{collections::HashMap, fs};
@@ -23,44 +24,47 @@ impl Cache {
         let content = serde_json::from_str(&file_content).unwrap_or_default();
         Self { path, content }
     }
+
     pub(crate) fn get_changed_entities(
         &self,
         new_content: &HashMap<String, Vec<ColumnInfo>>,
     ) -> Vec<String> {
-        let mut entries_to_remove: Vec<String> = Vec::new();
-        let mut new_entries_not_in_old: HashMap<String, Vec<ColumnInfo>> = new_content.clone();
+        let mut new_entries_not_in_old: HashMap<String, String> = HashMap::new();
         let mut changed_new_entries: Vec<String> = Vec::new();
         let mut new_cache_content: HashMap<String, String> = HashMap::new();
-        for key in self.content.keys() {
-            if !new_content.contains_key(key) {
-                entries_to_remove.push(key.clone());
-            }
-            new_entries_not_in_old.remove(key);
+        for (key, column_info) in new_content.iter() {
+            new_entries_not_in_old.insert(
+                key.clone(),
+                to_json_hash(column_info).unwrap_or_else(|_e| "NO_NEW_HASH".to_string()),
+            );
+        }
+        // Can be an old endtry does not appear in the new content,
+        // then this means that the table was removed, so we should remove it from the cache and not consider it as a changed entry
+        for key in new_entries_not_in_old.keys() {
             let old_hash = match self.content.get(key) {
                 Some(hash) => hash,
                 None => &"NO_OLD_HASH".to_string(), // This case is already handled by the previous check
             };
-            let new_hash = match new_content.get(key) {
-                Some(column_info) => match to_json_hash(column_info) {
-                    Ok(hash) => hash,
-                    Err(_e) => "NO_NEW_HASH".to_string(),
-                },
-                None => "NO_NEW_HASH".to_string(), // This case is already handled by the previous check
+            let new_hash = match new_entries_not_in_old.get(key) {
+                Some(hash) => hash,
+                None => &"NO_NEW_HASH".to_string(), // This case is already handled by the previous check
             };
             new_cache_content.insert(key.clone(), new_hash.clone());
-            if old_hash != &new_hash {
+            if old_hash != new_hash {
                 changed_new_entries.push(key.clone());
             }
         }
-        for (key, column_info) in new_entries_not_in_old.iter() {
-            let new_hash = match to_json_hash(column_info) {
-                Ok(hash) => hash,
-                Err(_e) => "NO_NEW_HASH".to_string(),
-            };
-            new_cache_content.insert(key.clone(), new_hash);
-            changed_new_entries.push(key.clone());
+        for (key, new_hash) in new_entries_not_in_old.iter() {
+            new_cache_content.insert(key.clone(), new_hash.clone());
+            //changed_new_entries.push(key.clone());
         }
 
+        self.write_cache_file(new_cache_content);
+
+        changed_new_entries
+    }
+
+    fn write_cache_file(&self, new_cache_content: HashMap<String, String>) {
         match fs::create_dir_all(&self.path) {
             Ok(_) => {
                 let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
@@ -72,8 +76,6 @@ impl Cache {
             }
             Err(e) => error!("Failed to create cache directory: {}", e),
         }
-
-        changed_new_entries
     }
 
     fn remove_cache_file(&self) {
@@ -133,8 +135,8 @@ mod tests {
 
     #[test]
     fn test_get_changed_entities_but_no_changes() {
-        let cache = Cache::new("test_cache".to_string());
-
+        let cache = Cache::new("test_cache_no_changes".to_string());
+        cache.remove_cache_file(); // Ensure we start with a clean slate
         let mut new_content: HashMap<String, Vec<ColumnInfo>> = HashMap::new();
         new_content.insert(
             "test_table".to_string(),
@@ -159,10 +161,48 @@ mod tests {
         );
         let changed_entities = cache.get_changed_entities(&new_content);
         assert_eq!(changed_entities.len(), 1);
-        let cache_after_first_run = Cache::new("test_cache".to_string());
+        let cache_after_first_run = Cache::new("test_cache_no_changes".to_string());
+        assert_eq!(cache_after_first_run.content.len(), 1);
         let changed_entities = cache_after_first_run.get_changed_entities(&new_content);
-        assert_eq!(changed_entities.len(), 0);
-        cache_after_first_run.remove_cache_file();
+        assert_eq!(
+            changed_entities.len(),
+            0,
+            "Should have no changed entries - got: {:?}",
+            changed_entities
+        );
+
+        new_content.insert(
+            "test_table_brand_new".to_string(),
+            vec![ColumnInfo {
+                table_name: "test_table_brand_new".to_string(),
+                column_name: "the_column".to_string(), // Always the same
+                data_type: "VARCHAR".to_string(),
+                is_nullable: "YES".to_string(),
+                column_default: None,
+                character_maximum_length: Some(255),
+                numeric_precision: None,
+                numeric_scale: None,
+                is_identity: "NO".to_string(),
+                identity_generation: None,
+                is_generated: "NO".to_string(),
+                generation_expression: None,
+                constraint_name: None,
+                constraint_type: None,
+                referenced_table: None,
+                referenced_column: None,
+            }],
+        );
+        let cache_third_run = Cache::new("test_cache_no_changes".to_string());
+        let changed_entities = cache_third_run.get_changed_entities(&new_content);
+        assert_eq!(
+            changed_entities.len(),
+            1,
+            "Should have one changed entry - got: {:?}",
+            changed_entities
+        );
+        assert!(cache_third_run.content.get("test_table").is_some());
+        assert!(changed_entities[0] == "test_table_brand_new".to_string());
+        cache_third_run.remove_cache_file();
     }
 
     #[test]
