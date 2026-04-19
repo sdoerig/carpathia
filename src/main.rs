@@ -1,5 +1,8 @@
 use clap::Parser;
 use log::info;
+
+use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
+
 mod cache;
 mod db;
 mod return_values;
@@ -20,7 +23,7 @@ struct Args {
     /// Database name you would like to generate code for - just the name NOT the full URL: my_database
     #[arg(long)]
     db_name: String,
-    /// NOT IMPLEMENTED:Forces the generator to overwirite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
+    /// Forces the generator to overwirite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
     #[arg(short, long, default_value_t = false)]
     force: bool,
     /// NOT IMPLEMENTED: Output format for the generated code - choices are "binary" (default) or "library"
@@ -49,7 +52,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let db_schema_parser =
         db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name).await;
     let table_info_map = db_schema_parser.parse_schema().await?;
-    let cache = cache::cache_file::Cache::new(args.cache_directory);
+    let cache = cache::cache_file::Cache::new(args.cache_directory, args.force);
     let _changed_entries = cache.get_changed_entities(&table_info_map);
     info!(
         "Successfully parsed database schema. Found {} tables.",
