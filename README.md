@@ -3,8 +3,10 @@
 ## Idea of mine
 
 * Command line interface
-* Generating programmable DB-Layer to avoid boilerplate
-* Motivation of mine: intressting problem, learning
+* Generating programmable DB-Layer to avoid boilerplate code
+* Using a templating lib like tera to generate the templates
+* Allow the users writing their own templates 
+* Motivation of mine: learning
 
 ## Proposed CLI:
 
