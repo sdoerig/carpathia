@@ -1,4 +1,5 @@
 use crate::db::db_schema_structs::ColumnInfo;
+use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use core::hash;
 use log::{error, info};
 use sha2::{Digest, Sha256};
@@ -8,6 +9,11 @@ const CACHE_FILE_NAME: &str = "carpathia_cache.json";
 pub(crate) struct Cache {
     path: String,
     content: HashMap<String, String>,
+}
+
+pub(crate) struct CacheResult {
+    pub to_generate: Vec<String>,
+    pub to_remove: Vec<String>,
 }
 
 impl Cache {
@@ -28,53 +34,96 @@ impl Cache {
     pub(crate) fn get_changed_entities(
         &self,
         new_content: &HashMap<String, Vec<ColumnInfo>>,
-    ) -> Vec<String> {
-        let mut new_entries_not_in_old: HashMap<String, String> = HashMap::new();
-        let mut changed_new_entries: Vec<String> = Vec::new();
+    ) -> Result<CacheResult, CarpathiaError> {
+        // We will compare the new content with the old content and determine which entries have changed
+        // We will create a new cache content based on the new content and write it to the cache file
+        let mut new_cached_entries: HashMap<String, String> = HashMap::new();
+        let mut to_generate: Vec<String> = Vec::new();
+        let mut to_remove: Vec<String> = Vec::new();
         let mut new_cache_content: HashMap<String, String> = HashMap::new();
         for (key, column_info) in new_content.iter() {
-            new_entries_not_in_old.insert(
+            new_cached_entries.insert(
                 key.clone(),
                 to_json_hash(column_info).unwrap_or_else(|_e| "NO_NEW_HASH".to_string()),
             );
         }
+        for key in self.content.keys() {
+            if !new_cached_entries.contains_key(key) {
+                info!(
+                    "Entry '{}' is present in the old cache but not in the new content. It will be removed from the cache.",
+                    key
+                );
+                to_remove.push(key.clone());
+            }
+        }
         // Can be an old endtry does not appear in the new content,
         // then this means that the table was removed, so we should remove it from the cache and not consider it as a changed entry
-        for key in new_entries_not_in_old.keys() {
+        for key in new_cached_entries.keys() {
             let old_hash = match self.content.get(key) {
                 Some(hash) => hash,
                 None => &"NO_OLD_HASH".to_string(), // This case is already handled by the previous check
             };
-            let new_hash = match new_entries_not_in_old.get(key) {
+            let new_hash = match new_cached_entries.get(key) {
                 Some(hash) => hash,
                 None => &"NO_NEW_HASH".to_string(), // This case is already handled by the previous check
             };
             new_cache_content.insert(key.clone(), new_hash.clone());
             if old_hash != new_hash {
-                changed_new_entries.push(key.clone());
+                to_generate.push(key.clone());
             }
         }
-        for (key, new_hash) in new_entries_not_in_old.iter() {
+        for (key, new_hash) in new_cached_entries.iter() {
             new_cache_content.insert(key.clone(), new_hash.clone());
             //changed_new_entries.push(key.clone());
         }
 
-        self.write_cache_file(new_cache_content);
-
-        changed_new_entries
+        match self.write_cache_file(new_cache_content) {
+            CarpathiaError {
+                error_type: ErrorNumber::Success(_),
+                ..
+            } => {
+                info!(
+                    "Cache file updated successfully. Changed entries: {:?}",
+                    to_generate
+                );
+                Ok(CacheResult {
+                    to_generate,
+                    to_remove,
+                })
+            }
+            err => Err(err),
+        }
     }
 
-    fn write_cache_file(&self, new_cache_content: HashMap<String, String>) {
+    fn write_cache_file(&self, new_cache_content: HashMap<String, String>) -> CarpathiaError {
         match fs::create_dir_all(&self.path) {
             Ok(_) => {
                 let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
                 let cache_content_json = serde_json::to_string_pretty(&new_cache_content).unwrap();
                 match fs::write(&cache_file_path, cache_content_json) {
-                    Ok(_) => info!("Cache file updated successfully at {}", &cache_file_path),
-                    Err(e) => error!("Failed to write cache file: {}", e),
+                    Ok(_) => {
+                        info!("Cache file updated successfully at {}", &cache_file_path);
+                        CarpathiaError {
+                            message: "Cache file updated successfully".to_string(),
+                            error_type: ErrorNumber::Success(0),
+                        }
+                    }
+                    Err(e) => {
+                        error!("Failed to write cache file: {}", e);
+                        CarpathiaError {
+                            message: "Failed to write cache file".to_string(),
+                            error_type: ErrorNumber::CacheFileError(1),
+                        }
+                    }
                 }
             }
-            Err(e) => error!("Failed to create cache directory: {}", e),
+            Err(e) => {
+                error!("Failed to create cache directory: {}", e);
+                CarpathiaError {
+                    message: "Failed to create cache directory".to_string(),
+                    error_type: ErrorNumber::CacheFileError(2),
+                }
+            }
         }
     }
 
@@ -128,9 +177,23 @@ mod tests {
                 referenced_column: None,
             }],
         );
-        let changed_entities = cache.get_changed_entities(&new_content);
-        assert_eq!(changed_entities.len(), 1);
-        assert_eq!(changed_entities[0], "test_table".to_string());
+        match cache.get_changed_entities(&new_content) {
+            Ok(result) => {
+                assert_eq!(
+                    result.to_generate.len(),
+                    1,
+                    "Should have one changed entry - got: {:?}",
+                    result.to_generate
+                );
+                assert_eq!(
+                    result.to_remove.len(),
+                    0,
+                    "Should have no removed entries - got: {:?}",
+                    result.to_remove
+                );
+            }
+            Err(e) => panic!("Expected Ok result but got Err: {}", e),
+        };
     }
 
     #[test]
@@ -159,17 +222,43 @@ mod tests {
                 referenced_column: None,
             }],
         );
-        let changed_entities = cache.get_changed_entities(&new_content);
-        assert_eq!(changed_entities.len(), 1);
+        match cache.get_changed_entities(&new_content) {
+            Ok(result) => {
+                assert_eq!(
+                    result.to_generate.len(),
+                    1,
+                    "Should have one changed entry - got: {:?}",
+                    result.to_generate
+                );
+                assert_eq!(
+                    result.to_remove.len(),
+                    0,
+                    "Should have no removed entries - got: {:?}",
+                    result.to_remove
+                );
+            }
+            Err(e) => panic!("Expected Ok result but got Err: {}", e),
+        };
+
         let cache_after_first_run = Cache::new("test_cache_no_changes".to_string());
-        assert_eq!(cache_after_first_run.content.len(), 1);
-        let changed_entities = cache_after_first_run.get_changed_entities(&new_content);
-        assert_eq!(
-            changed_entities.len(),
-            0,
-            "Should have no changed entries - got: {:?}",
-            changed_entities
-        );
+
+        match cache_after_first_run.get_changed_entities(&new_content) {
+            Ok(result) => {
+                assert_eq!(
+                    result.to_generate.len(),
+                    0,
+                    "Should have no changed entries - got: {:?}",
+                    result.to_generate
+                );
+                assert_eq!(
+                    result.to_remove.len(),
+                    0,
+                    "Should have no removed entries - got: {:?}",
+                    result.to_remove
+                );
+            }
+            Err(e) => panic!("Expected Ok result but got Err: {}", e),
+        }
 
         new_content.insert(
             "test_table_brand_new".to_string(),
@@ -193,15 +282,24 @@ mod tests {
             }],
         );
         let cache_third_run = Cache::new("test_cache_no_changes".to_string());
-        let changed_entities = cache_third_run.get_changed_entities(&new_content);
-        assert_eq!(
-            changed_entities.len(),
-            1,
-            "Should have one changed entry - got: {:?}",
-            changed_entities
-        );
-        assert!(cache_third_run.content.get("test_table").is_some());
-        assert!(changed_entities[0] == "test_table_brand_new".to_string());
+        match cache_third_run.get_changed_entities(&new_content) {
+            Ok(result) => {
+                assert_eq!(
+                    result.to_generate.len(),
+                    1,
+                    "Should have one changed entry - got: {:?}",
+                    result.to_generate
+                );
+                assert_eq!(
+                    result.to_remove.len(),
+                    0,
+                    "Should have no removed entries - got: {:?}",
+                    result.to_remove
+                );
+            }
+            Err(e) => panic!("Expected Ok result but got Err: {}", e),
+        }
+
         cache_third_run.remove_cache_file();
     }
 

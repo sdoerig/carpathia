@@ -2,6 +2,7 @@ use clap::Parser;
 use log::info;
 mod cache;
 mod db;
+mod return_values;
 
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
