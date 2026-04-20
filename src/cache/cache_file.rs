@@ -405,6 +405,4 @@ mod tests {
 
         cache_third_run.remove_cache_file();
     }
-
-
 }

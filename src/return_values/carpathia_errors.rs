@@ -23,4 +23,16 @@ impl fmt::Display for CarpathiaError {
     }
 }
 
+impl From<ErrorNumber> for i32 {
+    fn from(error_type: ErrorNumber) -> i32 {
+        match error_type {
+            ErrorNumber::CacheFileError(code) => code,
+            ErrorNumber::ConfigFileError(code) => code,
+            ErrorNumber::GenerationError(code) => code,
+            ErrorNumber::Other(code) => code,
+            ErrorNumber::Success(code) => code,
+        }
+    }
+}
+
 impl Error for CarpathiaError {}

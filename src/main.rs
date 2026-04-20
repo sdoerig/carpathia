@@ -1,5 +1,6 @@
 use clap::Parser;
-use log::info;
+use log::{debug, error, info};
+use std::process::exit;
 
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 
@@ -53,10 +54,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name).await;
     let table_info_map = db_schema_parser.parse_schema().await?;
     let cache = cache::cache_file::Cache::new(args.cache_directory, args.force);
-    let _changed_entries = cache.get_changed_entities(&table_info_map);
+    let changed_entities = match cache.get_changed_entities(&table_info_map) {
+        Ok(changed_entities) => {
+            changed_entities;
+        }
+        Err(e) => {
+            error!("Error while checking for changed entities: {}", e);
+            exit(i32::from(e.error_type));
+        }
+    };
     info!(
         "Successfully parsed database schema. Found {} tables.",
         table_info_map.len()
     );
-    Ok(())
+    exit(0);
+    //Ok(())
 }
