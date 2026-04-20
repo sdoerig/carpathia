@@ -1,4 +1,4 @@
-#[derive(sqlx::FromRow, serde::Serialize, Clone)]
+#[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct ColumnInfo {
     pub table_name: String,
     pub column_name: String,

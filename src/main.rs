@@ -1,13 +1,15 @@
 use clap::Parser;
 use log::{debug, error, info};
+
 use std::process::exit;
 
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 
 mod cache;
 mod db;
+mod generator;
 mod return_values;
-
+use db::db_schema_structs::ColumnInfo;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
 #[command(

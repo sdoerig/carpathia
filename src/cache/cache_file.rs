@@ -29,6 +29,25 @@ pub(crate) struct CacheResult {
     pub to_remove: Vec<String>,
 }
 
+impl std::fmt::Debug for CacheResult {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("CacheResult")
+            .field("to_generate", &self.to_generate)
+            .field("to_remove", &self.to_remove)
+            .finish()
+    }
+}
+
+impl std::fmt::Debug for Cache {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Cache")
+            .field("path", &self.path)
+            .field("forced", &self.forced)
+            .field("content", &self.content)
+            .finish()
+    }
+}
+
 impl Cache {
     pub(crate) fn new(path: String, forced: bool) -> Self {
         /*
@@ -105,7 +124,7 @@ impl Cache {
 
         match self.write_cache_file(new_cache_content) {
             CarpathiaError {
-                error_type: ErrorNumber::Success(_),
+                error_type: ErrorNumber::Success,
                 ..
             } => {
                 info!(
@@ -131,14 +150,14 @@ impl Cache {
                         info!("Cache file updated successfully at {}", &cache_file_path);
                         CarpathiaError {
                             message: "Cache file updated successfully".to_string(),
-                            error_type: ErrorNumber::Success(0),
+                            error_type: ErrorNumber::Success,
                         }
                     }
                     Err(e) => {
                         error!("Failed to write cache file: {}", e);
                         CarpathiaError {
                             message: "Failed to write cache file".to_string(),
-                            error_type: ErrorNumber::CacheFileError(1),
+                            error_type: ErrorNumber::CacheFileError,
                         }
                     }
                 }
@@ -147,7 +166,7 @@ impl Cache {
                 error!("Failed to create cache directory: {}", e);
                 CarpathiaError {
                     message: "Failed to create cache directory".to_string(),
-                    error_type: ErrorNumber::CacheFileError(2),
+                    error_type: ErrorNumber::CacheFileError,
                 }
             }
         }
