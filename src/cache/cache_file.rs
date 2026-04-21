@@ -117,10 +117,6 @@ impl Cache {
                 to_generate.push(key.clone());
             }
         }
-        for (key, new_hash) in new_cached_entries.iter() {
-            new_cache_content.insert(key.clone(), new_hash.clone());
-            //changed_new_entries.push(key.clone());
-        }
 
         match self.write_cache_file(new_cache_content) {
             CarpathiaError {
