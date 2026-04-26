@@ -101,10 +101,11 @@ impl Cache {
                 to_remove.push(key.clone());
             }
         }
-        // Can be an old endtry does not appear in the new content,
-        // then this means that the table was removed, so we should remove it from the cache and not consider it as a changed entry
+        // Now it will check for changed entries and also build the new cache content
+        // It will iterate over the new cached entries and compare them with the old cached entries. If an entry is new or has a different hash than the old entry, it will be added to the list of entries to generate.
+        // It will also build the new cache content based on the new cached entries.
         for key in new_cached_entries.keys() {
-            let old_hash =  self.content.get(key);
+            let old_hash = self.content.get(key);
             let new_hash = new_cached_entries.get(key);
             new_cache_content.insert(key.clone(), new_hash.unwrap().clone());
             if old_hash != new_hash || self.forced {
