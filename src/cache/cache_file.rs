@@ -15,11 +15,12 @@ use crate::db::db_schema_structs::ColumnInfo;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use log::{error, info};
 use sha2::{Digest, Sha256};
+use std::path::PathBuf;
 use std::{collections::HashMap, fs};
 
 const CACHE_FILE_NAME: &str = "carpathia_cache.json";
 pub(crate) struct Cache {
-    path: String,
+    path: PathBuf,
     forced: bool,
     content: HashMap<String, String>,
 }
@@ -59,18 +60,19 @@ impl Cache {
          * comparing it with the new schema information.
          *
          */
-        let file_content = std::fs::read_to_string(format!("{}/{}", &path, CACHE_FILE_NAME))
-            .unwrap_or_else(|_| {
-                // If the file doesn't exist, it can start with an empty cache
-                info!(
-                    "Cache file not found at {}, starting with an empty cache.",
-                    &path
-                );
-                "{}".to_string() // Return an empty JSON object as a string
-            });
+        let cache_dir: PathBuf = PathBuf::from(&path);
+        let cache_file_path = cache_dir.join(CACHE_FILE_NAME);
+        let file_content = std::fs::read_to_string(&cache_file_path).unwrap_or_else(|_| {
+            // If the file doesn't exist, it can start with an empty cache
+            info!(
+                "Cache file not found at {}, starting with an empty cache.",
+                &path
+            );
+            "{}".to_string() // Return an empty JSON object as a string
+        });
         let content = serde_json::from_str(&file_content).unwrap_or_default();
         Self {
-            path,
+            path: cache_file_path,
             forced,
             content,
         }
@@ -127,13 +129,16 @@ impl Cache {
         &self,
         new_cache_content: HashMap<String, String>,
     ) -> Result<(), CarpathiaError> {
-        match fs::create_dir_all(&self.path) {
+        match fs::create_dir_all(&self.path.parent().unwrap()) {
             Ok(_) => {
-                let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
+                //let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
                 let cache_content_json = serde_json::to_string_pretty(&new_cache_content).unwrap();
-                match fs::write(&cache_file_path, cache_content_json) {
+                match fs::write(&self.path, cache_content_json) {
                     Ok(_) => {
-                        info!("Cache file updated successfully at {}", &cache_file_path);
+                        info!(
+                            "Cache file updated successfully at {}",
+                            &self.path.display()
+                        );
                         Err(CarpathiaError {
                             message: "Cache file updated successfully".to_string(),
                             error_type: ErrorNumber::Success,
@@ -164,11 +169,14 @@ impl Cache {
          * This function is used in the tests to ensure that we start with a clean slate for the cache. It will try to remove the cache file if it exists. If the file is successfully removed, it will log a success message. If the file cannot be removed (e.g., due to permissions issues), it will log an error message. This function is not intended to be used in the main application logic,
          * but rather as a utility for testing purposes.
          */
-        let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
-        if fs::remove_file(&cache_file_path).is_ok() {
-            info!("Cache file removed successfully at {}", &cache_file_path);
+        //let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
+        if fs::remove_file(&self.path).is_ok() {
+            info!(
+                "Cache file removed successfully at {}",
+                &self.path.display()
+            );
         } else {
-            error!("Failed to remove cache file at {}", &cache_file_path);
+            error!("Failed to remove cache file at {}", &self.path.display());
         }
     }
 }
