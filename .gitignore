@@ -1,3 +1,4 @@
 /target
 Cargo.lock
 carpathia_cache.json
+tarpaulin-report.html
