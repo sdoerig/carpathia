@@ -104,15 +104,9 @@ impl Cache {
         // Can be an old endtry does not appear in the new content,
         // then this means that the table was removed, so we should remove it from the cache and not consider it as a changed entry
         for key in new_cached_entries.keys() {
-            let old_hash = match self.content.get(key) {
-                Some(hash) => hash,
-                None => &"NO_OLD_HASH".to_string(), // This case is already handled by the previous check
-            };
-            let new_hash = match new_cached_entries.get(key) {
-                Some(hash) => hash,
-                None => &"NO_NEW_HASH".to_string(), // This case is already handled by the previous check
-            };
-            new_cache_content.insert(key.clone(), new_hash.clone());
+            let old_hash =  self.content.get(key);
+            let new_hash = new_cached_entries.get(key);
+            new_cache_content.insert(key.clone(), new_hash.unwrap().clone());
             if old_hash != new_hash || self.forced {
                 to_generate.push(key.clone());
             }
