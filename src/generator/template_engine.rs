@@ -1,17 +1,17 @@
 use crate::cache::cache_file::CacheResult;
-use crate::db::db_schema_structs::ColumnInfo;
+use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use log::{debug, error, info};
 
 pub(crate) struct TemplateEngine {
     cache_result: CacheResult,
-    db_schema: std::collections::HashMap<String, Vec<ColumnInfo>>,
+    db_schema: std::collections::HashMap<String, AbstractDbRepr>,
 }
 
 impl TemplateEngine {
     pub(crate) fn new(
         cache_result: CacheResult,
-        db_schema: std::collections::HashMap<String, Vec<ColumnInfo>>,
+        db_schema: std::collections::HashMap<String, AbstractDbRepr>,
     ) -> Self {
         Self {
             cache_result,

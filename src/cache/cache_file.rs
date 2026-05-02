@@ -11,7 +11,7 @@
  * it can skip the code generation process for those entities.
  *
  */
-use crate::db::db_schema_structs::ColumnInfo;
+use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use log::{error, info};
 use sha2::{Digest, Sha256};
@@ -80,7 +80,7 @@ impl Cache {
 
     pub(crate) fn get_changed_entities(
         &self,
-        new_content: &HashMap<String, Vec<ColumnInfo>>,
+        new_content: &HashMap<String, AbstractDbRepr>,
     ) -> Result<CacheResult, CarpathiaError> {
         // it will compare the new content with the old content and determine which entries have changed
         // it will create a new cache content based on the new content and write it to the cache file
@@ -181,7 +181,7 @@ impl Cache {
     }
 }
 
-fn to_json_hash(column_info: &Vec<ColumnInfo>) -> Result<String, Box<dyn std::error::Error>> {
+fn to_json_hash(column_info: &AbstractDbRepr) -> Result<String, Box<dyn std::error::Error>> {
     let json_string = serde_json::to_string(column_info)?;
     let mut hasher = Sha256::new();
     hasher.update(json_string.as_bytes());
@@ -191,37 +191,41 @@ fn to_json_hash(column_info: &Vec<ColumnInfo>) -> Result<String, Box<dyn std::er
 
 #[cfg(test)]
 mod tests {
+    use crate::db::db_schema_structs::AbstractAttribute;
+
     use super::*;
 
-    fn create_column_info(table_name: &str, column_name: &str) -> ColumnInfo {
-        ColumnInfo {
+    fn create_column_info(table_name: &str, column_name: &str) -> AbstractDbRepr {
+        AbstractDbRepr {
             table_name: table_name.to_string(),
-            column_name: column_name.to_string(),
-            data_type: "VARCHAR".to_string(),
-            is_nullable: "YES".to_string(),
-            column_default: None,
-            character_maximum_length: Some(255),
-            numeric_precision: None,
-            numeric_scale: None,
-            is_identity: "NO".to_string(),
-            identity_generation: None,
-            is_generated: "NO".to_string(),
-            generation_expression: None,
-            constraint_name: None,
-            constraint_type: None,
-            referenced_table: None,
-            referenced_column: None,
+            attributes: vec![AbstractAttribute {
+                column_name: column_name.to_string(),
+                data_type: "text".to_string(),
+                is_nullable: "NO".to_string(),
+                column_default: None,
+                character_maximum_length: None,
+                numeric_precision: None,
+                numeric_scale: None,
+                is_identity: "NO".to_string(),
+                identity_generation: None,
+                is_generated: "NO".to_string(),
+                generation_expression: None,
+                constraint_name: None,
+                constraint_type: None,
+                referenced_table: None,
+                referenced_column: None,
+            }],
         }
     }
 
     #[test]
     fn test_get_changed_entities() {
         let cache = Cache::new("test_cache".to_string(), false);
-        let mut new_content: HashMap<String, Vec<ColumnInfo>> = HashMap::new();
+        let mut new_content: HashMap<String, AbstractDbRepr> = HashMap::new();
 
         new_content.insert(
             "test_table".to_string(),
-            vec![create_column_info("test_table", "a")],
+            create_column_info("test_table", "a"),
         );
         match cache.get_changed_entities(&new_content) {
             Ok(result) => {
@@ -247,10 +251,10 @@ mod tests {
     fn test_get_changed_entities_but_no_changes() {
         let cache = Cache::new("test_cache_no_changes".to_string(), false);
         cache.remove_cache_file(); // Ensure we start with a clean slate
-        let mut new_content: HashMap<String, Vec<ColumnInfo>> = HashMap::new();
+        let mut new_content: HashMap<String, AbstractDbRepr> = HashMap::new();
         new_content.insert(
             "test_table".to_string(),
-            vec![create_column_info("test_table", "a")],
+            create_column_info("test_table", "a"),
         );
         match cache.get_changed_entities(&new_content) {
             Ok(result) => {
@@ -292,7 +296,7 @@ mod tests {
 
         new_content.insert(
             "test_table_brand_new".to_string(),
-            vec![create_column_info("test_table_brand_new", "test_column")],
+            create_column_info("test_table_brand_new", "test_column"),
         );
         let cache_third_run = Cache::new("test_cache_no_changes".to_string(), false);
         match cache_third_run.get_changed_entities(&new_content) {
@@ -319,10 +323,10 @@ mod tests {
     #[test]
     fn test_get_changed_entities_with_forced() {
         let cache = Cache::new("test_cache_forced".to_string(), true);
-        let mut new_content: HashMap<String, Vec<ColumnInfo>> = HashMap::new();
+        let mut new_content: HashMap<String, AbstractDbRepr> = HashMap::new();
         new_content.insert(
             "test_table".to_string(),
-            vec![create_column_info("test_table", "a")],
+            create_column_info("test_table", "a"),
         );
         match cache.get_changed_entities(&new_content) {
             Ok(result) => {
@@ -364,7 +368,7 @@ mod tests {
     }
     #[test]
     fn test_to_json_hash() {
-        let column_info = vec![create_column_info("table_name", "column_name")];
+        let column_info = create_column_info("table_name", "column_name");
         let hash = to_json_hash(&column_info).unwrap();
         assert!(!hash.is_empty());
     }
@@ -372,10 +376,10 @@ mod tests {
     #[test]
     fn test_cache_removed_entries() {
         let cache = Cache::new("test_cache_removed_entries".to_string(), false);
-        let mut new_content: HashMap<String, Vec<ColumnInfo>> = HashMap::new();
+        let mut new_content: HashMap<String, AbstractDbRepr> = HashMap::new();
         new_content.insert(
             "test_table".to_string(),
-            vec![create_column_info("test_table", "a")],
+            create_column_info("test_table", "a"),
         );
         match cache.get_changed_entities(&new_content) {
             Ok(result) => {

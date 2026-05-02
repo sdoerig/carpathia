@@ -9,7 +9,8 @@ mod cache;
 mod db;
 mod generator;
 mod return_values;
-use db::db_schema_structs::ColumnInfo;
+use db::db_schema_structs::AbstractDbRepr;
+use db::db_schema_structs::DbType;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
 #[command(
@@ -53,7 +54,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Output Format: {}", &args.output_format);
     info!("Output Directory: {}", &args.output_directory);
     let db_schema_parser =
-        db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name).await;
+        db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name, DbType::Postgres);
     let table_info_map = db_schema_parser.parse_schema().await?;
     let cache = cache::cache_file::Cache::new(args.cache_directory, args.force);
     let changed_entities = match cache.get_changed_entities(&table_info_map) {
