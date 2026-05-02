@@ -2,7 +2,7 @@
  * This module is responsible for managing the cache file that stores the hash of the
  * database schema information. The cache file is used to determine if there have been
  * any changes in the database schema since the last time it was generated. The cache
- * file is stored in a specified directory and is named "carpathia_cache.json".
+ * file is stored in a specified directory and is named "`carpathia_cache.json`".
  * The cache content is stored as a JSON object where the keys are the names of the
  * database entities (e.g., table names) and the values are the hashes of their schema
  * information. When it generate code based on the database schema, it will first check
@@ -88,7 +88,7 @@ impl Cache {
         let mut to_generate: Vec<String> = Vec::new();
         let mut to_remove: Vec<String> = Vec::new();
         let mut new_cache_content: HashMap<String, String> = HashMap::new();
-        for (key, column_info) in new_content.iter() {
+        for (key, column_info) in new_content {
             new_cached_entries.insert(
                 key.clone(),
                 to_json_hash(column_info).unwrap_or_else(|_e| "NO_NEW_HASH".to_string()),
@@ -97,8 +97,7 @@ impl Cache {
         for key in self.content.keys() {
             if !new_cached_entries.contains_key(key) {
                 info!(
-                    "Entry '{}' is present in the old cache but not in the new content. It will be removed from the cache.",
-                    key
+                    "Entry '{key}' is present in the old cache but not in the new content. It will be removed from the cache."
                 );
                 to_remove.push(key.clone());
             }
@@ -116,9 +115,9 @@ impl Cache {
         }
 
         match self.write_cache_file(new_cache_content) {
-            Ok(_) => info!("Cache file updated successfully."),
-            Err(e) => error!("Failed to update cache file: {}", e),
-        };
+            Ok(()) => info!("Cache file updated successfully."),
+            Err(e) => error!("Failed to update cache file: {e}"),
+        }
         Ok(CacheResult {
             to_generate,
             to_remove,
@@ -129,12 +128,12 @@ impl Cache {
         &self,
         new_cache_content: HashMap<String, String>,
     ) -> Result<(), CarpathiaError> {
-        match fs::create_dir_all(&self.path.parent().unwrap()) {
-            Ok(_) => {
+        match fs::create_dir_all(self.path.parent().unwrap()) {
+            Ok(()) => {
                 //let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
                 let cache_content_json = serde_json::to_string_pretty(&new_cache_content).unwrap();
                 match fs::write(&self.path, cache_content_json) {
-                    Ok(_) => {
+                    Ok(()) => {
                         info!(
                             "Cache file updated successfully at {}",
                             &self.path.display()
@@ -145,7 +144,7 @@ impl Cache {
                         })
                     }
                     Err(e) => {
-                        error!("Failed to write cache file: {}", e);
+                        error!("Failed to write cache file: {e}");
                         Err(CarpathiaError {
                             message: "Failed to write cache file".to_string(),
                             error_type: ErrorNumber::CacheFileError,
@@ -154,7 +153,7 @@ impl Cache {
                 }
             }
             Err(e) => {
-                error!("Failed to create cache directory: {}", e);
+                error!("Failed to create cache directory: {e}");
                 Err(CarpathiaError {
                     message: "Failed to create cache directory".to_string(),
                     error_type: ErrorNumber::CacheFileError,
@@ -186,7 +185,7 @@ fn to_json_hash(column_info: &AbstractDbRepr) -> Result<String, Box<dyn std::err
     let mut hasher = Sha256::new();
     hasher.update(json_string.as_bytes());
     let hash_result = hasher.finalize();
-    Ok(format!("{:x}", hash_result))
+    Ok(format!("{hash_result:x}"))
 }
 
 #[cfg(test)]

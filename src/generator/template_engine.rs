@@ -1,7 +1,7 @@
 use crate::cache::cache_file::CacheResult;
 use crate::db::db_schema_structs::AbstractDbRepr;
-use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
-use log::{debug, error, info};
+use crate::return_values::carpathia_errors::CarpathiaError;
+use log::{debug, info};
 
 pub(crate) struct TemplateEngine {
     cache_result: CacheResult,

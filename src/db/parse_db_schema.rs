@@ -1,13 +1,6 @@
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::db::db_schema_structs::DbType;
 use crate::db::traits::DatabaseQuerier;
-/// This module extracts the datebase schema from a PostgreSQL database and
-/// generates a Rust struct for each table in the database. It also proviedes the
-/// intermeditate data structures to hold the extracted schema information.
-///
-///
-use log::{debug, info};
-use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 use std::collections::HashMap;
 
 use crate::db::postgresql::PostgresQuerier;

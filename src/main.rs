@@ -1,15 +1,13 @@
 use clap::Parser;
-use log::{debug, error, info};
+use log::{error, info};
 
 use std::process::exit;
 
-use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 
 mod cache;
 mod db;
 mod generator;
 mod return_values;
-use db::db_schema_structs::AbstractDbRepr;
 use db::db_schema_structs::DbType;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
@@ -21,10 +19,10 @@ use db::db_schema_structs::DbType;
 Note: It is still in early development and not functional yet."
 )]
 struct Args {
-    /// Database URL in the format - JUST host and port NOT the database name: postgres://user:password@localhost:5432
+    /// Database URL in the format - JUST host and port NOT the database name: <postgres://user:password@localhost:5432>
     #[arg(long)]
     db_url: String,
-    /// Database name you would like to generate code for - just the name NOT the full URL: my_database
+    /// Database name you would like to generate code for - just the name NOT the full URL: `my_database`
     #[arg(long)]
     db_name: String,
     /// Forces the generator to overwirite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
@@ -36,7 +34,7 @@ struct Args {
     /// NOT IMPLEMENTED: Output directory for the generated code   
     #[arg(long, default_value = "./src/db_layer")]
     output_directory: String,
-    /// directory containing the carpatia_cache.json. The cache file contains hashes of the previously generated database entities   
+    /// directory containing the `carpatia_cache.json`. The cache file contains hashes of the previously generated database entities   
     #[arg(long, default_value = ".")]
     cache_directory: String,
 }
@@ -57,15 +55,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name, DbType::Postgres);
     let table_info_map = db_schema_parser.parse_schema().await?;
     let cache = cache::cache_file::Cache::new(args.cache_directory, args.force);
-    let changed_entities = match cache.get_changed_entities(&table_info_map) {
+    match cache.get_changed_entities(&table_info_map) {
         Ok(changed_entities) => {
-            changed_entities;
+            drop(changed_entities);
         }
         Err(e) => {
-            error!("Error while checking for changed entities: {}", e);
+            error!("Error while checking for changed entities: {e}");
             exit(i32::from(e.error_type));
         }
-    };
+    }
     info!(
         "Successfully parsed database schema. Found {} tables.",
         table_info_map.len()

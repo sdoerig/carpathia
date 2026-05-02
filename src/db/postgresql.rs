@@ -1,6 +1,6 @@
 use super::db_schema_structs::{AbstractAttribute, AbstractDbRepr};
 use super::traits::DatabaseQuerier;
-use log::{debug, error, info};
+use log::{debug, info};
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 
 pub(crate) struct PostgresQuerier {
@@ -27,7 +27,7 @@ struct PgColumnInfo {
     pub referenced_column: Option<String>,
 }
 
-const SCHEMA_QUERY: &str = r#"
+const SCHEMA_QUERY: &str = r"
 SELECT
     -- Column Metadata
     c.table_name as table_name,
@@ -70,11 +70,11 @@ ORDER BY
     c.table_name, 
     c.ordinal_position;
 
-"#;
+";
 
 impl PostgresQuerier {
     pub(crate) fn new(db_url: &str, db_name: &str) -> Self {
-        let full_db_url = format!("{}/{}", db_url, db_name);
+        let full_db_url = format!("{db_url}/{db_name}");
         let pool = PgPoolOptions::new()
             .connect_lazy(&full_db_url)
             .expect("Failed to create database connection pool");
@@ -95,7 +95,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 .pool
                 .connect_options()
                 .get_database()
-                .unwrap_or(&"unknown".to_string())
+                .unwrap_or("unknown")
         );
         let mut table_info_map: std::collections::HashMap<String, AbstractDbRepr> =
             std::collections::HashMap::new();
