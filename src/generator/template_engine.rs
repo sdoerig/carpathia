@@ -1,7 +1,8 @@
 use crate::cache::cache_file::CacheResult;
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
-use log::{debug, info};
+use log::{debug, error, info};
+use std::collections::HashMap;
 
 pub(crate) struct TemplateEngine {
     cache_result: CacheResult,
@@ -26,5 +27,29 @@ impl TemplateEngine {
         debug!("Cache result: {:?}", self.cache_result);
         debug!("Database schema: {:?}", self.db_schema);
         Ok(())
+    }
+}
+
+pub(crate) fn print_schema_as_json(
+    table_info_map: &HashMap<String, AbstractDbRepr>,
+) -> Result<(), CarpathiaError> {
+    let mut db_types: HashMap<&str, String> = HashMap::new();
+    for key in table_info_map.keys() {
+        for attr in &table_info_map[key].attributes {
+            db_types.insert(&attr.data_type, String::new());
+        }
+    }
+    match serde_json::to_string_pretty(&table_info_map) {
+        Ok(json) => {
+            println!("Extracted database schema in JSON format:\n{}", json);
+            Ok(())
+        }
+        Err(e) => {
+            error!("Failed to serialize database schema to JSON: {e}");
+            Err(CarpathiaError {
+                message: format!("Failed to serialize database schema to JSON: {e}"),
+                error_type: crate::return_values::carpathia_errors::ErrorNumber::Other,
+            })
+        }
     }
 }

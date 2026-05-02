@@ -26,6 +26,8 @@ pub(crate) struct AbstractAttribute {
 // This enum represents the supported database types. Currently, only PostgreSQL is supported, but we can easily add support for MySQL and SQLite in the future by adding new variants to this enum and implementing the necessary logic in the database querier and schema parser.
 pub(crate) enum DbType {
     Postgres,
-    MySql,  // Future support for MySQL
+    #[allow(dead_code)]
+    MySql, // Future support for MySQL
+    #[allow(dead_code)]
     Sqlite, // Future support for SQLite
 }

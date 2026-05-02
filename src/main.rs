@@ -1,14 +1,15 @@
 use clap::Parser;
 use log::{error, info};
 
-use std::process::exit;
-
+use std::{collections::HashMap, process::exit};
 
 mod cache;
 mod db;
 mod generator;
 mod return_values;
 use db::db_schema_structs::DbType;
+
+use crate::generator::template_engine;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
 #[command(
@@ -37,6 +38,12 @@ struct Args {
     /// directory containing the `carpatia_cache.json`. The cache file contains hashes of the previously generated database entities   
     #[arg(long, default_value = ".")]
     cache_directory: String,
+    /// print the extracted database schema to the console in JSON format for debugging purposes.
+    #[arg(long, default_value_t = false)]
+    print_schema: bool,
+    /// print a json file of the database types to the console. You might need this.
+    #[arg(long, default_value_t = false)]
+    print_db_types: bool,
 }
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -57,6 +64,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cache = cache::cache_file::Cache::new(args.cache_directory, args.force);
     match cache.get_changed_entities(&table_info_map) {
         Ok(changed_entities) => {
+            if args.print_schema {
+                println!(
+                    "Extracted database schema in JSON format:\n{}",
+                    serde_json::to_string_pretty(&table_info_map)?
+                );
+            }
+            if args.print_db_types {
+                template_engine::print_schema_as_json(&table_info_map)?;
+            }
             drop(changed_entities);
         }
         Err(e) => {
@@ -69,5 +85,4 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         table_info_map.len()
     );
     exit(0);
-    //Ok(())
 }

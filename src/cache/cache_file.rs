@@ -138,10 +138,7 @@ impl Cache {
                             "Cache file updated successfully at {}",
                             &self.path.display()
                         );
-                        Err(CarpathiaError {
-                            message: "Cache file updated successfully".to_string(),
-                            error_type: ErrorNumber::Success,
-                        })
+                        Ok(())
                     }
                     Err(e) => {
                         error!("Failed to write cache file: {e}");
