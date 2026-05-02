@@ -39,9 +39,9 @@ pub(crate) fn print_schema_as_json(
             db_types.insert(&attr.data_type, String::new());
         }
     }
-    match serde_json::to_string_pretty(&table_info_map) {
+    match serde_json::to_string_pretty(&db_types) {
         Ok(json) => {
-            println!("Extracted database schema in JSON format:\n{json}");
+            println!("{json}");
             Ok(())
         }
         Err(e) => {
