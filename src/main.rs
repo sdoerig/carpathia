@@ -1,7 +1,7 @@
 use clap::Parser;
 use log::{error, info};
 
-use std::{collections::HashMap, process::exit};
+use std::process::exit;
 
 mod cache;
 mod db;

@@ -41,7 +41,7 @@ pub(crate) fn print_schema_as_json(
     }
     match serde_json::to_string_pretty(&table_info_map) {
         Ok(json) => {
-            println!("Extracted database schema in JSON format:\n{}", json);
+            println!("Extracted database schema in JSON format:\n{json}");
             Ok(())
         }
         Err(e) => {
