@@ -15,6 +15,7 @@ use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use log::{error, info};
 use sha2::{Digest, Sha256};
+use std::collections::BTreeMap;
 use std::path::PathBuf;
 use std::{collections::HashMap, fs};
 
@@ -80,7 +81,7 @@ impl Cache {
 
     pub(crate) fn get_changed_entities(
         &self,
-        new_content: &HashMap<String, AbstractDbRepr>,
+        new_content: &BTreeMap<String, AbstractDbRepr>,
     ) -> Result<CacheResult, CarpathiaError> {
         // it will compare the new content with the old content and determine which entries have changed
         // it will create a new cache content based on the new content and write it to the cache file
@@ -217,7 +218,7 @@ mod tests {
     #[test]
     fn test_get_changed_entities() {
         let cache = Cache::new("test_cache".to_string(), false);
-        let mut new_content: HashMap<String, AbstractDbRepr> = HashMap::new();
+        let mut new_content: BTreeMap<String, AbstractDbRepr> = BTreeMap::new();
 
         new_content.insert(
             "test_table".to_string(),
@@ -247,7 +248,7 @@ mod tests {
     fn test_get_changed_entities_but_no_changes() {
         let cache = Cache::new("test_cache_no_changes".to_string(), false);
         cache.remove_cache_file(); // Ensure we start with a clean slate
-        let mut new_content: HashMap<String, AbstractDbRepr> = HashMap::new();
+        let mut new_content: BTreeMap<String, AbstractDbRepr> = BTreeMap::new();
         new_content.insert(
             "test_table".to_string(),
             create_column_info("test_table", "a"),
@@ -319,7 +320,7 @@ mod tests {
     #[test]
     fn test_get_changed_entities_with_forced() {
         let cache = Cache::new("test_cache_forced".to_string(), true);
-        let mut new_content: HashMap<String, AbstractDbRepr> = HashMap::new();
+        let mut new_content: BTreeMap<String, AbstractDbRepr> = BTreeMap::new();
         new_content.insert(
             "test_table".to_string(),
             create_column_info("test_table", "a"),
@@ -372,7 +373,7 @@ mod tests {
     #[test]
     fn test_cache_removed_entries() {
         let cache = Cache::new("test_cache_removed_entries".to_string(), false);
-        let mut new_content: HashMap<String, AbstractDbRepr> = HashMap::new();
+        let mut new_content: BTreeMap<String, AbstractDbRepr> = BTreeMap::new();
         new_content.insert(
             "test_table".to_string(),
             create_column_info("test_table", "a"),
