@@ -1,56 +1,51 @@
-use crate::db::db_schema_structs::AbstractDbRepr;
+use std::collections::BTreeMap;
 use crate::db::db_schema_structs::DbType;
+use crate::db::db_schema_structs::AbstractDbRepr;
+/// This module extracts the datebase schema from a PostgreSQL database and
+/// generates a Rust struct for each table in the database. It also proviedes the
+/// intermeditate data structures to hold the extracted schema information.
+///
+///
+use log::{debug, info};
+use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 use crate::db::traits::DatabaseQuerier;
-use std::collections::HashMap;
 
 use crate::db::postgresql::PostgresQuerier;
-// scratch code for testing the database connection and schema extraction
-// pk
-//SELECT table_name, column_name, data_type, is_nullable
-//FROM information_schema.columns
-//WHERE table_schema = 'public'
-//ORDER BY table_name, ordinal_position;
-//
-// fk
-//SELECT kcu.table_name, kcu.column_name
-//FROM information_schema.table_constraints tco
-//JOIN information_schema.key_column_usage kcu ON kcu.constraint_name = tco.constraint_name
-//WHERE tco.constraint_type = 'PRIMARY KEY' AND tco.table_schema = 'public';
+
 
 pub(crate) struct DbSchemaParser {
     // You can add fields here if needed, for example, to hold configuration or state
     db_name: String,
     db_url: String,
-    db_type: DbType,
+    db_type: DbType
+    
 }
 
 impl DbSchemaParser {
-    pub(crate) fn new(db_url: String, db_name: String, db_type: DbType) -> Self {
-        Self {
-            db_name,
-            db_url,
-            db_type,
-        }
+    pub(crate)  fn new(db_url: String, db_name: String, db_type: DbType) -> Self {
+       Self { db_name, db_url, db_type }
     }
 
     pub(crate) async fn parse_schema(
         &self,
-    ) -> Result<HashMap<String, AbstractDbRepr>, Box<dyn std::error::Error>> {
+    ) -> Result<BTreeMap<String, AbstractDbRepr>, Box<dyn std::error::Error>> {
+        
         match self.db_type {
             DbType::Postgres => {
                 let querier = PostgresQuerier::new(&self.db_url, &self.db_name);
                 querier.get_schema().await
-            }
+            },
             DbType::MySql => {
                 unimplemented!("MySQL support is not implemented yet");
-            }
+            },
             DbType::Sqlite => {
                 unimplemented!("SQLite support is not implemented yet");
             }
         }
     }
-}
+        }
 
+        
 #[cfg(test)]
 mod tests {
     use super::*;

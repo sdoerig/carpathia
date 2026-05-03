@@ -1,8 +1,8 @@
 use crate::db::db_schema_structs::AbstractDbRepr;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 pub(crate) trait DatabaseQuerier {
     async fn get_schema(
         &self,
-    ) -> Result<HashMap<String, AbstractDbRepr>, Box<dyn std::error::Error>>;
+    ) -> Result<BTreeMap<String, AbstractDbRepr>, Box<dyn std::error::Error>>;
 }

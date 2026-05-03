@@ -68,7 +68,7 @@ WHERE
     c.table_schema = 'public'
 ORDER BY 
     c.table_name, 
-    c.ordinal_position;
+    c.column_name;
 
 ";
 
@@ -85,7 +85,7 @@ impl PostgresQuerier {
 impl DatabaseQuerier for PostgresQuerier {
     async fn get_schema(
         &self,
-    ) -> Result<std::collections::HashMap<String, AbstractDbRepr>, Box<dyn std::error::Error>> {
+    ) -> Result<std::collections::BTreeMap<String, AbstractDbRepr>, Box<dyn std::error::Error>> {
         // Here you would implement the logic to query the database for its schema
         // and populate your data structures with the extracted information.
         // This is just a placeholder for demonstration purposes.
@@ -97,8 +97,8 @@ impl DatabaseQuerier for PostgresQuerier {
                 .get_database()
                 .unwrap_or("unknown")
         );
-        let mut table_info_map: std::collections::HashMap<String, AbstractDbRepr> =
-            std::collections::HashMap::new();
+        let mut table_info_map: std::collections::BTreeMap<String, AbstractDbRepr> =
+            std::collections::BTreeMap::new();
         let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
             .fetch_all(&self.pool)
             .await
@@ -131,8 +131,7 @@ impl DatabaseQuerier for PostgresQuerier {
                     table_name: row.table_name,
                     attributes: Vec::new(),
                 })
-                .attributes
-                .push(attribute);
+                .unique_push(attribute);
         }
 
         Ok(table_info_map)
