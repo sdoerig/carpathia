@@ -71,7 +71,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 );
             }
             if args.print_db_types {
-                template_engine::print_schema_as_json(&table_info_map)?;
+                template_engine::print_db_types_as_json(&table_info_map)?;
             }
             drop(changed_entities);
         }

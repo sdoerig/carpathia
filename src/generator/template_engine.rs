@@ -30,7 +30,7 @@ impl TemplateEngine {
     }
 }
 
-pub(crate) fn print_schema_as_json(
+pub(crate) fn print_db_types_as_json(
     table_info_map: &BTreeMap<String, AbstractDbRepr>,
 ) -> Result<(), CarpathiaError> {
     // Printing the types found in the database this is needed
