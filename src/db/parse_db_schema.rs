@@ -6,12 +6,9 @@ use crate::db::db_schema_structs::AbstractDbRepr;
 /// intermeditate data structures to hold the extracted schema information.
 ///
 ///
-use log::{debug, info};
-use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
+/// 
 use crate::db::traits::DatabaseQuerier;
-
 use crate::db::postgresql::PostgresQuerier;
-
 
 pub(crate) struct DbSchemaParser {
     // You can add fields here if needed, for example, to hold configuration or state
