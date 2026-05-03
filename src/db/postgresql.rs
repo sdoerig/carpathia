@@ -85,7 +85,8 @@ impl PostgresQuerier {
 impl DatabaseQuerier for PostgresQuerier {
     async fn get_schema(
         &self,
-    ) -> Result<std::collections::BTreeMap<String, AbstractDbRepr>, Box<dyn std::error::Error>> {
+    ) -> Result<std::collections::BTreeMap<String, AbstractDbRepr>, Box<dyn std::error::Error>>
+    {
         // Here you would implement the logic to query the database for its schema
         // and populate your data structures with the extracted information.
         // This is just a placeholder for demonstration purposes.

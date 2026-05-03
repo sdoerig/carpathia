@@ -1,7 +1,7 @@
-// This module defines the intermediate database schema representation that will be 
-//used by the schema parser and the code generator. The AbstractDbRepr struct 
-// represents a database table, while the AbstractAttribute struct represents a column 
-// in a table. 
+// This module defines the intermediate database schema representation that will be
+//used by the schema parser and the code generator. The AbstractDbRepr struct
+// represents a database table, while the AbstractAttribute struct represents a column
+// in a table.
 //The DbType enum represents the supported database types, which can be extended in the future to support more databases.
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct AbstractDbRepr {
@@ -11,7 +11,7 @@ pub(crate) struct AbstractDbRepr {
 
 impl AbstractDbRepr {
     pub(crate) fn unique_push(&mut self, attribute: AbstractAttribute) {
-        // Only adding unique attributes to the list of attributes for a table. 
+        // Only adding unique attributes to the list of attributes for a table.
         // This is important to avoid duplicates in the generated code.
         if !self.attributes.contains(&attribute) {
             self.attributes.push(attribute);
@@ -47,8 +47,7 @@ pub(crate) enum DbType {
     Sqlite, // Future support for SQLite
 }
 
-
-#[cfg (test)]
+#[cfg(test)]
 mod tests {
     use super::*;
 
@@ -82,8 +81,7 @@ mod tests {
 
     #[test]
     fn test_abstract_db_repr() {
-        
-        let mut table_info = create_table_info("users" );
+        let mut table_info = create_table_info("users");
         assert_eq!(table_info.table_name, "users");
         table_info.unique_push(create_column_info("id")); // Attempt to add a first attribute
         assert_eq!(table_info.attributes.len(), 1);

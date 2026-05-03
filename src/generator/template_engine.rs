@@ -35,7 +35,7 @@ pub(crate) fn print_schema_as_json(
 ) -> Result<(), CarpathiaError> {
     // Printing the types found in the database this is needed
     // to give the users an overview ot the types found in the database
-    // and helping them creating a mapping file for their types they wnat 
+    // and helping them creating a mapping file for their types they wnat
     // to use in the generated code.
     let mut db_types: BTreeMap<&str, String> = BTreeMap::new();
     for key in table_info_map.keys() {

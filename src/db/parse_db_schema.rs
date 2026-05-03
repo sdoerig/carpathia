@@ -1,48 +1,49 @@
-use std::collections::BTreeMap;
-use crate::db::db_schema_structs::DbType;
 use crate::db::db_schema_structs::AbstractDbRepr;
+use crate::db::db_schema_structs::DbType;
+use crate::db::postgresql::PostgresQuerier;
 /// This module extracts the datebase schema from a `PostgreSQL` database and
 /// generates a Rust struct for each table in the database. It also proviedes the
 /// intermeditate data structures to hold the extracted schema information.
 ///
 ///
-/// 
+///
 use crate::db::traits::DatabaseQuerier;
-use crate::db::postgresql::PostgresQuerier;
+use std::collections::BTreeMap;
 
 pub(crate) struct DbSchemaParser {
     // You can add fields here if needed, for example, to hold configuration or state
     db_name: String,
     db_url: String,
-    db_type: DbType
-    
+    db_type: DbType,
 }
 
 impl DbSchemaParser {
-    pub(crate)  fn new(db_url: String, db_name: String, db_type: DbType) -> Self {
-       Self { db_name, db_url, db_type }
+    pub(crate) fn new(db_url: String, db_name: String, db_type: DbType) -> Self {
+        Self {
+            db_name,
+            db_url,
+            db_type,
+        }
     }
 
     pub(crate) async fn parse_schema(
         &self,
     ) -> Result<BTreeMap<String, AbstractDbRepr>, Box<dyn std::error::Error>> {
-        
         match self.db_type {
             DbType::Postgres => {
                 let querier = PostgresQuerier::new(&self.db_url, &self.db_name);
                 querier.get_schema().await
-            },
+            }
             DbType::MySql => {
                 unimplemented!("MySQL support is not implemented yet");
-            },
+            }
             DbType::Sqlite => {
                 unimplemented!("SQLite support is not implemented yet");
             }
         }
     }
-        }
+}
 
-        
 #[cfg(test)]
 mod tests {
     use super::*;
