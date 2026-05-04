@@ -149,7 +149,6 @@ impl DatabaseQuerier for PostgresQuerier {
                 &row.table_name, &row.column_name
             );
             let attribute = AbstractAttribute {
-                
                 column_name: row.column_name,
                 data_type: row.data_type,
                 is_nullable: row.is_nullable,
