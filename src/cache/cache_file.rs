@@ -195,6 +195,7 @@ mod tests {
     fn create_column_info(table_name: &str, column_name: &str) -> AbstractDbRepr {
         AbstractDbRepr {
             table_name: table_name.to_string(),
+            object_type: "BASE TABLE".to_string(),
             attributes: vec![AbstractAttribute {
                 column_name: column_name.to_string(),
                 data_type: "text".to_string(),

@@ -5,6 +5,7 @@
 //The DbType enum represents the supported database types, which can be extended in the future to support more databases.
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct AbstractDbRepr {
+    pub object_type: String,
     pub table_name: String,
     pub attributes: Vec<AbstractAttribute>,
 }
@@ -22,6 +23,7 @@ impl AbstractDbRepr {
 // This module defines the intermediate database attribute representation.
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct AbstractAttribute {
+    
     pub column_name: String,
     pub data_type: String,
     pub is_nullable: String,
@@ -74,6 +76,7 @@ mod tests {
     fn create_table_info(table_name: &str) -> AbstractDbRepr {
         let mut table_info = AbstractDbRepr {
             table_name: table_name.to_string(),
+            object_type: "BASE TABLE".to_string(),
             attributes: Vec::new(),
         };
         table_info

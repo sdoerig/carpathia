@@ -11,7 +11,10 @@
 ## Proposed CLI:
 
 ```
-Datebase layer generator for Rust. It generates code for database access based on a given schema. To enable logging, set the RUST_LOG environment variable to the desired log level (e.g., RUST_LOG=info) before running the application.
+It generates code for database access based on a given schema. You write the templates - it genrates the code. It is based on an abstract database representation (ADR).
+The ADR is an intermediate representation of the database schema that is independent of any specific database type. It allows us to decouple the database schema parsing from the code generation, making it easier to support multiple database types in the future. The ADR is defined in the `db_schema_structs` module and consists of two main structs: `AbstractDbRepr` and `AbstractAttribute`. The `AbstractDbRepr` struct represents a database table and contains the table name and a vector of `AbstractAttribute` structs, which represent the columns of the table and their properties.
+The generator currently supports PostgreSQL, but one could easily add support for MySQL and SQLite in the future by implementing the necessary logic in the database querier and schema parser.
+To enable logging, set the RUST_LOG environment variable to the desired log level (e.g., RUST_LOG=info) before running the application.
 Note: It is still in early development and not functional yet.
 
 Usage: carpathia [OPTIONS] --db-url <DB_URL> --db-name <DB_NAME>

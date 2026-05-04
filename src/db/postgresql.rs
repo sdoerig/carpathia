@@ -9,6 +9,7 @@ pub(crate) struct PostgresQuerier {
 
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 struct PgColumnInfo {
+    pub object_type: String,
     pub table_name: String,
     pub column_name: String,
     pub data_type: String,
@@ -29,27 +30,33 @@ struct PgColumnInfo {
 
 const SCHEMA_QUERY: &str = r"
 SELECT
-    -- Column Metadata
-    c.table_name as table_name,
-    c.column_name as column_name,
-    c.data_type as data_type,
-    c.is_nullable as is_nullable,
-    c.column_default as column_default,
-    c.character_maximum_length as character_maximum_length,
-    c.numeric_precision as numeric_precision,
-    c.numeric_scale as numeric_scale,
-    c.is_identity as is_identity,
-    c.identity_generation as identity_generation,
-    c.is_generated as is_generated,
-    c.generation_expression as generation_expression,
-    -- Constraint Details
-    tc.constraint_name as constraint_name,
-    tc.constraint_type as constraint_type,
-    -- Foreign Key Targets
+    t.table_type AS object_type,
+    c.table_name,
+    c.column_name,
+    CASE 
+        WHEN c.data_type = 'USER-DEFINED' THEN c.udt_name 
+        ELSE c.data_type 
+    END as data_type,
+    c.is_nullable,
+    c.column_default,
+    -- Requested Attributes
+    c.character_maximum_length,
+    c.numeric_precision,
+    c.numeric_scale,
+    c.is_identity,
+    c.identity_generation,
+    c.is_generated,
+    c.generation_expression,
+    tc.constraint_name,
+    tc.constraint_type,
     ccu.table_name AS referenced_table,
     ccu.column_name AS referenced_column
 FROM 
     information_schema.columns c
+JOIN 
+    information_schema.tables t 
+    ON c.table_name = t.table_name 
+    AND c.table_schema = t.table_schema
 LEFT JOIN 
     information_schema.key_column_usage kcu 
     ON c.table_name = kcu.table_name 
@@ -66,9 +73,41 @@ LEFT JOIN
     AND tc.constraint_type = 'FOREIGN KEY'
 WHERE 
     c.table_schema = 'public'
+
+UNION ALL
+
+-- Materialized Views (with NULL fillers for compatibility)
+SELECT 
+    'MATERIALIZED VIEW' as object_type,
+    mat.matviewname as table_name,
+    a.attname as column_name,
+    format_type(a.atttypid, a.atttypmod) as data_type,
+    CASE WHEN a.attnotnull THEN 'NO' ELSE 'YES' END as is_nullable,
+    NULL as column_default,
+    -- Attribute placeholders for MatViews
+    NULL as character_maximum_length,
+    NULL as numeric_precision,
+    NULL as numeric_scale,
+    'NO' as is_identity,
+    NULL as identity_generation,
+    'NEVER' as is_generated,
+    NULL as generation_expression,
+    NULL as constraint_name,
+    NULL as constraint_type,
+    NULL as referenced_table,
+    NULL as referenced_column
+FROM 
+    pg_matviews mat
+JOIN 
+    pg_attribute a ON a.attrelid = (quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass
+WHERE 
+    mat.schemaname = 'public' 
+    AND a.attnum > 0 
+    AND NOT a.attisdropped
 ORDER BY 
-    c.table_name, 
-    c.column_name;
+    table_name, 
+    column_name;
+
 
 ";
 
@@ -110,6 +149,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 &row.table_name, &row.column_name
             );
             let attribute = AbstractAttribute {
+                
                 column_name: row.column_name,
                 data_type: row.data_type,
                 is_nullable: row.is_nullable,
@@ -130,6 +170,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 .entry(row.table_name.clone())
                 .or_insert_with(|| AbstractDbRepr {
                     table_name: row.table_name,
+                    object_type: row.object_type,
                     attributes: Vec::new(),
                 })
                 .unique_push(attribute);
