@@ -28,7 +28,7 @@ impl DbSchemaParser {
 
     pub(crate) async fn parse_schema(
         &self,
-    ) -> Result<BTreeMap<String, AbstractDbRepr>, Box<dyn std::error::Error>> {
+    ) -> Result<AbstractDbRepr, Box<dyn std::error::Error>> {
         match self.db_type {
             DbType::Postgres => {
                 let querier = PostgresQuerier::new(&self.db_url, &self.db_name);
@@ -55,6 +55,6 @@ mod tests {
         let parser = DbSchemaParser::new(db_url, db_name, DbType::Postgres);
         let schema = parser.parse_schema().await.unwrap();
         // Add assertions here based on your test database schema
-        assert!(!schema.is_empty(), "Schema should not be empty");
+        assert!(!schema.tables.is_empty(), "Schema should not be empty");
     }
 }

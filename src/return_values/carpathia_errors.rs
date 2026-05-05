@@ -5,6 +5,7 @@ use std::fmt;
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub(crate) enum ErrorNumber {
     CacheFileError,
+    CacheFileReadError,
     ConfigFileError,
     GenerationError,
     Other,
@@ -27,6 +28,7 @@ impl From<ErrorNumber> for i32 {
     fn from(error_type: ErrorNumber) -> i32 {
         match error_type {
             ErrorNumber::CacheFileError => 3,
+            ErrorNumber::CacheFileReadError => 4,
             ErrorNumber::ConfigFileError => 2,
             ErrorNumber::GenerationError => 1,
             ErrorNumber::Other => 20,

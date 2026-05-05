@@ -20,22 +20,38 @@ use std::path::PathBuf;
 use std::{collections::HashMap, fs};
 
 const CACHE_FILE_NAME: &str = "carpathia_cache.json";
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
+
 pub(crate) struct Cache {
     path: PathBuf,
     forced: bool,
-    content: HashMap<String, String>,
+    content: CacheFile,
 }
 
-pub(crate) struct CacheResult {
+pub (crate) struct CacheFileDiff {
+    pub tables: CacheSection,
+    pub views: CacheSection
+}
+
+pub(crate) struct CacheSection {
     pub to_generate: Vec<String>,
     pub to_remove: Vec<String>,
 }
 
-impl std::fmt::Debug for CacheResult {
+impl std::fmt::Debug for CacheSection {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("CacheResult")
+        f.debug_struct("CacheSection")
             .field("to_generate", &self.to_generate)
             .field("to_remove", &self.to_remove)
+            .finish()
+    }
+}
+
+impl std::fmt::Debug for CacheFileDiff {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("CacheResult")
+            .field("tables", &self.tables)
+            .field("views", &self.views)
             .finish()
     }
 }
@@ -71,7 +87,20 @@ impl Cache {
             );
             "{}".to_string() // Return an empty JSON object as a string
         });
-        let content = serde_json::from_str(&file_content).unwrap_or_default();
+        let content = match serde_json::from_str(&file_content) {   
+            Ok(parsed_content) => parsed_content,
+            Err(e) => {
+                error!(
+                    "Failed to parse cache file at {}: {}. Starting with an empty cache.",
+                    &cache_file_path.display(),
+                    e
+                );
+                CacheFile {
+                    tables: BTreeMap::new(),
+                    views: BTreeMap::new(),
+                }
+            }
+        };
         Self {
             path: cache_file_path,
             forced,
@@ -81,8 +110,8 @@ impl Cache {
 
     pub(crate) fn get_changed_entities(
         &self,
-        new_content: &BTreeMap<String, AbstractDbRepr>,
-    ) -> Result<CacheResult, CarpathiaError> {
+        new_content: &AbstractDbRepr,
+    ) -> Result<CacheFile, CarpathiaError> {
         // it will compare the new content with the old content and determine which entries have changed
         // it will create a new cache content based on the new content and write it to the cache file
         let mut new_cached_entries: HashMap<String, String> = HashMap::new();
@@ -114,17 +143,19 @@ impl Cache {
                 to_generate.push(key.clone());
             }
         }
-
+    
         match self.write_cache_file(new_cache_content) {
             Ok(()) => info!("Cache file updated successfully."),
             Err(e) => error!("Failed to update cache file: {e}"),
         }
-        Ok(CacheResult {
+        Ok(CacheFile {
             to_generate,
             to_remove,
         })
     }
 
+    
+    
     fn write_cache_file(
         &self,
         new_cache_content: HashMap<String, String>,
@@ -196,6 +227,7 @@ mod tests {
         AbstractDbRepr {
             table_name: table_name.to_string(),
             object_type: "BASE TABLE".to_string(),
+            comment: Some("Test table".to_string()),
             attributes: vec![AbstractAttribute {
                 column_name: column_name.to_string(),
                 data_type: "text".to_string(),
@@ -212,6 +244,7 @@ mod tests {
                 constraint_type: None,
                 referenced_table: None,
                 referenced_column: None,
+                comment: Some("Test column".to_string()),
             }],
         }
     }

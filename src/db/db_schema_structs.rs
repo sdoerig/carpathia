@@ -2,15 +2,24 @@
 //used by the schema parser and the code generator. The AbstractDbRepr struct
 // represents a database table, while the AbstractAttribute struct represents a column
 // in a table.
-//The DbType enum represents the supported database types, which can be extended in the future to support more databases.
-#[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+// The DbType enum represents the supported database types, which can be extended in the future to support more databases.
+use std::collections::BTreeMap;
+
+#[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct AbstractDbRepr {
+    pub tables: BTreeMap<String, AbstractTableRepr>,
+    pub views: BTreeMap<String, AbstractTableRepr>,
+}
+
+#[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+pub(crate) struct AbstractTableRepr {
     pub object_type: String,
     pub table_name: String,
+    pub comment: Option<String>,
     pub attributes: Vec<AbstractAttribute>,
 }
 
-impl AbstractDbRepr {
+impl AbstractTableRepr {
     pub(crate) fn unique_push(&mut self, attribute: AbstractAttribute) {
         // Only adding unique attributes to the list of attributes for a table.
         // This is important to avoid duplicates in the generated code.
@@ -21,8 +30,9 @@ impl AbstractDbRepr {
 }
 
 // This module defines the intermediate database attribute representation.
-#[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct AbstractAttribute {
+    
     pub column_name: String,
     pub data_type: String,
     pub is_nullable: String,
@@ -38,6 +48,7 @@ pub(crate) struct AbstractAttribute {
     pub constraint_type: Option<String>,
     pub referenced_table: Option<String>,
     pub referenced_column: Option<String>,
+    pub comment: Option<String>,
 }
 // This enum represents the supported database types. Currently, only PostgreSQL is supported, but we can easily add support for MySQL and SQLite in the future by adding new variants to this enum and implementing the necessary logic in the database querier and schema parser.
 pub(crate) enum DbType {
@@ -69,14 +80,16 @@ mod tests {
             constraint_type: Some("PRIMARY KEY".to_string()),
             referenced_table: None,
             referenced_column: None,
+            comment: Some("Primary key for users table".to_string()),
         };
         attribute
     }
-    fn create_table_info(table_name: &str) -> AbstractDbRepr {
-        let mut table_info = AbstractDbRepr {
+    fn create_table_info(table_name: &str) -> AbstractTableRepr {
+        let mut table_info = AbstractTableRepr {
             table_name: table_name.to_string(),
             object_type: "BASE TABLE".to_string(),
             attributes: Vec::new(),
+            comment: Some("Users table".to_string()),
         };
         table_info
     }

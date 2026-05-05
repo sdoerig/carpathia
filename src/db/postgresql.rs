@@ -1,4 +1,4 @@
-use super::db_schema_structs::{AbstractAttribute, AbstractDbRepr};
+use super::db_schema_structs::{AbstractAttribute, AbstractDbRepr, AbstractTableRepr};
 use super::traits::DatabaseQuerier;
 use log::{debug, info};
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
@@ -15,6 +15,8 @@ struct PgColumnInfo {
     pub data_type: String,
     pub is_nullable: String,
     pub column_default: Option<String>,
+    pub table_is_insertable: String,
+    pub column_is_updatable: String,
     pub character_maximum_length: Option<i32>,
     pub numeric_precision: Option<i32>,
     pub numeric_scale: Option<i32>,
@@ -26,6 +28,8 @@ struct PgColumnInfo {
     pub constraint_type: Option<String>,
     pub referenced_table: Option<String>,
     pub referenced_column: Option<String>,
+    pub table_comment: Option<String>,
+    pub column_comment: Option<String>,
 }
 
 const SCHEMA_QUERY: &str = r"
@@ -33,13 +37,14 @@ SELECT
     t.table_type AS object_type,
     c.table_name,
     c.column_name,
-    CASE 
-        WHEN c.data_type = 'USER-DEFINED' THEN c.udt_name 
-        ELSE c.data_type 
+    CASE
+        WHEN c.data_type = 'USER-DEFINED' THEN c.udt_name
+        ELSE c.data_type
     END as data_type,
     c.is_nullable,
     c.column_default,
-    -- Requested Attributes
+    t.is_insertable_into AS table_is_insertable, 
+    c.is_updatable AS column_is_updatable,        
     c.character_maximum_length,
     c.numeric_precision,
     c.numeric_scale,
@@ -50,41 +55,48 @@ SELECT
     tc.constraint_name,
     tc.constraint_type,
     ccu.table_name AS referenced_table,
-    ccu.column_name AS referenced_column
-FROM 
+    ccu.column_name AS referenced_column,
+    obj_description(pg_class.oid) AS table_comment,
+    col_description(pg_attribute.attrelid, pg_attribute.attnum) AS column_comment
+FROM
     information_schema.columns c
-JOIN 
-    information_schema.tables t 
-    ON c.table_name = t.table_name 
+JOIN
+    information_schema.tables t
+    ON c.table_name = t.table_name
     AND c.table_schema = t.table_schema
-LEFT JOIN 
-    information_schema.key_column_usage kcu 
-    ON c.table_name = kcu.table_name 
-    AND c.column_name = kcu.column_name 
+LEFT JOIN
+    information_schema.key_column_usage kcu
+    ON c.table_name = kcu.table_name
+    AND c.column_name = kcu.column_name
     AND c.table_schema = kcu.table_schema
-LEFT JOIN 
-    information_schema.table_constraints tc 
-    ON kcu.constraint_name = tc.constraint_name 
+LEFT JOIN
+    information_schema.table_constraints tc
+    ON kcu.constraint_name = tc.constraint_name
     AND kcu.table_schema = tc.table_schema
-LEFT JOIN 
-    information_schema.constraint_column_usage ccu 
-    ON tc.constraint_name = ccu.constraint_name 
-    AND tc.table_schema = ccu.table_schema 
+LEFT JOIN
+    information_schema.constraint_column_usage ccu
+    ON tc.constraint_name = ccu.constraint_name
+    AND tc.table_schema = ccu.table_schema
     AND tc.constraint_type = 'FOREIGN KEY'
-WHERE 
+LEFT JOIN
+    pg_class ON pg_class.relname = c.table_name AND pg_class.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = c.table_schema)
+LEFT JOIN
+    pg_attribute ON pg_attribute.attrelid = pg_class.oid AND pg_attribute.attname = c.column_name
+WHERE
     c.table_schema = 'public'
 
 UNION ALL
 
--- Materialized Views (with NULL fillers for compatibility)
-SELECT 
+-- Materialized Views (immer Read-Only)
+SELECT
     'MATERIALIZED VIEW' as object_type,
     mat.matviewname as table_name,
     a.attname as column_name,
     format_type(a.atttypid, a.atttypmod) as data_type,
     CASE WHEN a.attnotnull THEN 'NO' ELSE 'YES' END as is_nullable,
     NULL as column_default,
-    -- Attribute placeholders for MatViews
+    'NO' as table_is_insertable,  
+    'NO' as column_is_updatable,   
     NULL as character_maximum_length,
     NULL as numeric_precision,
     NULL as numeric_scale,
@@ -95,21 +107,20 @@ SELECT
     NULL as constraint_name,
     NULL as constraint_type,
     NULL as referenced_table,
-    NULL as referenced_column
-FROM 
+    NULL as referenced_column,
+    obj_description((quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass) AS table_comment,
+    col_description(a.attrelid, a.attnum) AS column_comment
+FROM
     pg_matviews mat
-JOIN 
+JOIN
     pg_attribute a ON a.attrelid = (quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass
-WHERE 
-    mat.schemaname = 'public' 
-    AND a.attnum > 0 
+WHERE
+    mat.schemaname = 'public'
+    AND a.attnum > 0
     AND NOT a.attisdropped
-ORDER BY 
-    table_name, 
-    column_name;
-
-
-";
+ORDER BY
+    table_name,
+    column_name;";
 
 impl PostgresQuerier {
     pub(crate) fn new(db_url: &str, db_name: &str) -> Self {
@@ -124,7 +135,7 @@ impl PostgresQuerier {
 impl DatabaseQuerier for PostgresQuerier {
     async fn get_schema(
         &self,
-    ) -> Result<std::collections::BTreeMap<String, AbstractDbRepr>, Box<dyn std::error::Error>>
+    ) -> Result<AbstractDbRepr, Box<dyn std::error::Error>>
     {
         // Here you would implement the logic to query the database for its schema
         // and populate your data structures with the extracted information.
@@ -137,7 +148,9 @@ impl DatabaseQuerier for PostgresQuerier {
                 .get_database()
                 .unwrap_or("unknown")
         );
-        let mut table_info_map: std::collections::BTreeMap<String, AbstractDbRepr> =
+        let mut table_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
+            std::collections::BTreeMap::new();
+         let mut view_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
             std::collections::BTreeMap::new();
         let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
             .fetch_all(&self.pool)
@@ -164,17 +177,45 @@ impl DatabaseQuerier for PostgresQuerier {
                 constraint_type: row.constraint_type,
                 referenced_table: row.referenced_table,
                 referenced_column: row.referenced_column,
+                comment: row.column_comment,
             };
-            table_info_map
-                .entry(row.table_name.clone())
-                .or_insert_with(|| AbstractDbRepr {
-                    table_name: row.table_name,
-                    object_type: row.object_type,
-                    attributes: Vec::new(),
-                })
-                .unique_push(attribute);
+            match row.object_type.as_str() {
+                "BASE TABLE" => {
+                    table_info_map
+                        .entry(row.table_name.clone())
+                        .or_insert_with(|| AbstractTableRepr {
+                            table_name: row.table_name,
+                            object_type: row.object_type,
+                            comment: row.table_comment,
+                            attributes: Vec::new(),
+                        })
+                        .unique_push(attribute);
+                }
+                "VIEW" | "MATERIALIZED VIEW" => {
+                    view_info_map
+                        .entry(row.table_name.clone())
+                        .or_insert_with(|| AbstractTableRepr {
+                            table_name: row.table_name,
+                            object_type: row.object_type,
+                            comment: row.table_comment,
+                            attributes: Vec::new(),
+                        })
+                        .unique_push(attribute);
+                }
+                _ => {
+                    debug!(
+                        "Skipping unsupported object type: {} for table {}",
+                        row.object_type, row.table_name
+                    );
+                }
+            }
         }
 
-        Ok(table_info_map)
+        Ok(AbstractDbRepr {
+            tables: table_info_map,
+            views: view_info_map,
+        })
     }
 }
+
+                 
