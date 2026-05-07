@@ -1,8 +1,5 @@
 use crate::db::db_schema_structs::AbstractDbRepr;
-use crate::{
-    cache,
-    return_values::carpathia_errors::{CarpathiaError, ErrorNumber},
-};
+use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use log::{error, info};
 use serde::Serialize;
 use sha2::{Digest, Sha256};
@@ -47,16 +44,16 @@ impl CacheFile {
         }
     }
     pub(crate) fn from_file(path: &PathBuf) -> Result<Self, CarpathiaError> {
-        let file_content = std::fs::read_to_string(&path).map_err(|e| CarpathiaError {
-            message: format!("Failed to read cache file at {:?}: {}", path, e),
+        let file_content = std::fs::read_to_string(path).map_err(|e| CarpathiaError {
+            message: format!("Failed to read cache file at {path:?}: {e}"),
             error_type: ErrorNumber::CacheFileReadError,
         })?;
         let cache_file = match serde_json::from_str(&file_content) {
             Ok(cache) => cache,
             Err(e) => {
-                error!("Failed to parse cache file at {:?}: {}", path, e);
+                error!("Failed to parse cache file at {path:?}: {e}");
                 return Err(CarpathiaError {
-                    message: format!("Failed to parse cache file at {:?}: {}", path, e),
+                    message: format!("Failed to parse cache file at {path:?}: {e}"),
                     error_type: ErrorNumber::CacheFileReadError,
                 });
             }

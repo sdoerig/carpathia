@@ -1,5 +1,5 @@
 use crate::cache::cache_structs::CacheFile;
-use crate::db::db_schema_structs::{AbstractAttribute, AbstractDbRepr};
+use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
 use std::collections::BTreeMap;

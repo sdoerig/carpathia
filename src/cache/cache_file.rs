@@ -13,12 +13,11 @@ use super::cache_structs::{CacheFile, CacheFileDiff, compare_cache_files};
  *
  */
 use crate::db::db_schema_structs::AbstractDbRepr;
-use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
+use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{error, info};
-use sha2::{Digest, Sha256};
-use std::collections::BTreeMap;
+use sha2::Digest;
 use std::path::PathBuf;
-use std::{collections::HashMap, fs};
+use std::fs;
 
 const CACHE_FILE_NAME: &str = "carpathia_cache.json";
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
@@ -112,6 +111,7 @@ mod tests {
     use crate::db::db_schema_structs::AbstractAttribute;
     use crate::db::db_schema_structs::AbstractDbRepr;
     use crate::db::db_schema_structs::AbstractTableRepr;
+    use std::collections::BTreeMap;
 
     use super::*;
     enum DbObjectType {
