@@ -32,7 +32,6 @@ impl AbstractTableRepr {
 // This module defines the intermediate database attribute representation.
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct AbstractAttribute {
-    
     pub column_name: String,
     pub data_type: String,
     pub is_nullable: String,

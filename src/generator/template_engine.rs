@@ -1,5 +1,5 @@
-use crate::cache::cache_file::CacheFile;
-use crate::db::db_schema_structs::AbstractDbRepr;
+use crate::cache::cache_structs::CacheFile;
+use crate::db::db_schema_structs::{AbstractAttribute, AbstractDbRepr};
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
 use std::collections::BTreeMap;
@@ -31,15 +31,15 @@ impl TemplateEngine {
 }
 
 pub(crate) fn print_db_types_as_json(
-    table_info_map: &BTreeMap<String, AbstractDbRepr>,
+    table_info_map: &AbstractDbRepr,
 ) -> Result<(), CarpathiaError> {
     // Printing the types found in the database this is needed
     // to give the users an overview ot the types found in the database
     // and helping them creating a mapping file for their types they wnat
     // to use in the generated code.
     let mut db_types: BTreeMap<&str, String> = BTreeMap::new();
-    for key in table_info_map.keys() {
-        for attr in &table_info_map[key].attributes {
+    for key in table_info_map.tables.keys() {
+        for attr in &table_info_map.tables[key].attributes {
             db_types.insert(&attr.data_type, String::new());
         }
     }

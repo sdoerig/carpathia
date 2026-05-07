@@ -133,10 +133,7 @@ impl PostgresQuerier {
 }
 
 impl DatabaseQuerier for PostgresQuerier {
-    async fn get_schema(
-        &self,
-    ) -> Result<AbstractDbRepr, Box<dyn std::error::Error>>
-    {
+    async fn get_schema(&self) -> Result<AbstractDbRepr, Box<dyn std::error::Error>> {
         // Here you would implement the logic to query the database for its schema
         // and populate your data structures with the extracted information.
         // This is just a placeholder for demonstration purposes.
@@ -150,7 +147,7 @@ impl DatabaseQuerier for PostgresQuerier {
         );
         let mut table_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
             std::collections::BTreeMap::new();
-         let mut view_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
+        let mut view_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
             std::collections::BTreeMap::new();
         let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
             .fetch_all(&self.pool)
@@ -217,5 +214,3 @@ impl DatabaseQuerier for PostgresQuerier {
         })
     }
 }
-
-                 

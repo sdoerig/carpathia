@@ -26,9 +26,7 @@ impl DbSchemaParser {
         }
     }
 
-    pub(crate) async fn parse_schema(
-        &self,
-    ) -> Result<AbstractDbRepr, Box<dyn std::error::Error>> {
+    pub(crate) async fn parse_schema(&self) -> Result<AbstractDbRepr, Box<dyn std::error::Error>> {
         match self.db_type {
             DbType::Postgres => {
                 let querier = PostgresQuerier::new(&self.db_url, &self.db_name);

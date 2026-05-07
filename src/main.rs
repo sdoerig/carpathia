@@ -85,7 +85,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     info!(
         "Successfully parsed database schema. Found {} tables.",
-        table_info_map.len()
+        table_info_map.tables.len()
     );
     exit(0);
 }
