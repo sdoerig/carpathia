@@ -7,8 +7,9 @@ mod cache;
 mod db;
 mod generator;
 mod return_values;
-use db::db_schema_structs::DbType;
 
+use db::db_schema_structs::DbType;
+use cache::cache_structs::CacheModus;
 use crate::generator::template_engine;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
@@ -30,8 +31,8 @@ struct Args {
     #[arg(long)]
     db_name: String,
     /// Forces the generator to overwirite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
-    #[arg(short, long, default_value_t = false)]
-    force: bool,
+    #[arg(long, value_enum, default_value_t = CacheModus::UseCache)] 
+    cache_modus: CacheModus,
     /// NOT IMPLEMENTED: Output format for the generated code - choices are "binary" (default) or "library"
     #[arg(long, default_value = "binary")]
     output_format: String,
@@ -52,10 +53,10 @@ struct Args {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
     let args = Args::parse();
-    if args.force {
-        info!("Force option is enabled. Existing files will be overwritten.");
+    if args.cache_modus == CacheModus::BypassCache {
+        info!("Bypassing cache - existing files will be overwritten.");
     } else {
-        info!("Force option is disabled. Existing files will not be overwritten.");
+        info!("Using cache - only changed files will be overwritten.");
     }
     info!("Database URL: {}", &args.db_url);
     info!("Database Name: {}", &args.db_name);
@@ -64,7 +65,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let db_schema_parser =
         db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name, DbType::Postgres);
     let table_info_map = db_schema_parser.parse_schema().await?;
-    let cache = cache::cache_file::Cache::new(args.cache_directory, args.force);
+    let cache = cache::cache_file::Cache::new(args.cache_directory, args.cache_modus);
     match cache.get_changed_entities(&table_info_map) {
         Ok(changed_entities) => {
             if args.print_schema {

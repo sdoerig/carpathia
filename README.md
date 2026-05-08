@@ -26,8 +26,11 @@ Options:
       --db-name <DB_NAME>
           Database name you would like to generate code for - just the name NOT the full URL: `my_database`
 
-  -f, --force
+      --cache-modus <CACHE_MODUS>
           Forces the generator to overwirite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator
+          
+          [default: use-cache]
+          [possible values: bypass-cache, use-cache]
 
       --output-format <OUTPUT_FORMAT>
           NOT IMPLEMENTED: Output format for the generated code - choices are "binary" (default) or "library"

@@ -6,6 +6,13 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
+use clap::{ValueEnum};
+
+#[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub(crate) enum CacheModus {
+    BypassCache,
+    UseCache,
+}
 
 pub(crate) struct CacheSectionDiff {
     pub to_generate: Vec<String>,
@@ -107,19 +114,19 @@ impl CacheFile {
 pub(crate) fn compare_cache_files(
     old_cache: &CacheFile,
     new_cache: &CacheFile,
-    force: bool,
+    cache_usage: CacheModus,
 ) -> CacheFileDiff {
     let mut cache_diff = CacheFileDiff::new();
     diff_btrees(
         &old_cache.tables,
         &new_cache.tables,
-        force,
+        cache_usage,
         &mut cache_diff.tables,
     );
     diff_btrees(
         &old_cache.views,
         &new_cache.views,
-        force,
+        cache_usage,
         &mut cache_diff.views,
     );
     cache_diff
@@ -128,7 +135,7 @@ pub(crate) fn compare_cache_files(
 fn diff_btrees(
     old_cache: &BTreeMap<String, String>,
     new_cache: &BTreeMap<String, String>,
-    force: bool,
+    cache_usage: CacheModus,
     cache_diff: &mut CacheSectionDiff,
 ) {
     // Zu entfernende Elemente: In Old, aber nicht in New
@@ -143,7 +150,7 @@ fn diff_btrees(
     cache_diff.to_generate.extend(
         new_cache
             .iter()
-            .filter(|(k, new_hash)| force || old_cache.get(*k) != Some(*new_hash))
+            .filter(|(k, new_hash)| cache_usage == CacheModus::BypassCache || old_cache.get(*k) != Some(*new_hash))
             .map(|(k, _)| k.clone()),
     );
 }
