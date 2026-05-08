@@ -6,6 +6,7 @@ pub (crate) struct PgColumnInfo {
     pub table_name: String,
     pub column_name: String,
     pub data_type: String,
+    pub array_dimensions: Option<i32>,
     pub is_nullable: String,
     pub column_default: Option<String>,
     pub table_is_insertable: String,

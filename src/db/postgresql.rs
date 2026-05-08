@@ -10,14 +10,12 @@ pub(crate) struct PostgresQuerier {
 const LIMIT: i64 = 30;
 
 const SCHEMA_QUERY: &str = r"
-SELECT
+   SELECT
     t.table_type AS object_type,
     c.table_name,
     c.column_name,
-    CASE
-        WHEN c.data_type = 'USER-DEFINED' THEN c.udt_name
-        ELSE c.data_type
-    END as data_type,
+    format_type(c.udt_name::regtype, NULL) AS data_type,
+    pg_attribute.attndims AS array_dimensions,
     c.is_nullable,
     c.column_default,
     t.is_insertable_into AS table_is_insertable, 
@@ -35,41 +33,37 @@ SELECT
     ccu.column_name AS referenced_column,
     obj_description(pg_class.oid) AS table_comment,
     col_description(pg_attribute.attrelid, pg_attribute.attnum) AS column_comment
-FROM
-    information_schema.columns c
-JOIN
-    information_schema.tables t
+FROM information_schema.columns c
+JOIN information_schema.tables t
     ON c.table_name = t.table_name
     AND c.table_schema = t.table_schema
-LEFT JOIN
-    information_schema.key_column_usage kcu
+JOIN pg_type pt
+    ON pt.typname = c.udt_name
+LEFT JOIN information_schema.key_column_usage kcu
     ON c.table_name = kcu.table_name
     AND c.column_name = kcu.column_name
     AND c.table_schema = kcu.table_schema
-LEFT JOIN
-    information_schema.table_constraints tc
+LEFT JOIN information_schema.table_constraints tc
     ON kcu.constraint_name = tc.constraint_name
     AND kcu.table_schema = tc.table_schema
-LEFT JOIN
-    information_schema.constraint_column_usage ccu
+LEFT JOIN information_schema.constraint_column_usage ccu
     ON tc.constraint_name = ccu.constraint_name
     AND tc.table_schema = ccu.table_schema
     AND tc.constraint_type = 'FOREIGN KEY'
-LEFT JOIN
-    pg_class ON pg_class.relname = c.table_name AND pg_class.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = c.table_schema)
-LEFT JOIN
-    pg_attribute ON pg_attribute.attrelid = pg_class.oid AND pg_attribute.attname = c.column_name
-WHERE
-    c.table_schema = 'public'
-
+LEFT JOIN pg_class 
+    ON pg_class.relname = c.table_name 
+    AND pg_class.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = c.table_schema)
+LEFT JOIN pg_attribute 
+    ON pg_attribute.attrelid = pg_class.oid 
+    AND pg_attribute.attname = c.column_name
+WHERE c.table_schema = 'public'
 UNION ALL
-
--- Materialized Views (immer Read-Only)
 SELECT
     'MATERIALIZED VIEW' as object_type,
     mat.matviewname as table_name,
     a.attname as column_name,
     format_type(a.atttypid, a.atttypmod) as data_type,
+    a.attndims AS array_dimensions,
     CASE WHEN a.attnotnull THEN 'NO' ELSE 'YES' END as is_nullable,
     NULL as column_default,
     'NO' as table_is_insertable,  
@@ -87,17 +81,13 @@ SELECT
     NULL as referenced_column,
     obj_description((quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass) AS table_comment,
     col_description(a.attrelid, a.attnum) AS column_comment
-FROM
-    pg_matviews mat
-JOIN
-    pg_attribute a ON a.attrelid = (quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass
-WHERE
-    mat.schemaname = 'public'
-    AND a.attnum > 0
-    AND NOT a.attisdropped
-ORDER BY
-    table_name,
-    column_name
+FROM pg_matviews mat
+JOIN pg_attribute a 
+    ON a.attrelid = (quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass
+WHERE mat.schemaname = 'public'
+  AND a.attnum > 0
+  AND NOT a.attisdropped
+ORDER BY table_name, column_name
 LIMIT $1
 OFFSET $2;
     ";
@@ -144,9 +134,18 @@ impl DatabaseQuerier for PostgresQuerier {
                     "Processing column: {}.{}",
                     &row.table_name, &row.column_name
                 );
+                let data_type = if let Some(dimensions) = row.array_dimensions {
+                    if dimensions != 0 {
+                        format!("{}[{}]", &row.data_type, dimensions)
+                    } else {
+                        row.data_type.clone()
+                    }
+                } else {
+                    row.data_type.clone()
+                };
                 let attribute = AbstractAttribute {
                     column_name: row.column_name,
-                    data_type: row.data_type,
+                    data_type: data_type,
                     is_nullable: row.is_nullable,
                     column_default: row.column_default,
                     character_maximum_length: row.character_maximum_length,
