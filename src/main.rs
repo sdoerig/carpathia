@@ -8,9 +8,9 @@ mod db;
 mod generator;
 mod return_values;
 
-use db::db_schema_structs::DbType;
-use cache::cache_structs::CacheModus;
 use crate::generator::template_engine;
+use cache::cache_structs::CacheModus;
+use db::db_schema_structs::DbType;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
 #[command(
@@ -31,7 +31,7 @@ struct Args {
     #[arg(long)]
     db_name: String,
     /// Forces the generator to overwirite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
-    #[arg(long, value_enum, default_value_t = CacheModus::UseCache)] 
+    #[arg(long, value_enum, default_value_t = CacheModus::UseCache)]
     cache_modus: CacheModus,
     /// NOT IMPLEMENTED: Output format for the generated code - choices are "binary" (default) or "library"
     #[arg(long, default_value = "binary")]

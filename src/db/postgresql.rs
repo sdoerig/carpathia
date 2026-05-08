@@ -1,8 +1,8 @@
 use super::db_schema_structs::{AbstractAttribute, AbstractDbRepr, AbstractTableRepr};
 use super::traits::DatabaseQuerier;
+use crate::db::postgresql_structs::PgColumnInfo;
 use log::{debug, info};
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
-use crate::db::postgresql_structs::PgColumnInfo;
 pub(crate) struct PostgresQuerier {
     pool: Pool<Postgres>,
 }
@@ -128,7 +128,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 .await
                 .expect("Failed to execute schema query");
             let num_rows = rows.len();
-            debug!("Fetched {} rows from schema query with offset {}", num_rows, offset);
+            debug!("Fetched {num_rows} rows from schema query with offset {offset}");
             for row in rows {
                 debug!(
                     "Processing column: {}.{}",
@@ -145,7 +145,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 };
                 let attribute = AbstractAttribute {
                     column_name: row.column_name,
-                    data_type: data_type,
+                    data_type,
                     is_nullable: row.is_nullable,
                     column_default: row.column_default,
                     character_maximum_length: row.character_maximum_length,
@@ -197,8 +197,6 @@ impl DatabaseQuerier for PostgresQuerier {
                 break;
             }
         }
-  
-        
 
         Ok(AbstractDbRepr {
             tables: table_info_map,

@@ -1,4 +1,5 @@
 use super::cache_structs::{CacheFile, CacheFileDiff, compare_cache_files};
+use crate::cache::cache_structs::CacheModus;
 /**
  * This module is responsible for managing the cache file that stores the hash of the
  * database schema information. The cache file is used to determine if there have been
@@ -14,11 +15,10 @@ use super::cache_structs::{CacheFile, CacheFileDiff, compare_cache_files};
  */
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
-use crate::cache::cache_structs::CacheModus;
 use log::{error, info};
 
-use std::path::PathBuf;
 use std::fs;
+use std::path::PathBuf;
 
 const CACHE_FILE_NAME: &str = "carpathia_cache.json";
 
@@ -104,13 +104,13 @@ impl Cache {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use crate::cache::cache_file::Cache;
+    use crate::cache::cache_structs::CacheModus;
     use crate::db::db_schema_structs::AbstractAttribute;
     use crate::db::db_schema_structs::AbstractDbRepr;
     use crate::db::db_schema_structs::AbstractTableRepr;
     use std::collections::BTreeMap;
-    use crate::cache::cache_structs::CacheModus;
-    use super::*;
     enum DbObjectType {
         Table,
         View,
@@ -231,7 +231,8 @@ mod tests {
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         };
 
-        let cache_after_first_run = Cache::new("test_cache_no_changes".to_string(), CacheModus::UseCache);
+        let cache_after_first_run =
+            Cache::new("test_cache_no_changes".to_string(), CacheModus::UseCache);
 
         match cache_after_first_run.get_changed_entities(&new_content) {
             Ok(result) => {
@@ -300,7 +301,8 @@ mod tests {
             }
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         };
-        let cache_after_first_run = Cache::new("test_cache_forced".to_string(), CacheModus::BypassCache);
+        let cache_after_first_run =
+            Cache::new("test_cache_forced".to_string(), CacheModus::BypassCache);
         match cache_after_first_run.get_changed_entities(&new_content) {
             Ok(result) => {
                 assert_eq!(
@@ -324,7 +326,10 @@ mod tests {
 
     #[test]
     fn test_cache_removed_entries() {
-        let cache = Cache::new("test_cache_removed_entries".to_string(), CacheModus::UseCache);
+        let cache = Cache::new(
+            "test_cache_removed_entries".to_string(),
+            CacheModus::UseCache,
+        );
         let mut new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", DbObjectType::Table);
 
@@ -348,7 +353,10 @@ mod tests {
 
         // Now we remove the entry from the new content and check if it is detected as removed
         new_content.tables.remove("test_table");
-        let cache_third_run = Cache::new("test_cache_removed_entries".to_string(), CacheModus::UseCache);
+        let cache_third_run = Cache::new(
+            "test_cache_removed_entries".to_string(),
+            CacheModus::UseCache,
+        );
         match cache_third_run.get_changed_entities(&new_content) {
             Ok(result) => {
                 assert_eq!(

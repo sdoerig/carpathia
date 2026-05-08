@@ -1,7 +1,5 @@
-
-
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
-pub (crate) struct PgColumnInfo {
+pub(crate) struct PgColumnInfo {
     pub object_type: String,
     pub table_name: String,
     pub column_name: String,

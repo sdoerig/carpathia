@@ -1,12 +1,12 @@
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
+use clap::ValueEnum;
 use log::{error, info};
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
-use clap::{ValueEnum};
 
 #[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub(crate) enum CacheModus {
@@ -150,7 +150,9 @@ fn diff_btrees(
     cache_diff.to_generate.extend(
         new_cache
             .iter()
-            .filter(|(k, new_hash)| cache_usage == CacheModus::BypassCache || old_cache.get(*k) != Some(*new_hash))
+            .filter(|(k, new_hash)| {
+                cache_usage == CacheModus::BypassCache || old_cache.get(*k) != Some(*new_hash)
+            })
             .map(|(k, _)| k.clone()),
     );
 }
