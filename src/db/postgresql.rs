@@ -2,35 +2,12 @@ use super::db_schema_structs::{AbstractAttribute, AbstractDbRepr, AbstractTableR
 use super::traits::DatabaseQuerier;
 use log::{debug, info};
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
-
+use crate::db::postgresql_structs::PgColumnInfo;
 pub(crate) struct PostgresQuerier {
     pool: Pool<Postgres>,
 }
 
-#[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
-struct PgColumnInfo {
-    pub object_type: String,
-    pub table_name: String,
-    pub column_name: String,
-    pub data_type: String,
-    pub is_nullable: String,
-    pub column_default: Option<String>,
-    pub table_is_insertable: String,
-    pub column_is_updatable: String,
-    pub character_maximum_length: Option<i32>,
-    pub numeric_precision: Option<i32>,
-    pub numeric_scale: Option<i32>,
-    pub is_identity: String,
-    pub identity_generation: Option<String>,
-    pub is_generated: String,
-    pub generation_expression: Option<String>,
-    pub constraint_name: Option<String>,
-    pub constraint_type: Option<String>,
-    pub referenced_table: Option<String>,
-    pub referenced_column: Option<String>,
-    pub table_comment: Option<String>,
-    pub column_comment: Option<String>,
-}
+const LIMIT: i64 = 30;
 
 const SCHEMA_QUERY: &str = r"
 SELECT
@@ -120,7 +97,10 @@ WHERE
     AND NOT a.attisdropped
 ORDER BY
     table_name,
-    column_name;";
+    column_name
+LIMIT $1
+OFFSET $2;
+    ";
 
 impl PostgresQuerier {
     pub(crate) fn new(db_url: &str, db_name: &str) -> Self {
@@ -149,64 +129,77 @@ impl DatabaseQuerier for PostgresQuerier {
             std::collections::BTreeMap::new();
         let mut view_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
             std::collections::BTreeMap::new();
-        let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
-            .fetch_all(&self.pool)
-            .await
-            .expect("Failed to execute schema query");
-        for row in rows {
-            debug!(
-                "Processing column: {}.{}",
-                &row.table_name, &row.column_name
-            );
-            let attribute = AbstractAttribute {
-                column_name: row.column_name,
-                data_type: row.data_type,
-                is_nullable: row.is_nullable,
-                column_default: row.column_default,
-                character_maximum_length: row.character_maximum_length,
-                numeric_precision: row.numeric_precision,
-                numeric_scale: row.numeric_scale,
-                is_identity: row.is_identity,
-                identity_generation: row.identity_generation,
-                is_generated: row.is_generated,
-                generation_expression: row.generation_expression,
-                constraint_name: row.constraint_name,
-                constraint_type: row.constraint_type,
-                referenced_table: row.referenced_table,
-                referenced_column: row.referenced_column,
-                comment: row.column_comment,
-            };
-            match row.object_type.as_str() {
-                "BASE TABLE" => {
-                    table_info_map
-                        .entry(row.table_name.clone())
-                        .or_insert_with(|| AbstractTableRepr {
-                            table_name: row.table_name,
-                            object_type: row.object_type,
-                            comment: row.table_comment,
-                            attributes: Vec::new(),
-                        })
-                        .unique_push(attribute);
-                }
-                "VIEW" | "MATERIALIZED VIEW" => {
-                    view_info_map
-                        .entry(row.table_name.clone())
-                        .or_insert_with(|| AbstractTableRepr {
-                            table_name: row.table_name,
-                            object_type: row.object_type,
-                            comment: row.table_comment,
-                            attributes: Vec::new(),
-                        })
-                        .unique_push(attribute);
-                }
-                _ => {
-                    debug!(
-                        "Skipping unsupported object type: {} for table {}",
-                        row.object_type, row.table_name
-                    );
+        let mut offset = 0;
+        loop {
+            let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
+                .bind(LIMIT)
+                .bind(offset)
+                .fetch_all(&self.pool)
+                .await
+                .expect("Failed to execute schema query");
+            let num_rows = rows.len();
+            debug!("Fetched {} rows from schema query with offset {}", num_rows, offset);
+            for row in rows {
+                debug!(
+                    "Processing column: {}.{}",
+                    &row.table_name, &row.column_name
+                );
+                let attribute = AbstractAttribute {
+                    column_name: row.column_name,
+                    data_type: row.data_type,
+                    is_nullable: row.is_nullable,
+                    column_default: row.column_default,
+                    character_maximum_length: row.character_maximum_length,
+                    numeric_precision: row.numeric_precision,
+                    numeric_scale: row.numeric_scale,
+                    is_identity: row.is_identity,
+                    identity_generation: row.identity_generation,
+                    is_generated: row.is_generated,
+                    generation_expression: row.generation_expression,
+                    constraint_name: row.constraint_name,
+                    constraint_type: row.constraint_type,
+                    referenced_table: row.referenced_table,
+                    referenced_column: row.referenced_column,
+                    comment: row.column_comment,
+                };
+                match row.object_type.as_str() {
+                    "BASE TABLE" => {
+                        table_info_map
+                            .entry(row.table_name.clone())
+                            .or_insert_with(|| AbstractTableRepr {
+                                table_name: row.table_name,
+                                object_type: row.object_type,
+                                comment: row.table_comment,
+                                attributes: Vec::new(),
+                            })
+                            .unique_push(attribute);
+                    }
+                    "VIEW" | "MATERIALIZED VIEW" => {
+                        view_info_map
+                            .entry(row.table_name.clone())
+                            .or_insert_with(|| AbstractTableRepr {
+                                table_name: row.table_name,
+                                object_type: row.object_type,
+                                comment: row.table_comment,
+                                attributes: Vec::new(),
+                            })
+                            .unique_push(attribute);
+                    }
+                    _ => {
+                        debug!(
+                            "Skipping unsupported object type: {} for table {}",
+                            row.object_type, row.table_name
+                        );
+                    }
                 }
             }
+            offset += LIMIT;
+            if num_rows < LIMIT as usize {
+                break;
+            }
         }
+  
+        
 
         Ok(AbstractDbRepr {
             tables: table_info_map,
