@@ -1,3 +1,5 @@
+![Test Status](https://github.com/sdoerig/carpathia/actions/workflows/test.yml/badge.svg)
+
 # General
 
 ## Idea of mine
