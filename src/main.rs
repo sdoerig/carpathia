@@ -66,7 +66,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cache =
         cache::cache_file::Cache::new(PathBuf::from(args.cache_directory), args.cache_modus);
     match cache.get_changed_entities(&table_info_map) {
-        Ok(changed_entities) => {
+        Ok(_changed_entities) => {
             if args.print_schema {
                 println!(
                     "Extracted database schema in JSON format:\n{}",
