@@ -11,17 +11,16 @@ env:
 
 jobs:
   test:
-    name: testing with PostgreSQL
+    name: Testing with PostgreSQL and Pagila schema
     runs-on: ubuntu-latest
 
-    # PostgreSQL service for testing
     services:
       postgres:
         image: postgres:15
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: carpathia  # yes. this is the name of the test database. don't ask.
+          POSTGRES_DB: carpathia
         ports:
           - 5432:5432
         options: >-
@@ -38,14 +37,30 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-          components: rustfmt, clippy
 
       - name: Abhängigkeiten installieren
-        run: sudo apt-get update && sudo apt-get install -y libpq-dev
+        run: sudo apt-get update && sudo apt-get install -y libpq-dev postgresql-client wget
+
+      # Fetch the Pagila schema from the official repository - hopefully this is stable and won't break in the future
+      - name: Pagila schema downloaden
+        run: |
+          wget https://raw.githubusercontent.com/devrimgunduz/pagila/master/pagila-schema.sql -O pagila-schema.sql
+
+      # Import the Pagila schema into the PostgreSQL service
+      - name: Pagila-Schema in PostgreSQL importieren
+        run: |
+          # Takes a while for PostgreSQL to be ready, so we wait until it's responsive
+          until pg_isready -h localhost -U postgres; do
+            sleep 1
+          done
+
+          # Import the Pagila schema into the "carpathia" database - sorry for renaming but I just name the database after the project name
+          psql -h localhost -U postgres -d carpathia -f pagila-schema.sql
+        env:
+          PGPASSWORD: postgres
 
       - name: Tests ausführen
         run: cargo test
         env:
-          # set the test database connection details as environment variables for the tests
           TEST_DB_URL: postgres://postgres:postgres@localhost:5432
           TEST_DB_NAME: carpathia
