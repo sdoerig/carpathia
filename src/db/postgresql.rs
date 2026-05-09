@@ -101,7 +101,7 @@ impl DatabaseQuerier for PostgresQuerier {
         let pool = PgPoolOptions::new()
             .connect_lazy(&full_db_url)
             .map_err(|e| {
-                error!("Error creating database connection pool: {}", e);
+                error!("Error creating database connection pool: {e}");
                 CarpathiaError {
                     message: format!("Failed to create database connection pool: {e}"),
                     error_type: crate::return_values::carpathia_errors::ErrorNumber::DatabaseConnectionError,
@@ -133,7 +133,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 .fetch_all(&self.pool)
                 .await
                 .map_err(|e| {
-                    debug!("Error executing schema query: {}", e);
+                    debug!("Error executing schema query: {e}");
                     CarpathiaError {
                         message: format!("Failed to execute schema query: {e}"),
                         error_type: crate::return_values::carpathia_errors::ErrorNumber::DatabaseConnectionError,
