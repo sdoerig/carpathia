@@ -1,8 +1,7 @@
 use clap::Parser;
 use log::{error, info};
-
+use std::path::PathBuf;
 use std::process::exit;
-
 mod cache;
 mod db;
 mod generator;
@@ -49,6 +48,7 @@ struct Args {
     #[arg(long, default_value_t = false)]
     print_db_types: bool,
 }
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
@@ -64,8 +64,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Output Directory: {}", &args.output_directory);
     let db_schema_parser =
         db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name, DbType::Postgres);
-    let table_info_map = db_schema_parser.parse_schema().await?;
-    let cache = cache::cache_file::Cache::new(args.cache_directory, args.cache_modus);
+    let table_info_map = match db_schema_parser.parse_schema().await {
+        Ok(schema) => schema,
+        Err(e) => {
+            //error!("Error parsing database schema: {}", e);
+            exit(i32::from(e.error_type));
+        }
+    };
+    let cache =
+        cache::cache_file::Cache::new(PathBuf::from(args.cache_directory), args.cache_modus);
     match cache.get_changed_entities(&table_info_map) {
         Ok(changed_entities) => {
             if args.print_schema {
@@ -77,7 +84,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             if args.print_db_types {
                 template_engine::print_db_types_as_json(&table_info_map)?;
             }
-            drop(changed_entities);
         }
         Err(e) => {
             error!("Error while checking for changed entities: {e}");

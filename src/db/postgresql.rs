@@ -1,13 +1,14 @@
 use super::db_schema_structs::{AbstractAttribute, AbstractDbRepr, AbstractTableRepr};
 use super::traits::DatabaseQuerier;
 use crate::db::postgresql_structs::PgColumnInfo;
-use log::{debug, info};
+use crate::return_values::carpathia_errors::CarpathiaError;
+use log::{debug, error, info};
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 pub(crate) struct PostgresQuerier {
     pool: Pool<Postgres>,
 }
 
-const LIMIT: i64 = 30;
+const LIMIT: i64 = 1000;
 
 const SCHEMA_QUERY: &str = r"
    SELECT
@@ -92,18 +93,23 @@ LIMIT $1
 OFFSET $2;
     ";
 
-impl PostgresQuerier {
-    pub(crate) fn new(db_url: &str, db_name: &str) -> Self {
+impl PostgresQuerier {}
+
+impl DatabaseQuerier for PostgresQuerier {
+    fn new(db_url: &str, db_name: &str) -> Result<Self, CarpathiaError> {
         let full_db_url = format!("{db_url}/{db_name}");
         let pool = PgPoolOptions::new()
             .connect_lazy(&full_db_url)
-            .expect("Failed to create database connection pool");
-        Self { pool }
+            .map_err(|e| {
+                error!("Error creating database connection pool: {}", e);
+                CarpathiaError {
+                    message: format!("Failed to create database connection pool: {e}"),
+                    error_type: crate::return_values::carpathia_errors::ErrorNumber::DatabaseConnectionError,
+                }
+            })?;
+        Ok(Self { pool })
     }
-}
-
-impl DatabaseQuerier for PostgresQuerier {
-    async fn get_schema(&self) -> Result<AbstractDbRepr, Box<dyn std::error::Error>> {
+    async fn get_schema(&self) -> Result<AbstractDbRepr, CarpathiaError> {
         // Here you would implement the logic to query the database for its schema
         // and populate your data structures with the extracted information.
         // This is just a placeholder for demonstration purposes.
@@ -113,7 +119,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 .pool
                 .connect_options()
                 .get_database()
-                .unwrap_or("unknown")
+                .unwrap_or("unknown database")
         );
         let mut table_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
             std::collections::BTreeMap::new();
@@ -126,7 +132,13 @@ impl DatabaseQuerier for PostgresQuerier {
                 .bind(offset)
                 .fetch_all(&self.pool)
                 .await
-                .expect("Failed to execute schema query");
+                .map_err(|e| {
+                    debug!("Error executing schema query: {}", e);
+                    CarpathiaError {
+                        message: format!("Failed to execute schema query: {e}"),
+                        error_type: crate::return_values::carpathia_errors::ErrorNumber::DatabaseConnectionError,
+                    }
+                })?;
             let num_rows = rows.len();
             debug!("Fetched {num_rows} rows from schema query with offset {offset}");
             for row in rows {
