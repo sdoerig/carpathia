@@ -10,14 +10,160 @@
 * Allow the users writing their own templates 
 * Motivation of mine: learning
 
-## Proposed CLI:
+# Current status
+- Under development
+- PostgreSQL support only at the moment
+
+# Architectur 
 
 ```
-It generates code for database access based on a given schema. You write the templates - it genrates the code. It is based on an abstract database representation (ADR).
-The ADR is an intermediate representation of the database schema that is independent of any specific database type. It allows us to decouple the database schema parsing from the code generation, making it easier to support multiple database types in the future. The ADR is defined in the `db_schema_structs` module and consists of two main structs: `AbstractDbRepr` and `AbstractAttribute`. The `AbstractDbRepr` struct represents a database table and contains the table name and a vector of `AbstractAttribute` structs, which represent the columns of the table and their properties.
-The generator currently supports PostgreSQL, but one could easily add support for MySQL and SQLite in the future by implementing the necessary logic in the database querier and schema parser.
-To enable logging, set the RUST_LOG environment variable to the desired log level (e.g., RUST_LOG=info) before running the application.
-Note: It is still in early development and not functional yet.
+                                   +----------------------+
+                                   |       main.rs        |
+                                   |----------------------|
+                                   | CLI (clap)           |
+                                   | Logging              |
+                                   | Orchestrates flow    |
+                                   +----------+-----------+
+                                              |
+                                              v
+        +-------------------------------------+--------------------------------------+
+        |                                                                            |
+        v                                                                            v
++-------------------+                                                    +----------------------+
+|       db/         |                                                    |       cache/         |
+|-------------------|                                                    |----------------------|
+| parse_db_schema   |                                                    | cache_file           |
+| postgresql        |                                                    | cache_structs        |
+| postgresql_structs|                                                    +----------+-----------+
+| traits            |                                                               |
+| db_schema_structs |                                                               |
++---------+---------+                                                               |
+          |                                                                         |
+          | produces ADR                                                            |
+          v                                                                         |
++---------------------------+                                                       |
+|  AbstractDbRepr (ADR)     |<------------------------------------------------------+
+|  AbstractTableRepr        |                 CacheDiff (changed tables only)        
+|  AbstractAttribute        |
++-------------+-------------+
+              |
+              | enriched ADR (after applying user type mapping)
+              v
+      +----------------------------+
+      |   User Type Mapping JSON   |
+      |----------------------------|
+      | Provided by the user       |
+      | Defines custom type rules  |
+      +-------------+--------------+
+                    |
+                    | passed into parser
+                    v
+      +----------------------------+
+      |  Parser integrates mapping |
+      |  - DB types → user types   |
+      |  - Mapping changes force   |
+      |    regeneration            |
+      +-------------+--------------+
+                    |
+                    v
+      +----------------------------+
+      |     generator/             |
+      |----------------------------|
+      | template_engine            |
+      | - receives ADR + CacheDiff |
+      | - loads templates          |
+      | - generates code only for  |
+      |   changed entities         |
+      | - language-agnostic        |
+      +-------------+--------------+
+                    |
+                    v
+      +----------------------------+
+      |   Output / Filesystem      |
+      |   (code generation output) |
+      +----------------------------+
+
+
+```
+
+## main.rs
+
+- Parses CLI arguments
+-  Initializes logging
+
+- Calls:
+   - DB schema parser
+   - Cache system
+   - Generator
+     
+Passes user options (cache mode, output directory, etc.)
+
+## db/ – Database Layer
+
+- Responsible for:
+   - Connecting to PostgreSQL
+   - Extracting schema metadata 
+   - Converting raw DB metadata to ADR
+   - Applying user type mapping (not yet implemented)
+
+- ADR (Abstract Database Representation) is the the central data structure:
+   - AbstractDbRepr
+     Currently supports tables and view. Planned is to implement stored procedures, triggers and so on too.
+   - AbstractTableRepr
+   - AbstractAttribute
+
+## User Type Mapping JSON
+
+- This is a planned feature but already architecturally important.
+   - User provides a JSON file describing how DB types map to code types
+   - Parser gets this mapping
+   - Parser fits ADR attributes accordingly with the code types
+   - If mapping changes → cache invalidation → regeneration
+
+This is a powerful design because it makes Carpathia language‑agnostic. Use --print-db-types to get a JSON printed to STDOUT with the datatypes carpathia discovered.
+
+## cache/ – Change Detection
+- Stores per‑table hashes
+- Compares old vs. new ADR
+- Produces CacheDiff:
+   - list of changed tables
+   - list of removed tables
+
+This is passed to the generator so it only regenerates what is necessary.
+
+## generator/ – Template Engine
+
+Not implemented yet - will not take place before ADR is settled and done. There will be a CLI switch to generate the intial templates. A planned structure could be:
+- tables.rs.tera
+- views.rs.tera
+- procs.rs.tera
+- triggers.rs.tera
+
+To the naming: 
+- First part: tables, views, triggers and so on are object types ADR provides, It will be replaced with the object the file represents after generation e.g. films.
+- Second part: rs stands for the suffix of the file after generation-
+- Third pard: it is a tera template.
+To complete the example, after generation one would have a file named films.rs.
+
+- Receives:
+   - ADR
+   - CacheDiff
+
+- Loads templates
+   - Generates code only for changed entities
+   - Can output DB types as JSON for debugging
+   - Language‑agnostic (Rust, Go, TS, SQL, …)
+
+# Testing and development
+
+For development I used the fine [pagila](https://github.com/devrimgunduz/pagila/blob/master/pagila-schema.sql) schema. As it should ever come to a MySQL/MariaDB implementation I propose the [sakila](https://dev.mysql.com/doc/sakila/en/) sample database. 
+
+# CLI 
+
+Note it is under development. At the moment it looks like this
+
+```
+It generates code for database access based on a given schema. You write the templates - it genrates the code. Note: It is still in early development and not functional yet.
 
 Usage: carpathia [OPTIONS] --db-url <DB_URL> --db-name <DB_NAME>
 
@@ -33,11 +179,6 @@ Options:
           
           [default: use-cache]
           [possible values: bypass-cache, use-cache]
-
-      --output-format <OUTPUT_FORMAT>
-          NOT IMPLEMENTED: Output format for the generated code - choices are "binary" (default) or "library"
-          
-          [default: binary]
 
       --output-directory <OUTPUT_DIRECTORY>
           NOT IMPLEMENTED: Output directory for the generated code

@@ -14,13 +14,9 @@ use db::db_schema_structs::DbType;
 #[derive(Parser, Debug)]
 #[command(
     author = "Stefan Dörig, sdoerig@bluewin.ch",
-    version = "0.2.0",
+    version = "0.3.0",
     about = "Template based, language-agnostic database layer generator.",
-    long_about = "It generates code for database access based on a given schema. You write the templates - it genrates the code. It is based on an abstract database representation (ADR).
-The ADR is an intermediate representation of the database schema that is independent of any specific database type. It allows us to decouple the database schema parsing from the code generation, making it easier to support multiple database types in the future. The ADR is defined in the `db_schema_structs` module and consists of two main structs: `AbstractDbRepr` and `AbstractAttribute`. The `AbstractDbRepr` struct represents a database table and contains the table name and a vector of `AbstractAttribute` structs, which represent the columns of the table and their properties.
-The generator currently supports PostgreSQL, but one could easily add support for MySQL and SQLite in the future by implementing the necessary logic in the database querier and schema parser.
-To enable logging, set the RUST_LOG environment variable to the desired log level (e.g., RUST_LOG=info) before running the application.
-Note: It is still in early development and not functional yet."
+    long_about = "It generates code for database access based on a given schema. You write the templates - it genrates the code. Note: It is still in early development and not functional yet."
 )]
 struct Args {
     /// Database URL in the format - JUST host and port NOT the database name: <postgres://user:password@localhost:5432>
@@ -29,12 +25,9 @@ struct Args {
     /// Database name you would like to generate code for - just the name NOT the full URL: `my_database`
     #[arg(long)]
     db_name: String,
-    /// Forces the generator to overwirite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
+    /// Forces the generator to overwrite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
     #[arg(long, value_enum, default_value_t = CacheModus::UseCache)]
     cache_modus: CacheModus,
-    /// NOT IMPLEMENTED: Output format for the generated code - choices are "binary" (default) or "library"
-    #[arg(long, default_value = "binary")]
-    output_format: String,
     /// NOT IMPLEMENTED: Output directory for the generated code   
     #[arg(long, default_value = "./src/db_layer")]
     output_directory: String,
@@ -60,7 +53,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     info!("Database URL: {}", &args.db_url);
     info!("Database Name: {}", &args.db_name);
-    info!("Output Format: {}", &args.output_format);
     info!("Output Directory: {}", &args.output_directory);
     let db_schema_parser =
         db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name, DbType::Postgres);
