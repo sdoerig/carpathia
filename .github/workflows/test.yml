@@ -1,0 +1,51 @@
+name: Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: testing with PostgreSQL
+    runs-on: ubuntu-latest
+
+    # PostgreSQL service for testing
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: carpathia  # yes. this is the name of the test database. don't ask.
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Rust Toolchain einrichten
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: rustfmt, clippy
+
+      - name: Abhängigkeiten installieren
+        run: sudo apt-get update && sudo apt-get install -y libpq-dev
+
+      - name: Tests ausführen
+        run: cargo test
+        env:
+          # set the test database connection details as environment variables for the tests
+          TEST_DB_URL: postgres://postgres:postgres@localhost:5432
+          TEST_DB_NAME: carpathia
