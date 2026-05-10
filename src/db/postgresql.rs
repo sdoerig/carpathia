@@ -1,3 +1,5 @@
+use std::collections::BTreeMap;
+
 use super::db_schema_structs::{AbstractAttribute, AbstractDbRepr, AbstractTableRepr};
 use super::traits::DatabaseQuerier;
 use crate::db::postgresql_structs::PgColumnInfo;
@@ -181,9 +183,10 @@ impl DatabaseQuerier for PostgresQuerier {
                                 table_name: row.table_name,
                                 object_type: row.object_type,
                                 comment: row.table_comment,
-                                attributes: Vec::new(),
+                                attributes: BTreeMap::new(),
                             })
-                            .unique_push(attribute);
+                            .attributes
+                            .insert(attribute.column_name.clone(), attribute);
                     }
                     "VIEW" | "MATERIALIZED VIEW" => {
                         view_info_map
@@ -192,9 +195,10 @@ impl DatabaseQuerier for PostgresQuerier {
                                 table_name: row.table_name,
                                 object_type: row.object_type,
                                 comment: row.table_comment,
-                                attributes: Vec::new(),
+                                attributes: BTreeMap::new(),
                             })
-                            .unique_push(attribute);
+                            .attributes
+                            .insert(attribute.column_name.clone(), attribute);
                     }
                     _ => {
                         debug!(

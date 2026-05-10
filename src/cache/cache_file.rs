@@ -144,28 +144,33 @@ mod tests {
         column_name: &str,
         object_type: DbObjectType,
     ) -> AbstractTableRepr {
-        let atr = AbstractTableRepr {
-            table_name: table_name.to_string(),
-            object_type: String::from(object_type),
-            comment: Some("Test table".to_string()),
-            attributes: vec![AbstractAttribute {
+        let mut abstract_attribte_map: BTreeMap<String, AbstractAttribute> = BTreeMap::new();
+        abstract_attribte_map.insert(
+            column_name.to_string(),
+            AbstractAttribute {
                 column_name: column_name.to_string(),
-                data_type: "text".to_string(),
+                data_type: "integer".to_string(),
                 is_nullable: "NO".to_string(),
-                column_default: None,
+                column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
                 character_maximum_length: None,
-                numeric_precision: None,
-                numeric_scale: None,
+                numeric_precision: Some(32),
+                numeric_scale: Some(0),
                 is_identity: "NO".to_string(),
                 identity_generation: None,
                 is_generated: "NO".to_string(),
                 generation_expression: None,
-                constraint_name: None,
-                constraint_type: None,
+                constraint_name: Some("users_pkey".to_string()),
+                constraint_type: Some("PRIMARY KEY".to_string()),
                 referenced_table: None,
                 referenced_column: None,
-                comment: Some("Test column".to_string()),
-            }],
+                comment: Some("Primary key for users table".to_string()),
+            },
+        );
+        let atr = AbstractTableRepr {
+            table_name: table_name.to_string(),
+            object_type: String::from(object_type),
+            comment: Some("Test table".to_string()),
+            attributes: abstract_attribte_map,
         };
         atr
     }

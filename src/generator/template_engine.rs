@@ -39,8 +39,8 @@ pub(crate) fn print_db_types_as_json(
     // to use in the generated code.
     let mut db_types: BTreeMap<&str, String> = BTreeMap::new();
     for key in table_info_map.tables.keys() {
-        for attr in &table_info_map.tables[key].attributes {
-            db_types.insert(&attr.data_type, String::new());
+        for attribute in table_info_map.tables[key].attributes.values() {
+            db_types.insert(&attribute.data_type, attribute.data_type.clone());
         }
     }
     match serde_json::to_string_pretty(&db_types) {

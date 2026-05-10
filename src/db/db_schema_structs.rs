@@ -16,17 +16,7 @@ pub(crate) struct AbstractTableRepr {
     pub object_type: String,
     pub table_name: String,
     pub comment: Option<String>,
-    pub attributes: Vec<AbstractAttribute>,
-}
-
-impl AbstractTableRepr {
-    pub(crate) fn unique_push(&mut self, attribute: AbstractAttribute) {
-        // Only adding unique attributes to the list of attributes for a table.
-        // This is important to avoid duplicates in the generated code.
-        if !self.attributes.contains(&attribute) {
-            self.attributes.push(attribute);
-        }
-    }
+    pub attributes: BTreeMap<String, AbstractAttribute>,
 }
 
 // This module defines the intermediate database attribute representation.
@@ -87,7 +77,7 @@ mod tests {
         let mut table_info = AbstractTableRepr {
             table_name: table_name.to_string(),
             object_type: "BASE TABLE".to_string(),
-            attributes: Vec::new(),
+            attributes: BTreeMap::new(),
             comment: Some("Users table".to_string()),
         };
         table_info
@@ -97,13 +87,21 @@ mod tests {
     fn test_abstract_db_repr() {
         let mut table_info = create_table_info("users");
         assert_eq!(table_info.table_name, "users");
-        table_info.unique_push(create_column_info("id")); // Attempt to add a first attribute
+        table_info
+            .attributes
+            .insert("id".to_string(), create_column_info("id")); // Attempt to add a first attribute
         assert_eq!(table_info.attributes.len(), 1);
-        table_info.unique_push(create_column_info("id")); // Attempt to add a duplicate attribute
+        table_info
+            .attributes
+            .insert("id".to_string(), create_column_info("id")); // Attempt to add a duplicate attribute
         assert_eq!(table_info.attributes.len(), 1);
-        table_info.unique_push(create_column_info("name")); // Add a new attribute
+        table_info
+            .attributes
+            .insert("name".to_string(), create_column_info("name")); // Add a new attribute
         assert_eq!(table_info.attributes.len(), 2);
-        table_info.unique_push(create_column_info("name")); // Attempt to add a duplicate attribute again
+        table_info
+            .attributes
+            .insert("name".to_string(), create_column_info("name")); // Attempt to add a duplicate attribute again
         assert_eq!(table_info.attributes.len(), 2);
     }
 }
