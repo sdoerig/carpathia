@@ -14,7 +14,7 @@ use db::db_schema_structs::DbType;
 #[derive(Parser, Debug)]
 #[command(
     author = "Stefan Dörig, sdoerig@bluewin.ch",
-    version = "0.3.0",
+    version = "0.2.1-alpha.2",
     about = "Template based, language-agnostic database layer generator.",
     long_about = "It generates code for database access based on a given schema. You write the templates - it genrates the code. Note: It is still in early development and not functional yet."
 )]
