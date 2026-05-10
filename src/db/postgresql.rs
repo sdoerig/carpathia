@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 
-use super::db_schema_structs::{AbstractAttribute, AbstractDbRepr, AbstractTableRepr};
+use super::db_schema_structs::{AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ABSTRACT_DB_REPR_VERSION};
 use super::traits::DatabaseQuerier;
 use crate::db::postgresql_structs::PgColumnInfo;
 use crate::return_values::carpathia_errors::CarpathiaError;
@@ -215,6 +215,7 @@ impl DatabaseQuerier for PostgresQuerier {
         }
 
         Ok(AbstractDbRepr {
+            version: ABSTRACT_DB_REPR_VERSION,
             tables: table_info_map,
             views: view_info_map,
         })
