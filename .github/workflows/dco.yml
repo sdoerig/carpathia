@@ -1,0 +1,17 @@
+name: DCO Check
+
+on:  
+  pull_request:  
+    branches: [ main ]
+
+jobs:  
+  dco:  
+    name: DCO Check  
+    runs-on: ubuntu-latest  
+    steps:  
+      - name: Checkout code  
+        uses: actions/checkout@v4  
+        with:  
+          fetch-depth: 0  # Check all commits in the pull request
+      - name: Check DCO
+        uses: actions-hub/dco@main
