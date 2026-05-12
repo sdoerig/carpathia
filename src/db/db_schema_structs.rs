@@ -19,14 +19,16 @@
 // The DbType enum represents the supported database types, which can be extended in the future to support more databases.
 use std::collections::BTreeMap;
 
-pub const  ABSTRACT_DB_REPR_VERSION: &str = env!("CARGO_PKG_VERSION");
+pub const ABSTRACT_DB_REPR_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct AbstractDbRepr {
-    pub version: &'static str,
+    // Apply the version as string, might have to deserialize it back to a struct.
+    // Furthermore as there will be differnt versions and users can 
+    // print out the ADR the version might help in case of debugging.
+    pub version: String,
     pub tables: BTreeMap<String, AbstractTableRepr>,
     pub views: BTreeMap<String, AbstractTableRepr>,
-
 }
 
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]

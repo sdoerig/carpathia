@@ -85,39 +85,52 @@ impl CacheFile {
     pub(crate) fn from_abstract_db_repr(db_repr: &AbstractDbRepr) -> Self {
         let mut cache_file = CacheFile::new();
         for (table_name, table_repr) in &db_repr.tables {
-            let table_hash = sha256_hash(table_repr);
+            let table_hash = match sha256_hash(table_repr) {
+                Ok(hash) => hash,
+                Err(e) => {
+                    error!("Failed to hash table representation for table {table_name}: {e}");
+                    continue; // Skip this table and continue with the next one
+                }
+            };
             cache_file.tables.insert(table_name.clone(), table_hash);
         }
         for (view_name, view_repr) in &db_repr.views {
-            let view_hash = sha256_hash(view_repr);
+            let view_hash = match sha256_hash(view_repr) {
+                Ok(hash) => hash,
+                Err(e) => {
+                    error!("Failed to hash view representation for view {view_name}: {e}");
+                    continue; // Skip this view and continue with the next one
+                }
+            };
             cache_file.views.insert(view_name.clone(), view_hash);
         }
         cache_file
     }
 
     pub(crate) fn save_to_file(&self, path: &PathBuf) -> Result<(), CarpathiaError> {
-        match fs::create_dir_all(path.parent().unwrap()) {
+        // Try to create the parent directory if it doesn't exist, but ignore errors (e.g., if it already exists)
+        // or if the path is void.
+        let _ = fs::create_dir_all(path.parent().unwrap()).map_err(|e| {
+            error!("Failed to create cache directory: {e}");
+        });
+
+        //let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
+        let cache_content_json = serde_json::to_string_pretty(&self).map_err(|e| {
+            error!("Failed to serialize cache content to JSON: {e}");
+            CarpathiaError {
+                message: "Failed to serialize cache content to JSON".to_string(),
+                error_type: ErrorNumber::CacheFileError,
+            }
+        })?;
+        match fs::write(path, cache_content_json) {
             Ok(()) => {
-                //let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
-                let cache_content_json = serde_json::to_string_pretty(&self).unwrap();
-                match fs::write(path, cache_content_json) {
-                    Ok(()) => {
-                        info!("Cache file updated successfully at {}", &path.display());
-                        Ok(())
-                    }
-                    Err(e) => {
-                        error!("Failed to write cache file: {e}");
-                        Err(CarpathiaError {
-                            message: "Failed to write cache file".to_string(),
-                            error_type: ErrorNumber::CacheFileError,
-                        })
-                    }
-                }
+                info!("Cache file updated successfully at {}", &path.display());
+                Ok(())
             }
             Err(e) => {
-                error!("Failed to create cache directory: {e}");
+                error!("Failed to write cache file: {e}");
                 Err(CarpathiaError {
-                    message: "Failed to create cache directory".to_string(),
+                    message: "Failed to write cache file".to_string(),
                     error_type: ErrorNumber::CacheFileError,
                 })
             }
@@ -171,10 +184,19 @@ fn diff_btrees(
     );
 }
 
-fn sha256_hash<T: Serialize>(item: &T) -> String {
-    let json_string = serde_json::to_string(item).unwrap();
+fn sha256_hash<T: Serialize>(item: &T) -> Result<String, CarpathiaError> {
+    let json_string = match serde_json::to_string(item) {
+        Ok(s) => s,
+        Err(e) => {
+            error!("Failed to serialize item to JSON: {e}");
+            return Err(CarpathiaError {
+                message: "Failed to serialize item to JSON".to_string(),
+                error_type: ErrorNumber::Other,
+            });
+        }
+    };
     let mut hasher = Sha256::new();
     hasher.update(json_string.as_bytes());
     let hash_result = hasher.finalize();
-    format!("{hash_result:x}")
+    Ok(format!("{hash_result:x}"))
 }

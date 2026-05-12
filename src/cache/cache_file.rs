@@ -27,7 +27,7 @@ use crate::cache::cache_structs::CacheModus;
  * it can skip the code generation process for those entities.
  *
  */
-use crate::db::db_schema_structs::{AbstractDbRepr,ABSTRACT_DB_REPR_VERSION};
+use crate::db::db_schema_structs::{ABSTRACT_DB_REPR_VERSION, AbstractDbRepr};
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{error, info};
 
@@ -146,7 +146,7 @@ mod tests {
     ) -> AbstractDbRepr {
         let atr = create_abstract_selectable(table_name, column_name, object_type);
         let mut db_repr = AbstractDbRepr {
-            version: ABSTRACT_DB_REPR_VERSION,
+            version: ABSTRACT_DB_REPR_VERSION.to_string(),
             tables: BTreeMap::new(),
             views: BTreeMap::new(),
         };
