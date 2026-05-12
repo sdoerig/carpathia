@@ -14,7 +14,7 @@
 - Under development
 - PostgreSQL support only at the moment
 
-# Architectur 
+# Architecture 
 
 ```
                                    +----------------------+
@@ -203,3 +203,12 @@ Options:
           Print version
 
 ```
+
+# Announcement: Migration to Apache‑2.0 License
+
+This project has been relicensed under the Apache‑2.0 license. As the sole contributor and with the project still in its alpha phase, this transition provides a more robust and widely compatible legal foundation for future development.
+
+- All new releases will be published under Apache‑2.0.
+- Existing versions remain available under their original license.
+
+This change aims to support broader adoption and clearer integration with other Rust projects.
