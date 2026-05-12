@@ -27,7 +27,7 @@ use crate::cache::cache_structs::CacheModus;
  * it can skip the code generation process for those entities.
  *
  */
-use crate::db::db_schema_structs::{ABSTRACT_DB_REPR_VERSION, AbstractDbRepr};
+use crate::db::db_schema_structs::{AbstractDbRepr};
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{error, info};
 
@@ -122,7 +122,7 @@ mod tests {
     use crate::cache::cache_structs::CacheModus;
     use crate::db::db_schema_structs::AbstractAttribute;
     use crate::db::db_schema_structs::AbstractDbRepr;
-    use crate::db::db_schema_structs::AbstractTableRepr;
+    use crate::db::db_schema_structs::{AbstractTableRepr, ABSTRACT_DB_REPR_VERSION};
     use std::collections::BTreeMap;
     use tempfile::NamedTempFile;
     use tempfile::env::temp_dir;

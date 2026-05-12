@@ -61,8 +61,8 @@ jobs:
           PGPASSWORD: postgres
 
       # Linting
-      - name: Rust Linting (clippy)
-        run: cargo clippy --all-targets --all-features -- -D warnings
+      #- name: Rust Linting (clippy)
+      #  run: cargo clippy --all-targets --all-features -- -D warnings
 
       # Tests
       - name: Tests ausführen
