@@ -17,7 +17,7 @@ use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use clap::ValueEnum;
 use log::{error, info};
 use serde::Serialize;
-use sha2::{Digest, Sha256};
+use blake3::Hasher as Blake3Hasher;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
@@ -85,7 +85,7 @@ impl CacheFile {
     pub(crate) fn from_abstract_db_repr(db_repr: &AbstractDbRepr) -> Self {
         let mut cache_file = CacheFile::new();
         for (table_name, table_repr) in &db_repr.tables {
-            let table_hash = match sha256_hash(table_repr) {
+            let table_hash = match blake3_hash(table_repr) {
                 Ok(hash) => hash,
                 Err(e) => {
                     error!("Failed to hash table representation for table {table_name}: {e}");
@@ -95,7 +95,7 @@ impl CacheFile {
             cache_file.tables.insert(table_name.clone(), table_hash);
         }
         for (view_name, view_repr) in &db_repr.views {
-            let view_hash = match sha256_hash(view_repr) {
+            let view_hash = match blake3_hash(view_repr) {
                 Ok(hash) => hash,
                 Err(e) => {
                     error!("Failed to hash view representation for view {view_name}: {e}");
@@ -184,7 +184,7 @@ fn diff_btrees(
     );
 }
 
-fn sha256_hash<T: Serialize>(item: &T) -> Result<String, CarpathiaError> {
+fn blake3_hash<T: Serialize>(item: &T) -> Result<String, CarpathiaError> {
     let json_string = match serde_json::to_string(item) {
         Ok(s) => s,
         Err(e) => {
@@ -195,8 +195,8 @@ fn sha256_hash<T: Serialize>(item: &T) -> Result<String, CarpathiaError> {
             });
         }
     };
-    let mut hasher = Sha256::new();
+    let mut hasher = Blake3Hasher::new();
     hasher.update(json_string.as_bytes());
     let hash_result = hasher.finalize();
-    Ok(format!("{hash_result:x}"))
+    Ok(hash_result.to_hex().to_string())
 }
