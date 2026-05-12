@@ -1,3 +1,17 @@
+// Copyright 2026 Stefan Dörig
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 use crate::cache::cache_structs::CacheFile;
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
@@ -39,8 +53,8 @@ pub(crate) fn print_db_types_as_json(
     // to use in the generated code.
     let mut db_types: BTreeMap<&str, String> = BTreeMap::new();
     for key in table_info_map.tables.keys() {
-        for attr in &table_info_map.tables[key].attributes {
-            db_types.insert(&attr.data_type, String::new());
+        for attribute in table_info_map.tables[key].attributes.values() {
+            db_types.insert(&attribute.data_type, attribute.data_type.clone());
         }
     }
     match serde_json::to_string_pretty(&db_types) {

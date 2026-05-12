@@ -1,8 +1,9 @@
 [package]
 name = "carpathia"
-version = "0.2.1-alpha.1"
+version = "0.2.1-alpha.2"
 edition = "2024"
-license = "AGPL-3.0-or-later"
+license = "Apache-2.0"
+authors = ["Stefan Dörig", "sdoerig@bluewin.ch"]
 description = "Database schema parser and language agnostic generator"
 repository = "https://github.com/sdoerig/carpathia"
 homepage = "https://github.com/sdoerig/carpathia"

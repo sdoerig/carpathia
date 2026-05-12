@@ -1,3 +1,17 @@
+// Copyright 2026 Stefan Dörig
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 use clap::Parser;
 use log::{error, info};
 use std::path::PathBuf;
@@ -13,9 +27,9 @@ use db::db_schema_structs::DbType;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
 #[command(
-    author = "Stefan Dörig, sdoerig@bluewin.ch",
-    version = "0.3.0",
-    about = "Template based, language-agnostic database layer generator.",
+    author = env!("CARGO_PKG_AUTHORS"),
+    version = env!("CARGO_PKG_VERSION"),
+    about = env!("CARGO_PKG_DESCRIPTION"),
     long_about = "It generates code for database access based on a given schema. You write the templates - it genrates the code. Note: It is still in early development and not functional yet."
 )]
 struct Args {

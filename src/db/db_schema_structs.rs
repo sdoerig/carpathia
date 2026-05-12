@@ -1,3 +1,17 @@
+// Copyright 2026 Stefan Dörig
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // This module defines the intermediate database schema representation that will be
 //used by the schema parser and the code generator. The AbstractDbRepr struct
 // represents a database table, while the AbstractAttribute struct represents a column
@@ -5,10 +19,14 @@
 // The DbType enum represents the supported database types, which can be extended in the future to support more databases.
 use std::collections::BTreeMap;
 
+pub const  ABSTRACT_DB_REPR_VERSION: &str = env!("CARGO_PKG_VERSION");
+
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct AbstractDbRepr {
+    pub version: &'static str,
     pub tables: BTreeMap<String, AbstractTableRepr>,
     pub views: BTreeMap<String, AbstractTableRepr>,
+
 }
 
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
@@ -16,17 +34,7 @@ pub(crate) struct AbstractTableRepr {
     pub object_type: String,
     pub table_name: String,
     pub comment: Option<String>,
-    pub attributes: Vec<AbstractAttribute>,
-}
-
-impl AbstractTableRepr {
-    pub(crate) fn unique_push(&mut self, attribute: AbstractAttribute) {
-        // Only adding unique attributes to the list of attributes for a table.
-        // This is important to avoid duplicates in the generated code.
-        if !self.attributes.contains(&attribute) {
-            self.attributes.push(attribute);
-        }
-    }
+    pub attributes: BTreeMap<String, AbstractAttribute>,
 }
 
 // This module defines the intermediate database attribute representation.
@@ -87,7 +95,7 @@ mod tests {
         let mut table_info = AbstractTableRepr {
             table_name: table_name.to_string(),
             object_type: "BASE TABLE".to_string(),
-            attributes: Vec::new(),
+            attributes: BTreeMap::new(),
             comment: Some("Users table".to_string()),
         };
         table_info
@@ -97,13 +105,21 @@ mod tests {
     fn test_abstract_db_repr() {
         let mut table_info = create_table_info("users");
         assert_eq!(table_info.table_name, "users");
-        table_info.unique_push(create_column_info("id")); // Attempt to add a first attribute
+        table_info
+            .attributes
+            .insert("id".to_string(), create_column_info("id")); // Attempt to add a first attribute
         assert_eq!(table_info.attributes.len(), 1);
-        table_info.unique_push(create_column_info("id")); // Attempt to add a duplicate attribute
+        table_info
+            .attributes
+            .insert("id".to_string(), create_column_info("id")); // Attempt to add a duplicate attribute
         assert_eq!(table_info.attributes.len(), 1);
-        table_info.unique_push(create_column_info("name")); // Add a new attribute
+        table_info
+            .attributes
+            .insert("name".to_string(), create_column_info("name")); // Add a new attribute
         assert_eq!(table_info.attributes.len(), 2);
-        table_info.unique_push(create_column_info("name")); // Attempt to add a duplicate attribute again
+        table_info
+            .attributes
+            .insert("name".to_string(), create_column_info("name")); // Attempt to add a duplicate attribute again
         assert_eq!(table_info.attributes.len(), 2);
     }
 }

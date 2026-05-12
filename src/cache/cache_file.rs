@@ -1,3 +1,17 @@
+// Copyright 2026 Stefan Dörig
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 use super::cache_structs::{CacheFile, CacheFileDiff, compare_cache_files};
 use crate::cache::cache_structs::CacheModus;
 /**
@@ -13,7 +27,7 @@ use crate::cache::cache_structs::CacheModus;
  * it can skip the code generation process for those entities.
  *
  */
-use crate::db::db_schema_structs::AbstractDbRepr;
+use crate::db::db_schema_structs::{AbstractDbRepr,ABSTRACT_DB_REPR_VERSION};
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{error, info};
 
@@ -132,6 +146,7 @@ mod tests {
     ) -> AbstractDbRepr {
         let atr = create_abstract_selectable(table_name, column_name, object_type);
         let mut db_repr = AbstractDbRepr {
+            version: ABSTRACT_DB_REPR_VERSION,
             tables: BTreeMap::new(),
             views: BTreeMap::new(),
         };
@@ -144,28 +159,33 @@ mod tests {
         column_name: &str,
         object_type: DbObjectType,
     ) -> AbstractTableRepr {
-        let atr = AbstractTableRepr {
-            table_name: table_name.to_string(),
-            object_type: String::from(object_type),
-            comment: Some("Test table".to_string()),
-            attributes: vec![AbstractAttribute {
+        let mut abstract_attribte_map: BTreeMap<String, AbstractAttribute> = BTreeMap::new();
+        abstract_attribte_map.insert(
+            column_name.to_string(),
+            AbstractAttribute {
                 column_name: column_name.to_string(),
-                data_type: "text".to_string(),
+                data_type: "integer".to_string(),
                 is_nullable: "NO".to_string(),
-                column_default: None,
+                column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
                 character_maximum_length: None,
-                numeric_precision: None,
-                numeric_scale: None,
+                numeric_precision: Some(32),
+                numeric_scale: Some(0),
                 is_identity: "NO".to_string(),
                 identity_generation: None,
                 is_generated: "NO".to_string(),
                 generation_expression: None,
-                constraint_name: None,
-                constraint_type: None,
+                constraint_name: Some("users_pkey".to_string()),
+                constraint_type: Some("PRIMARY KEY".to_string()),
                 referenced_table: None,
                 referenced_column: None,
-                comment: Some("Test column".to_string()),
-            }],
+                comment: Some("Primary key for users table".to_string()),
+            },
+        );
+        let atr = AbstractTableRepr {
+            table_name: table_name.to_string(),
+            object_type: String::from(object_type),
+            comment: Some("Test table".to_string()),
+            attributes: abstract_attribte_map,
         };
         atr
     }
