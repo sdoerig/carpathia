@@ -12,6 +12,7 @@ pub enum ErrorNumber {
     Other,
     InvalidConstraintType,
     InvalidObjectType,
+    InvalidPoolType,
     Success,
 }
 
@@ -38,6 +39,7 @@ impl From<ErrorNumber> for i32 {
             ErrorNumber::Other => 20,
             ErrorNumber::InvalidConstraintType => 6,
             ErrorNumber::InvalidObjectType => 7,
+            ErrorNumber::InvalidPoolType => 8,
             ErrorNumber::Success => 0,
         }
     }

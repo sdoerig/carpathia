@@ -1,4 +1,5 @@
-use crate::configuration::conf_enums::DbType;
+use crate::configuration::carpathia_conf::CarpathiaConfig;
+use crate::configuration::conf_enums::{DbPool, DbType};
 /// This module extracts the datebase schema from a `PostgreSQL` database and
 /// generates a Rust struct for each table in the database. It also proviedes the
 /// intermeditate data structures to hold the extracted schema information.
@@ -9,26 +10,14 @@ use crate::return_values::carpathia_errors::CarpathiaError;
 
 pub(crate) struct DbSchemaParser {
     // You can add fields here if needed, for example, to hold configuration or state
-    db_name: String,
-    db_url: String,
-    db_type: DbType,
 }
 
 impl DbSchemaParser {
-    pub(crate) fn new(db_url: String, db_name: String, db_type: DbType) -> Self {
-        Self {
-            db_name,
-            db_url,
-            db_type,
-        }
-    }
-
-    pub(crate) async fn parse_schema(&self) -> Result<AbstractDbRepr, CarpathiaError> {
-        match self.db_type {
-            DbType::Postgres => {
-                let querier = PostgresQuerier::new(&self.db_url, &self.db_name)?;
-                querier.get_schema().await
-            }
+    pub(crate) async fn parse_schema(
+        config: &CarpathiaConfig,
+    ) -> Result<AbstractDbRepr, CarpathiaError> {
+        match config.db_pool {
+            DbPool::Postgres(_) => PostgresQuerier::get_schema(config).await, // Future support for MySQL and SQLite can be added here by adding new variants to the DbPool enum and handling them accordingly.
         }
     }
 }
@@ -36,8 +25,8 @@ impl DbSchemaParser {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[tokio::test]
-    async fn test_db_schema_parser() {
+
+    fn setup_test_config() -> CarpathiaConfig {
         // Lade .env.test (falls vorhanden)
         dotenv::from_filename(".env.test").ok();
 
@@ -47,8 +36,26 @@ mod tests {
 
         let db_name = std::env::var("TEST_DB_NAME").unwrap_or_else(|_| "postgres".to_string());
 
-        let parser = DbSchemaParser::new(db_url, db_name, DbType::Postgres);
-        let schema = parser.parse_schema().await.unwrap();
+        CarpathiaConfig::new(
+            &db_url,
+            &db_name,
+            &DbType::Postgres,
+            crate::configuration::conf_enums::CacheModus::BypassCache,
+            &"./output".to_string(),
+            &"./cache".to_string(),
+            false,
+            false,
+        )
+        .expect("Failed to create test configuration")
+    }
+
+    #[tokio::test]
+    async fn test_db_schema_parser() {
+        // Lade .env.test (falls vorhanden)
+        dotenv::from_filename(".env.test").ok();
+
+        let config = setup_test_config();
+        let schema = DbSchemaParser::parse_schema(&config).await.unwrap();
         assert!(!schema.tables.is_empty(), "Schema should not be empty");
     }
 }

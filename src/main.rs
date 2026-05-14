@@ -7,6 +7,7 @@ mod configuration;
 mod db;
 mod generator;
 mod return_values;
+use crate::db::parse_db_schema::DbSchemaParser;
 use crate::generator::template_engine;
 use configuration::carpathia_conf::CarpathiaConfig;
 use configuration::conf_enums::CacheModus;
@@ -75,9 +76,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             exit(i32::from(e.error_type));
         }
     };
-    let db_schema_parser =
-        db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name, DbType::Postgres);
-    let table_info_map = match db_schema_parser.parse_schema().await {
+
+    let table_info_map = match DbSchemaParser::parse_schema(&config).await {
         Ok(schema) => schema,
         Err(e) => {
             //error!("Error parsing database schema: {}", e);

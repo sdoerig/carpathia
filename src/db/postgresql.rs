@@ -1,15 +1,17 @@
-use std::collections::BTreeMap;
-use std::str::FromStr;
-
 use super::db_schema_structs::{
     ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ConstraintType,
     IsGenerated, IsIdentity, IsNullable, ObjectType,
 };
 use super::traits::DatabaseQuerier;
+use crate::configuration::carpathia_conf::CarpathiaConfig;
+use crate::configuration::conf_enums::DbPool;
 use crate::db::postgresql_structs::PgColumnInfo;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
+use std::collections::BTreeMap;
+use std::ops::Deref;
+use std::str::FromStr;
 pub(crate) struct PostgresQuerier {
     pool: Pool<Postgres>,
 }
@@ -102,41 +104,31 @@ OFFSET $2;
 impl PostgresQuerier {}
 
 impl DatabaseQuerier for PostgresQuerier {
-    fn new(db_url: &str, db_name: &str) -> Result<Self, CarpathiaError> {
-        let full_db_url = format!("{db_url}/{db_name}");
-        let pool = PgPoolOptions::new()
-            .connect_lazy(&full_db_url)
-            .map_err(|e| {
-                error!("Error creating database connection pool: {e}");
-                CarpathiaError {
-                    message: format!("Failed to create database connection pool: {e}"),
-                    error_type: crate::return_values::carpathia_errors::ErrorNumber::DatabaseConnectionError,
-                }
-            })?;
-        Ok(Self { pool })
-    }
-    async fn get_schema(&self) -> Result<AbstractDbRepr, CarpathiaError> {
+    async fn get_schema(config: &CarpathiaConfig) -> Result<AbstractDbRepr, CarpathiaError> {
         // Here you would implement the logic to query the database for its schema
         // and populate your data structures with the extracted information.
         // This is just a placeholder for demonstration purposes.
-        info!(
-            "Parsing schema for PostgreSQL database: {}",
-            &self
-                .pool
-                .connect_options()
-                .get_database()
-                .unwrap_or("unknown database")
-        );
+        info!("Parsing schema for PostgreSQL database:");
         let mut table_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
             std::collections::BTreeMap::new();
         let mut view_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
             std::collections::BTreeMap::new();
         let mut offset = 0;
+        let pool = match config.db_pool {
+            DbPool::Postgres(ref pool) => pool,
+            _ => {
+                return Err(CarpathiaError {
+                    message: "Invalid database pool type for PostgreSQL querier".to_string(),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::InvalidPoolType,
+                });
+            }
+        };
         loop {
             let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
                 .bind(LIMIT)
                 .bind(offset)
-                .fetch_all(&self.pool)
+                .fetch_all(pool)
                 .await
                 .map_err(|e| {
                     debug!("Error executing schema query: {e}");
