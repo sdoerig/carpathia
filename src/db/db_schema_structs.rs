@@ -47,33 +47,6 @@ pub(crate) struct AbstractAttribute {
     pub referenced_column: Option<String>,
     pub comment: Option<String>,
 }
-// This enum represents the supported database types. Currently, only PostgreSQL is supported, but we can easily add support for MySQL and SQLite in the future by adding new variants to this enum and implementing the necessary logic in the database querier and schema parser.
-pub(crate) enum DbType {
-    Postgres,
-    #[allow(dead_code)]
-    MySql, // Future support for MySQL
-    #[allow(dead_code)]
-    Sqlite, // Future support for SQLite
-}
-
-/**
-        "column_name": "actor_id",
-         "data_type": "integer",
-         "is_nullable": "NO",
-         "column_default": "nextval('actor_actor_id_seq'::regclass)",
-         "character_maximum_length": null,
-         "numeric_precision": 32,
-         "numeric_scale": 0,
-         "is_identity": "NO", enum values are "YES" and "NO"
-         "identity_generation": null,
-         "is_generated": "NEVER", enum values are "ALWAYS", "BY DEFAULT", "BY DEFAULT ON NULL", "NEVER"
-         "generation_expression": null,
-         "constraint_name": "actor_pkey",
-         "constraint_type": "PRIMARY KEY", enum values are "PRIMARY KEY", "FOREIGN KEY", "UNIQUE", "CHECK", "EXCLUDE"
-         "referenced_table": null,
-         "referenced_column": null,
-         "comment": null
-*/
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
 pub enum ObjectType {

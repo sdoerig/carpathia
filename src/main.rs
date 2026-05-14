@@ -3,13 +3,14 @@ use log::{error, info};
 use std::path::PathBuf;
 use std::process::exit;
 mod cache;
+mod configuration;
 mod db;
 mod generator;
 mod return_values;
-
 use crate::generator::template_engine;
-use cache::cache_structs::CacheModus;
-use db::db_schema_structs::DbType;
+use configuration::carpathia_conf::CarpathiaConfig;
+use configuration::conf_enums::CacheModus;
+use configuration::conf_enums::DbType;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
 #[command(
@@ -25,6 +26,9 @@ struct Args {
     /// Database name you would like to generate code for - just the name NOT the full URL: `my_database`
     #[arg(long)]
     db_name: String,
+    /// Database type - currently only `Postgres` is supported, MySQL  and SQLite planned in the future.
+    #[arg(long, value_enum, default_value_t = DbType::Postgres)]
+    db_type: DbType,
     /// Forces the generator to overwrite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
     #[arg(long, value_enum, default_value_t = CacheModus::UseCache)]
     cache_modus: CacheModus,
@@ -54,6 +58,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Database URL: {}", &args.db_url);
     info!("Database Name: {}", &args.db_name);
     info!("Output Directory: {}", &args.output_directory);
+
+    let config = match CarpathiaConfig::new(
+        &args.db_url,
+        &args.db_name,
+        &args.db_type,
+        args.cache_modus,
+        &args.output_directory,
+        &args.cache_directory,
+        args.print_schema,
+        args.print_db_types,
+    ) {
+        Ok(config) => config,
+        Err(e) => {
+            error!("Error creating configuration: {}", e);
+            exit(i32::from(e.error_type));
+        }
+    };
     let db_schema_parser =
         db::parse_db_schema::DbSchemaParser::new(args.db_url, args.db_name, DbType::Postgres);
     let table_info_map = match db_schema_parser.parse_schema().await {

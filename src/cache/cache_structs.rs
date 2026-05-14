@@ -1,3 +1,4 @@
+use crate::configuration::conf_enums::CacheModus;
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use blake3::Hasher as Blake3Hasher;
@@ -7,12 +8,6 @@ use serde::Serialize;
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
-
-#[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub(crate) enum CacheModus {
-    BypassCache,
-    UseCache,
-}
 
 pub(crate) struct CacheSectionDiff {
     pub to_generate: Vec<String>,

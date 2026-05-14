@@ -12,7 +12,7 @@
  *
  */
 use super::cache_structs::{CacheFile, CacheFileDiff, compare_cache_files};
-use crate::cache::cache_structs::CacheModus;
+use crate::configuration::conf_enums::CacheModus;
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{error, info};
@@ -105,7 +105,7 @@ impl Cache {
 mod tests {
     use super::*;
     use crate::cache::cache_file::Cache;
-    use crate::cache::cache_structs::CacheModus;
+    use crate::configuration::conf_enums::CacheModus;
     use crate::db::db_schema_structs::AbstractAttribute;
     use crate::db::db_schema_structs::AbstractDbRepr;
     use crate::db::db_schema_structs::{

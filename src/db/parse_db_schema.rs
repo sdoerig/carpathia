@@ -1,8 +1,8 @@
+use crate::configuration::conf_enums::DbType;
 /// This module extracts the datebase schema from a `PostgreSQL` database and
 /// generates a Rust struct for each table in the database. It also proviedes the
 /// intermeditate data structures to hold the extracted schema information.
 use crate::db::db_schema_structs::AbstractDbRepr;
-use crate::db::db_schema_structs::DbType;
 use crate::db::postgresql::PostgresQuerier;
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
@@ -28,12 +28,6 @@ impl DbSchemaParser {
             DbType::Postgres => {
                 let querier = PostgresQuerier::new(&self.db_url, &self.db_name)?;
                 querier.get_schema().await
-            }
-            DbType::MySql => {
-                unimplemented!("MySQL support is not implemented yet");
-            }
-            DbType::Sqlite => {
-                unimplemented!("SQLite support is not implemented yet");
             }
         }
     }
