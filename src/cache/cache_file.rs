@@ -1,19 +1,3 @@
-// Copyright 2026 Stefan Dörig
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-use super::cache_structs::{CacheFile, CacheFileDiff, compare_cache_files};
-use crate::cache::cache_structs::CacheModus;
 /**
  * This module is responsible for managing the cache file that stores the hash of the
  * database schema information. The cache file is used to determine if there have been
@@ -27,7 +11,9 @@ use crate::cache::cache_structs::CacheModus;
  * it can skip the code generation process for those entities.
  *
  */
-use crate::db::db_schema_structs::{AbstractDbRepr};
+use super::cache_structs::{CacheFile, CacheFileDiff, compare_cache_files};
+use crate::cache::cache_structs::CacheModus;
+use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{error, info};
 
@@ -122,27 +108,18 @@ mod tests {
     use crate::cache::cache_structs::CacheModus;
     use crate::db::db_schema_structs::AbstractAttribute;
     use crate::db::db_schema_structs::AbstractDbRepr;
-    use crate::db::db_schema_structs::{AbstractTableRepr, ABSTRACT_DB_REPR_VERSION};
+    use crate::db::db_schema_structs::{
+        ABSTRACT_DB_REPR_VERSION, AbstractTableRepr, ConstraintType, IsGenerated, IsIdentity,
+        IsNullable, ObjectType,
+    };
     use std::collections::BTreeMap;
     use tempfile::NamedTempFile;
     use tempfile::env::temp_dir;
-    enum DbObjectType {
-        Table,
-        View,
-    }
-    impl From<DbObjectType> for String {
-        fn from(object_type: DbObjectType) -> String {
-            match object_type {
-                DbObjectType::Table => "BASE TABLE".to_string(),
-                DbObjectType::View => "VIEW".to_string(),
-            }
-        }
-    }
 
     fn create_abstract_db_repr(
         table_name: &str,
         column_name: &str,
-        object_type: DbObjectType,
+        object_type: ObjectType,
     ) -> AbstractDbRepr {
         let atr = create_abstract_selectable(table_name, column_name, object_type);
         let mut db_repr = AbstractDbRepr {
@@ -157,7 +134,7 @@ mod tests {
     fn create_abstract_selectable(
         table_name: &str,
         column_name: &str,
-        object_type: DbObjectType,
+        object_type: ObjectType,
     ) -> AbstractTableRepr {
         let mut abstract_attribte_map: BTreeMap<String, AbstractAttribute> = BTreeMap::new();
         abstract_attribte_map.insert(
@@ -165,17 +142,17 @@ mod tests {
             AbstractAttribute {
                 column_name: column_name.to_string(),
                 data_type: "integer".to_string(),
-                is_nullable: "NO".to_string(),
+                is_nullable: "NO".parse().unwrap_or(IsNullable::No),
                 column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
                 character_maximum_length: None,
                 numeric_precision: Some(32),
                 numeric_scale: Some(0),
-                is_identity: "NO".to_string(),
+                is_identity: "NO".parse().unwrap_or(IsIdentity::No),
                 identity_generation: None,
-                is_generated: "NO".to_string(),
+                is_generated: "NO".parse().unwrap_or(IsGenerated::Never),
                 generation_expression: None,
                 constraint_name: Some("users_pkey".to_string()),
-                constraint_type: Some("PRIMARY KEY".to_string()),
+                constraint_type: "PRIMARY KEY".parse().unwrap_or(ConstraintType::None),
                 referenced_table: None,
                 referenced_column: None,
                 comment: Some("Primary key for users table".to_string()),
@@ -183,7 +160,7 @@ mod tests {
         );
         let atr = AbstractTableRepr {
             table_name: table_name.to_string(),
-            object_type: String::from(object_type),
+            object_type: object_type,
             comment: Some("Test table".to_string()),
             attributes: abstract_attribte_map,
         };
@@ -195,7 +172,7 @@ mod tests {
         let temp_dir = tempfile::tempdir().unwrap();
         let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
         let new_content: AbstractDbRepr =
-            create_abstract_db_repr("test_table", "test_column", DbObjectType::Table);
+            create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
         match cache.get_changed_entities(&new_content) {
             Ok(result) => {
                 assert_eq!(
@@ -235,7 +212,7 @@ mod tests {
         let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
         //cache.remove_cache_file(); // Ensure we start with a clean slate
         let mut new_content: AbstractDbRepr =
-            create_abstract_db_repr("test_table", "test_column", DbObjectType::Table);
+            create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
         match cache.get_changed_entities(&new_content) {
             Ok(result) => {
                 assert_eq!(
@@ -276,7 +253,11 @@ mod tests {
 
         new_content.tables.insert(
             "test_table_brand_new".to_string(),
-            create_abstract_selectable("test_table_brand_new", "test_column", DbObjectType::Table),
+            create_abstract_selectable(
+                "test_table_brand_new",
+                "test_column",
+                ObjectType::BaseTable,
+            ),
         );
         let cache_third_run = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
         match cache_third_run.get_changed_entities(&new_content) {
@@ -305,7 +286,7 @@ mod tests {
         let temp_dir = tempfile::tempdir().unwrap();
         let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::BypassCache);
         let mut new_content: AbstractDbRepr =
-            create_abstract_db_repr("test_table", "test_column", DbObjectType::Table);
+            create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
 
         match cache.get_changed_entities(&new_content) {
             Ok(result) => {
@@ -352,7 +333,7 @@ mod tests {
         let temp_dir = tempfile::tempdir().unwrap();
         let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
         let mut new_content: AbstractDbRepr =
-            create_abstract_db_repr("test_table", "test_column", DbObjectType::Table);
+            create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
 
         match cache.get_changed_entities(&new_content) {
             Ok(result) => {

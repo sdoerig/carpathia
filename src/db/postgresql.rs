@@ -1,21 +1,9 @@
-// Copyright 2026 Stefan Dörig
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 use std::collections::BTreeMap;
+use std::str::FromStr;
 
 use super::db_schema_structs::{
-    ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr,
+    ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ConstraintType,
+    IsGenerated, IsIdentity, IsNullable, ObjectType,
 };
 use super::traits::DatabaseQuerier;
 use crate::db::postgresql_structs::PgColumnInfo;
@@ -176,48 +164,56 @@ impl DatabaseQuerier for PostgresQuerier {
                 let attribute = AbstractAttribute {
                     column_name: row.column_name,
                     data_type,
-                    is_nullable: row.is_nullable,
+                    is_nullable: row.is_nullable.parse().unwrap_or(IsNullable::No),
                     column_default: row.column_default,
                     character_maximum_length: row.character_maximum_length,
                     numeric_precision: row.numeric_precision,
                     numeric_scale: row.numeric_scale,
-                    is_identity: row.is_identity,
+                    is_identity: row.is_identity.parse().unwrap_or(IsIdentity::No),
                     identity_generation: row.identity_generation,
-                    is_generated: row.is_generated,
+                    is_generated: row.is_generated.parse().unwrap_or(IsGenerated::Never),
                     generation_expression: row.generation_expression,
                     constraint_name: row.constraint_name,
-                    constraint_type: row.constraint_type,
+                    constraint_type: row
+                        .constraint_type
+                        .as_ref()
+                        .and_then(|s| s.parse().ok())
+                        .unwrap_or(ConstraintType::None),
                     referenced_table: row.referenced_table,
                     referenced_column: row.referenced_column,
                     comment: row.column_comment,
                 };
-                match row.object_type.as_str() {
-                    "BASE TABLE" => {
+                let object_type = row.object_type.parse().unwrap_or_else(|_| {
+                    debug!("Unknown object type: {}", row.object_type);
+                    ObjectType::Other
+                });
+                match object_type {
+                    ObjectType::BaseTable => {
                         table_info_map
                             .entry(row.table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
                                 table_name: row.table_name,
-                                object_type: row.object_type,
+                                object_type: object_type,
                                 comment: row.table_comment,
                                 attributes: BTreeMap::new(),
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
                     }
-                    "VIEW" | "MATERIALIZED VIEW" => {
+                    ObjectType::View | ObjectType::MaterializedView => {
                         view_info_map
                             .entry(row.table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
                                 table_name: row.table_name,
-                                object_type: row.object_type,
+                                object_type: object_type,
                                 comment: row.table_comment,
                                 attributes: BTreeMap::new(),
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
                     }
-                    _ => {
-                        debug!(
+                    ObjectType::Other => {
+                        error!(
                             "Skipping unsupported object type: {} for table {}",
                             row.object_type, row.table_name
                         );

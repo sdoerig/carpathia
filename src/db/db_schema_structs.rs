@@ -1,30 +1,18 @@
-// Copyright 2026 Stefan Dörig
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 // This module defines the intermediate database schema representation that will be
 //used by the schema parser and the code generator. The AbstractDbRepr struct
 // represents a database table, while the AbstractAttribute struct represents a column
 // in a table.
 // The DbType enum represents the supported database types, which can be extended in the future to support more databases.
-use std::collections::BTreeMap;
+use crate::return_values::carpathia_errors::CarpathiaError;
+use log::error;
+use std::{collections::BTreeMap, str::FromStr};
 
 pub const ABSTRACT_DB_REPR_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct AbstractDbRepr {
     // Apply the version as string, might have to deserialize it back to a struct.
-    // Furthermore as there will be differnt versions and users can 
+    // Furthermore as there will be differnt versions and users can
     // print out the ADR the version might help in case of debugging.
     pub version: String,
     pub tables: BTreeMap<String, AbstractTableRepr>,
@@ -33,7 +21,7 @@ pub(crate) struct AbstractDbRepr {
 
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct AbstractTableRepr {
-    pub object_type: String,
+    pub object_type: ObjectType,
     pub table_name: String,
     pub comment: Option<String>,
     pub attributes: BTreeMap<String, AbstractAttribute>,
@@ -44,17 +32,17 @@ pub(crate) struct AbstractTableRepr {
 pub(crate) struct AbstractAttribute {
     pub column_name: String,
     pub data_type: String,
-    pub is_nullable: String,
+    pub is_nullable: IsNullable,
     pub column_default: Option<String>,
     pub character_maximum_length: Option<i32>,
     pub numeric_precision: Option<i32>,
     pub numeric_scale: Option<i32>,
-    pub is_identity: String,
+    pub is_identity: IsIdentity,
     pub identity_generation: Option<String>,
-    pub is_generated: String,
+    pub is_generated: IsGenerated,
     pub generation_expression: Option<String>,
     pub constraint_name: Option<String>,
-    pub constraint_type: Option<String>,
+    pub constraint_type: ConstraintType,
     pub referenced_table: Option<String>,
     pub referenced_column: Option<String>,
     pub comment: Option<String>,
@@ -68,6 +56,159 @@ pub(crate) enum DbType {
     Sqlite, // Future support for SQLite
 }
 
+/**
+        "column_name": "actor_id",
+         "data_type": "integer",
+         "is_nullable": "NO",
+         "column_default": "nextval('actor_actor_id_seq'::regclass)",
+         "character_maximum_length": null,
+         "numeric_precision": 32,
+         "numeric_scale": 0,
+         "is_identity": "NO", enum values are "YES" and "NO"
+         "identity_generation": null,
+         "is_generated": "NEVER", enum values are "ALWAYS", "BY DEFAULT", "BY DEFAULT ON NULL", "NEVER"
+         "generation_expression": null,
+         "constraint_name": "actor_pkey",
+         "constraint_type": "PRIMARY KEY", enum values are "PRIMARY KEY", "FOREIGN KEY", "UNIQUE", "CHECK", "EXCLUDE"
+         "referenced_table": null,
+         "referenced_column": null,
+         "comment": null
+*/
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+pub enum ObjectType {
+    BaseTable,
+    View,
+    MaterializedView,
+    Other,
+}
+
+impl FromStr for ObjectType {
+    type Err = CarpathiaError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "base table" => Ok(ObjectType::BaseTable),
+            "view" => Ok(ObjectType::View),
+            "materialized view" => Ok(ObjectType::MaterializedView),
+            _ => {
+                error!("Invalid object type: {}", s);
+                Err(CarpathiaError {
+                    message: format!("Invalid object type: {}", s),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::InvalidObjectType,
+                })
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, sqlx::Type)]
+pub enum IsNullable {
+    Yes,
+    No,
+}
+
+impl FromStr for IsNullable {
+    type Err = CarpathiaError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "yes" => Ok(IsNullable::Yes),
+            "no" => Ok(IsNullable::No),
+            _ => {
+                error!("Invalid value for is_nullable: {}", s);
+                Err(CarpathiaError {
+                    message: format!("Invalid value for is_nullable: {}", s),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::InvalidConstraintType,
+                })
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, sqlx::Type)]
+pub enum IsIdentity {
+    Yes,
+    No,
+}
+
+impl FromStr for IsIdentity {
+    type Err = CarpathiaError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "yes" => Ok(IsIdentity::Yes),
+            "no" => Ok(IsIdentity::No),
+            _ => {
+                error!("Invalid value for is_identity: {}", s);
+                Err(CarpathiaError {
+                    message: format!("Invalid value for is_identity: {}", s),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::InvalidConstraintType,
+                })
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, sqlx::Type)]
+pub enum IsGenerated {
+    Always,
+    ByDefault,
+    ByDefaultOnNull,
+    Never,
+}
+
+impl FromStr for IsGenerated {
+    type Err = CarpathiaError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "always" => Ok(IsGenerated::Always),
+            "by default" => Ok(IsGenerated::ByDefault),
+            "by default on null" => Ok(IsGenerated::ByDefaultOnNull),
+            "never" => Ok(IsGenerated::Never),
+            _ => {
+                error!("Invalid value for is_generated: {}", s);
+                Err(CarpathiaError {
+                    message: format!("Invalid value for is_generated: {}", s),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::InvalidConstraintType,
+                })
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+pub enum ConstraintType {
+    PrimaryKey,
+    ForeignKey,
+    None,
+}
+
+impl FromStr for ConstraintType {
+    type Err = CarpathiaError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "primary key" => Ok(ConstraintType::PrimaryKey),
+            "foreign key" => Ok(ConstraintType::ForeignKey),
+            "unique" => Ok(ConstraintType::None),
+            _ => {
+                error!("Invalid constraint type: {}", s);
+                Err(CarpathiaError {
+                    message: format!("Invalid constraint type: {}", s),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::InvalidConstraintType,
+                })
+            }
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -76,17 +217,17 @@ mod tests {
         let attribute = AbstractAttribute {
             column_name: column_name.to_string(),
             data_type: "integer".to_string(),
-            is_nullable: "NO".to_string(),
+            is_nullable: "NO".parse().unwrap_or(IsNullable::No),
             column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
             character_maximum_length: None,
             numeric_precision: Some(32),
             numeric_scale: Some(0),
-            is_identity: "NO".to_string(),
+            is_identity: "NO".parse().unwrap_or(IsIdentity::No),
             identity_generation: None,
-            is_generated: "NO".to_string(),
+            is_generated: "NO".parse().unwrap_or(IsGenerated::Never),
             generation_expression: None,
             constraint_name: Some("users_pkey".to_string()),
-            constraint_type: Some("PRIMARY KEY".to_string()),
+            constraint_type: "PRIMARY KEY".parse().unwrap_or(ConstraintType::None),
             referenced_table: None,
             referenced_column: None,
             comment: Some("Primary key for users table".to_string()),
@@ -96,7 +237,7 @@ mod tests {
     fn create_table_info(table_name: &str) -> AbstractTableRepr {
         let mut table_info = AbstractTableRepr {
             table_name: table_name.to_string(),
-            object_type: "BASE TABLE".to_string(),
+            object_type: "BASE TABLE".parse().unwrap_or(ObjectType::BaseTable),
             attributes: BTreeMap::new(),
             comment: Some("Users table".to_string()),
         };
