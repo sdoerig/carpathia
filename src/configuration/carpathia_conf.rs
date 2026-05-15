@@ -18,12 +18,12 @@ pub struct CarpathiaConfig {
 
 impl CarpathiaConfig {
     pub fn new(
-        db_url: &String,
-        db_name: &String,
+        db_url: &str,
+        db_name: &str,
         db_type: &DbType,
         cache_modus: CacheModus,
-        output_directory: &String,
-        cache_directory: &String,
+        output_directory: &str,
+        cache_directory: &str,
         print_schema: bool,
         print_db_types: bool,
     ) -> Result<Self, CarpathiaError> {
