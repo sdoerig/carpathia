@@ -13,13 +13,11 @@
  */
 use super::cache_structs::{CacheFile, CacheFileDiff, compare_cache_files};
 use crate::configuration::carpathia_conf::CarpathiaConfig;
-use crate::configuration::conf_enums::CacheModus;
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{error, info};
 
 use std::fs;
-use std::path::PathBuf;
 
 pub(crate) struct Cache {}
 
