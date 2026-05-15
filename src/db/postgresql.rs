@@ -156,17 +156,26 @@ impl DatabaseQuerier for PostgresQuerier {
                 let attribute = AbstractAttribute {
                     column_name: row.column_name,
                     data_type,
-                    is_nullable: row.is_nullable.parse().unwrap_or(IsNullable::No),
+                    is_nullable: row
+                        .is_nullable
+                        .parse()
+                        .unwrap_or(IsNullable::Unknown(row.is_nullable)),
                     column_default: row.column_default,
                     character_maximum_length: row.character_maximum_length,
                     numeric_precision: row.numeric_precision,
                     numeric_scale: row.numeric_scale,
-                    is_identity: row.is_identity.parse().unwrap_or(IsIdentity::No),
+                    is_identity: row
+                        .is_identity
+                        .parse()
+                        .unwrap_or(IsIdentity::Unknown(row.is_identity)),
                     identity_generation: row.identity_generation,
-                    is_generated: row.is_generated.parse().unwrap_or(IsGenerated::Never),
+                    is_generated: row
+                        .is_generated
+                        .parse()
+                        .unwrap_or(IsGenerated::Unknown(row.is_generated)),
                     generation_expression: row.generation_expression,
                     constraint_name: row.constraint_name,
-                    constraint_type: row
+                     constraint_type: row
                         .constraint_type
                         .as_ref()
                         .and_then(|s| s.parse().ok())
@@ -204,7 +213,7 @@ impl DatabaseQuerier for PostgresQuerier {
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
                     }
-                    ObjectType::Other => {
+                    _ => {
                         error!(
                             "Skipping unsupported object type: {} for table {}",
                             row.object_type, row.table_name

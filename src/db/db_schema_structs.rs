@@ -54,6 +54,7 @@ pub enum ObjectType {
     View,
     MaterializedView,
     Other,
+    Unknown(String),
 }
 
 impl FromStr for ObjectType {
@@ -66,20 +67,17 @@ impl FromStr for ObjectType {
             "materialized view" => Ok(ObjectType::MaterializedView),
             _ => {
                 error!("Invalid object type: {}", s);
-                Err(CarpathiaError {
-                    message: format!("Invalid object type: {}", s),
-                    error_type:
-                        crate::return_values::carpathia_errors::ErrorNumber::InvalidObjectType,
-                })
+                Ok(ObjectType::Unknown(s.to_string()))
             }
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, sqlx::Type)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
 pub enum IsNullable {
     Yes,
     No,
+    Unknown(String),
 }
 
 impl FromStr for IsNullable {
@@ -91,20 +89,17 @@ impl FromStr for IsNullable {
             "no" => Ok(IsNullable::No),
             _ => {
                 error!("Invalid value for is_nullable: {}", s);
-                Err(CarpathiaError {
-                    message: format!("Invalid value for is_nullable: {}", s),
-                    error_type:
-                        crate::return_values::carpathia_errors::ErrorNumber::InvalidConstraintType,
-                })
+                Ok(IsNullable::Unknown(s.to_string()))
             }
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, sqlx::Type)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
 pub enum IsIdentity {
     Yes,
     No,
+    Unknown(String),
 }
 
 impl FromStr for IsIdentity {
@@ -116,22 +111,19 @@ impl FromStr for IsIdentity {
             "no" => Ok(IsIdentity::No),
             _ => {
                 error!("Invalid value for is_identity: {}", s);
-                Err(CarpathiaError {
-                    message: format!("Invalid value for is_identity: {}", s),
-                    error_type:
-                        crate::return_values::carpathia_errors::ErrorNumber::InvalidConstraintType,
-                })
+                Ok(IsIdentity::Unknown(s.to_string()))
             }
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, sqlx::Type)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
 pub enum IsGenerated {
     Always,
     ByDefault,
     ByDefaultOnNull,
     Never,
+    Unknown(String),
 }
 
 impl FromStr for IsGenerated {
@@ -145,11 +137,7 @@ impl FromStr for IsGenerated {
             "never" => Ok(IsGenerated::Never),
             _ => {
                 error!("Invalid value for is_generated: {}", s);
-                Err(CarpathiaError {
-                    message: format!("Invalid value for is_generated: {}", s),
-                    error_type:
-                        crate::return_values::carpathia_errors::ErrorNumber::InvalidConstraintType,
-                })
+                Ok(IsGenerated::Unknown(s.to_string()))
             }
         }
     }
@@ -160,6 +148,7 @@ pub enum ConstraintType {
     PrimaryKey,
     ForeignKey,
     None,
+    Unknown(String),
 }
 
 impl FromStr for ConstraintType {
@@ -172,11 +161,7 @@ impl FromStr for ConstraintType {
             "unique" => Ok(ConstraintType::None),
             _ => {
                 error!("Invalid constraint type: {}", s);
-                Err(CarpathiaError {
-                    message: format!("Invalid constraint type: {}", s),
-                    error_type:
-                        crate::return_values::carpathia_errors::ErrorNumber::InvalidConstraintType,
-                })
+                Ok(ConstraintType::Unknown(s.to_string()))
             }
         }
     }
