@@ -88,13 +88,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     match Cache::get_changed_entities(&config, &table_info_map) {
         Ok(_changed_entities) => {
-            if args.print_schema {
+            if config.print_schema {
                 println!(
                     "Extracted database schema in JSON format:\n{}",
                     serde_json::to_string_pretty(&table_info_map)?
                 );
             }
-            if args.print_db_types {
+            if config.print_db_types {
                 template_engine::print_db_types_as_json(&table_info_map)?;
             }
         }

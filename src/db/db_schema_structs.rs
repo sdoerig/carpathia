@@ -3,8 +3,7 @@
 // represents a database table, while the AbstractAttribute struct represents a column
 // in a table.
 // The DbType enum represents the supported database types, which can be extended in the future to support more databases.
-use crate::return_values::carpathia_errors::CarpathiaError;
-use log::error;
+use log::debug;
 use std::{collections::BTreeMap, str::FromStr};
 
 pub const ABSTRACT_DB_REPR_VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -58,7 +57,7 @@ pub enum ObjectType {
 }
 
 impl FromStr for ObjectType {
-    type Err = CarpathiaError;
+    type Err = std::convert::Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
@@ -66,7 +65,7 @@ impl FromStr for ObjectType {
             "view" => Ok(ObjectType::View),
             "materialized view" => Ok(ObjectType::MaterializedView),
             _ => {
-                error!("Invalid object type: {}", s);
+                debug!("Invalid object type: {}", s);
                 Ok(ObjectType::Unknown(s.to_string()))
             }
         }
@@ -81,14 +80,14 @@ pub enum IsNullable {
 }
 
 impl FromStr for IsNullable {
-    type Err = CarpathiaError;
+    type Err = std::convert::Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "yes" => Ok(IsNullable::Yes),
             "no" => Ok(IsNullable::No),
             _ => {
-                error!("Invalid value for is_nullable: {}", s);
+                debug!("Invalid value for is_nullable: {}", s);
                 Ok(IsNullable::Unknown(s.to_string()))
             }
         }
@@ -103,14 +102,14 @@ pub enum IsIdentity {
 }
 
 impl FromStr for IsIdentity {
-    type Err = CarpathiaError;
+    type Err = std::convert::Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "yes" => Ok(IsIdentity::Yes),
             "no" => Ok(IsIdentity::No),
             _ => {
-                error!("Invalid value for is_identity: {}", s);
+                debug!("Invalid value for is_identity: {}", s);
                 Ok(IsIdentity::Unknown(s.to_string()))
             }
         }
@@ -127,7 +126,7 @@ pub enum IsGenerated {
 }
 
 impl FromStr for IsGenerated {
-    type Err = CarpathiaError;
+    type Err = std::convert::Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
@@ -136,7 +135,7 @@ impl FromStr for IsGenerated {
             "by default on null" => Ok(IsGenerated::ByDefaultOnNull),
             "never" => Ok(IsGenerated::Never),
             _ => {
-                error!("Invalid value for is_generated: {}", s);
+                debug!("Invalid value for is_generated: {}", s);
                 Ok(IsGenerated::Unknown(s.to_string()))
             }
         }
@@ -152,7 +151,7 @@ pub enum ConstraintType {
 }
 
 impl FromStr for ConstraintType {
-    type Err = CarpathiaError;
+    type Err = std::convert::Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
@@ -160,7 +159,7 @@ impl FromStr for ConstraintType {
             "foreign key" => Ok(ConstraintType::ForeignKey),
             "unique" => Ok(ConstraintType::None),
             _ => {
-                error!("Invalid constraint type: {}", s);
+                debug!("Invalid constraint type: {}", s);
                 Ok(ConstraintType::Unknown(s.to_string()))
             }
         }
@@ -182,7 +181,7 @@ mod tests {
             numeric_scale: Some(0),
             is_identity: "NO".parse().unwrap_or(IsIdentity::No),
             identity_generation: None,
-            is_generated: "NO".parse().unwrap_or(IsGenerated::Never),
+            is_generated: "NO".parse().unwrap_or(IsGenerated::Always),
             generation_expression: None,
             constraint_name: Some("users_pkey".to_string()),
             constraint_type: "PRIMARY KEY".parse().unwrap_or(ConstraintType::None),

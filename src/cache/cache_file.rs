@@ -124,7 +124,7 @@ mod tests {
                 numeric_scale: Some(0),
                 is_identity: "NO".parse().unwrap_or(IsIdentity::No),
                 identity_generation: None,
-                is_generated: "NO".parse().unwrap_or(IsGenerated::Never),
+                is_generated: "NO".parse().unwrap_or(IsGenerated::Always),
                 generation_expression: None,
                 constraint_name: Some("users_pkey".to_string()),
                 constraint_type: "PRIMARY KEY".parse().unwrap_or(ConstraintType::None),
