@@ -4,11 +4,14 @@ use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use log::error;
 use sqlx::postgres::PgPoolOptions;
 use std::path::PathBuf;
+
+const CACHE_FILE_NAME: &str = "carpathia_cache.json";
+
 pub struct CarpathiaConfig {
     pub db_pool: DbPool,
     pub cache_modus: CacheModus,
     pub output_directory: PathBuf,
-    pub cache_directory: PathBuf,
+    pub cache_file: PathBuf,
     pub print_schema: bool,
     pub print_db_types: bool,
 }
@@ -41,7 +44,7 @@ impl CarpathiaConfig {
             db_pool,
             cache_modus,
             output_directory: PathBuf::from(output_directory),
-            cache_directory: PathBuf::from(cache_directory),
+            cache_file: PathBuf::from(cache_directory).join(CACHE_FILE_NAME),
             print_schema,
             print_db_types,
         })

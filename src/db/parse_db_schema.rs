@@ -17,7 +17,8 @@ impl DbSchemaParser {
         config: &CarpathiaConfig,
     ) -> Result<AbstractDbRepr, CarpathiaError> {
         match config.db_pool {
-            DbPool::Postgres(_) => PostgresQuerier::get_schema(config).await, // Future support for MySQL and SQLite can be added here by adding new variants to the DbPool enum and handling them accordingly.
+            DbPool::Postgres(_) => PostgresQuerier::get_schema(config).await,
+            DbPool::Dummy => todo!("Dummy database pool not implemented"),
         }
     }
 }

@@ -12,6 +12,7 @@
  *
  */
 use super::cache_structs::{CacheFile, CacheFileDiff, compare_cache_files};
+use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::CacheModus;
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
@@ -20,59 +21,30 @@ use log::{error, info};
 use std::fs;
 use std::path::PathBuf;
 
-const CACHE_FILE_NAME: &str = "carpathia_cache.json";
-
-pub(crate) struct Cache {
-    path: PathBuf,
-    cache_modus: CacheModus,
-}
-
-impl std::fmt::Debug for Cache {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Cache")
-            .field("path", &self.path)
-            .field("cache_modus", &self.cache_modus)
-            .finish()
-    }
-}
+pub(crate) struct Cache {}
 
 impl Cache {
-    pub(crate) fn new(path: PathBuf, cache_modus: CacheModus) -> Self {
-        /*
-         * When it create a new cache, it will try to read the existing cache file if it exists.
-         * If the file does not exist, it will start with an empty cache. The cache content will be stored as a HashMap where the key is the name of the database entity (e.g., table name) and the value is a hash of the entity's schema information. This way, it can easily compare the new schema information with the cached information to determine if there have been any changes.
-         * If the cache file exists but cannot be read (e.g., due to permissions issues),
-         * it will also start with an empty cache and log an error message.
-         * The cache file will be created or updated when it write the new cache content after
-         * comparing it with the new schema information.
-         *
-         */
-        let cache_file_path = path.join(CACHE_FILE_NAME);
-
-        Self {
-            path: cache_file_path,
-            cache_modus,
-        }
-    }
-
     pub(crate) fn get_changed_entities(
-        &self,
+        config: &CarpathiaConfig,
         new_content: &AbstractDbRepr,
     ) -> Result<CacheFileDiff, CarpathiaError> {
-        let old_cache = match CacheFile::from_file(&self.path) {
+        let old_cache = match CacheFile::from_file(&config.cache_file) {
             Ok(cache) => cache,
             Err(e) => {
-                error!("Failed to read cache file at {:?}: {}", &self.path, e);
+                error!(
+                    "Failed to read cache file at {:?}: {}",
+                    &config.cache_file, e
+                );
                 CacheFile::new()
             }
         };
         let new_cache = CacheFile::from_abstract_db_repr(new_content);
-        let cache_diff = compare_cache_files(&old_cache, &new_cache, self.cache_modus);
-        match new_cache.save_to_file(&self.path) {
+        let cache_diff = compare_cache_files(&old_cache, &new_cache, config.cache_modus);
+        match new_cache.save_to_file(&config.cache_file) {
             Ok(()) => {
                 info!(
                     "Cache file updated successfully at {}",
-                    &self.path.display()
+                    &config.cache_file.display()
                 );
                 Ok(cache_diff)
             }
@@ -84,19 +56,22 @@ impl Cache {
     }
 
     #[allow(dead_code)]
-    fn remove_cache_file(&self) {
+    fn remove_cache_file(config: &CarpathiaConfig) {
         /*
          * This function is used in the tests to ensure that we start with a clean slate for the cache. It will try to remove the cache file if it exists. If the file is successfully removed, it will log a success message. If the file cannot be removed (e.g., due to permissions issues), it will log an error message. This function is not intended to be used in the main application logic,
          * but rather as a utility for testing purposes.
          */
         //let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
-        if fs::remove_file(&self.path).is_ok() {
+        if fs::remove_file(&config.cache_file).is_ok() {
             info!(
                 "Cache file removed successfully at {}",
-                &self.path.display()
+                &config.cache_file.display()
             );
         } else {
-            error!("Failed to remove cache file at {}", &self.path.display());
+            error!(
+                "Failed to remove cache file at {}",
+                &config.cache_file.display()
+            );
         }
     }
 }
@@ -105,7 +80,7 @@ impl Cache {
 mod tests {
     use super::*;
     use crate::cache::cache_file::Cache;
-    use crate::configuration::conf_enums::CacheModus;
+    use crate::configuration::conf_enums::{CacheModus, DbPool};
     use crate::db::db_schema_structs::AbstractAttribute;
     use crate::db::db_schema_structs::AbstractDbRepr;
     use crate::db::db_schema_structs::{
@@ -167,13 +142,26 @@ mod tests {
         atr
     }
 
+    fn get_config_with_cache_modus(cache_modus: CacheModus) -> CarpathiaConfig {
+        let temp_dir = tempfile::tempdir().unwrap();
+        let cache_file_path = temp_dir.path().to_path_buf().join("carpathia_cache.json");
+        CarpathiaConfig {
+            db_pool: DbPool::Dummy,
+            cache_modus: cache_modus,
+            output_directory: tempfile::tempdir().unwrap().path().to_path_buf(),
+            cache_file: cache_file_path,
+            print_schema: false,
+            print_db_types: false,
+        }
+    }
+
     #[test]
     fn test_get_changed_entities() {
-        let temp_dir = tempfile::tempdir().unwrap();
-        let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
+        let config = get_config_with_cache_modus(CacheModus::UseCache);
+        //let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
         let new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
-        match cache.get_changed_entities(&new_content) {
+        match Cache::get_changed_entities(&config, &new_content) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -203,17 +191,17 @@ mod tests {
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         };
 
-        cache.remove_cache_file();
+        Cache::remove_cache_file(&config);
     }
 
     #[test]
     fn test_get_changed_entities_but_no_changes() {
-        let temp_dir = tempfile::tempdir().unwrap();
-        let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
+        let config = get_config_with_cache_modus(CacheModus::UseCache);
+        //let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
         //cache.remove_cache_file(); // Ensure we start with a clean slate
         let mut new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
-        match cache.get_changed_entities(&new_content) {
+        match Cache::get_changed_entities(&config, &new_content) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -231,9 +219,9 @@ mod tests {
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         };
 
-        let cache_after_first_run = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
+        //let cache_after_first_run = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
 
-        match cache_after_first_run.get_changed_entities(&new_content) {
+        match Cache::get_changed_entities(&config, &new_content) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -259,8 +247,8 @@ mod tests {
                 ObjectType::BaseTable,
             ),
         );
-        let cache_third_run = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
-        match cache_third_run.get_changed_entities(&new_content) {
+        //let config_third_run = get_config_with_cache_modus(CacheModus::UseCache);
+        match Cache::get_changed_entities(&config, &new_content) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -278,17 +266,16 @@ mod tests {
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         }
 
-        cache_third_run.remove_cache_file();
+        Cache::remove_cache_file(&config);
     }
 
     #[test]
     fn test_get_changed_entities_with_forced() {
-        let temp_dir = tempfile::tempdir().unwrap();
-        let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::BypassCache);
+        let config = get_config_with_cache_modus(CacheModus::BypassCache);
         let mut new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
 
-        match cache.get_changed_entities(&new_content) {
+        match Cache::get_changed_entities(&config, &new_content) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -305,9 +292,8 @@ mod tests {
             }
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         };
-        let cache_after_first_run =
-            Cache::new(temp_dir.path().to_path_buf(), CacheModus::BypassCache);
-        match cache_after_first_run.get_changed_entities(&new_content) {
+        let config_after_first_run = get_config_with_cache_modus(CacheModus::BypassCache);
+        match Cache::get_changed_entities(&config_after_first_run, &new_content) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -325,17 +311,16 @@ mod tests {
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         }
 
-        cache_after_first_run.remove_cache_file();
+        Cache::remove_cache_file(&config_after_first_run);
     }
 
     #[test]
     fn test_cache_removed_entries() {
-        let temp_dir = tempfile::tempdir().unwrap();
-        let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
+        let config = get_config_with_cache_modus(CacheModus::UseCache);
         let mut new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
 
-        match cache.get_changed_entities(&new_content) {
+        match Cache::get_changed_entities(&config, &new_content) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -355,8 +340,8 @@ mod tests {
 
         // Now we remove the entry from the new content and check if it is detected as removed
         new_content.tables.remove("test_table");
-        let cache_third_run = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
-        match cache_third_run.get_changed_entities(&new_content) {
+        //let config_third_run = get_config_with_cache_modus(CacheModus::UseCache);
+        match Cache::get_changed_entities(&config, &new_content) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -374,6 +359,6 @@ mod tests {
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         }
 
-        cache_third_run.remove_cache_file();
+        Cache::remove_cache_file(&config);
     }
 }

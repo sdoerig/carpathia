@@ -13,5 +13,5 @@ pub enum DbType {
 
 pub enum DbPool {
     Postgres(Pool<Postgres>),
-    // Future support for MySQL and SQLite can be added here by adding new variants to this enum and implementing the necessary logic in the database querier and schema parser.
+    Dummy,
 }

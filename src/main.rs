@@ -7,6 +7,7 @@ mod configuration;
 mod db;
 mod generator;
 mod return_values;
+use crate::cache::cache_file::Cache;
 use crate::db::parse_db_schema::DbSchemaParser;
 use crate::generator::template_engine;
 use configuration::carpathia_conf::CarpathiaConfig;
@@ -84,9 +85,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             exit(i32::from(e.error_type));
         }
     };
-    let cache =
-        cache::cache_file::Cache::new(PathBuf::from(args.cache_directory), args.cache_modus);
-    match cache.get_changed_entities(&table_info_map) {
+
+    match Cache::get_changed_entities(&config, &table_info_map) {
         Ok(_changed_entities) => {
             if args.print_schema {
                 println!(
