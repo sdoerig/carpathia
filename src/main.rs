@@ -62,15 +62,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Output Directory: {}", &args.output_directory);
 
     let config = match CarpathiaConfigBuilder::new()
-            .db_url(&args.db_url)
-            .db_name(&args.db_name)
-            .db_type(args.db_type)
-            .cache_modus(args.cache_modus)
-            .output_directory(&args.output_directory)
-            .cache_directory(&args.cache_directory)
-            .print_schema( args.print_schema)
-            .print_db_types( args.print_db_types)
-            .build() {
+        .db_url(&args.db_url)
+        .db_name(&args.db_name)
+        .db_type(args.db_type)
+        .cache_modus(args.cache_modus)
+        .output_directory(&args.output_directory)
+        .cache_directory(&args.cache_directory)
+        .print_schema(args.print_schema)
+        .print_db_types(args.print_db_types)
+        .build()
+    {
         Ok(config) => config,
         Err(e) => {
             error!("Error creating configuration: {}", e);

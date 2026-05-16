@@ -52,7 +52,6 @@ impl CarpathiaConfig {
     }
 }
 
-
 pub struct CarpathiaConfigBuilder {
     db_url: Option<String>,
     db_name: Option<String>,
@@ -63,7 +62,6 @@ pub struct CarpathiaConfigBuilder {
     print_schema: bool,
     print_db_types: bool,
 }
-
 
 impl CarpathiaConfigBuilder {
     pub fn new() -> Self {
@@ -122,18 +120,28 @@ impl CarpathiaConfigBuilder {
 
 impl CarpathiaConfigBuilder {
     pub fn build(self) -> Result<CarpathiaConfig, CarpathiaError> {
-        let db_url = self.db_url.ok_or_else(|| CarpathiaError{ message: "db_url missing".into(), error_type: ErrorNumber::InvalidConfiguration })?;
-        let db_name = self.db_name.ok_or_else(|| CarpathiaError{ message: "db_name missing".into(), error_type: ErrorNumber::InvalidConfiguration })?;
-        let db_type = self.db_type.ok_or_else(|| CarpathiaError{ message: "db_type missing".into(), error_type: ErrorNumber::InvalidConfiguration })?;
+        let db_url = self.db_url.ok_or_else(|| CarpathiaError {
+            message: "db_url missing".into(),
+            error_type: ErrorNumber::InvalidConfiguration,
+        })?;
+        let db_name = self.db_name.ok_or_else(|| CarpathiaError {
+            message: "db_name missing".into(),
+            error_type: ErrorNumber::InvalidConfiguration,
+        })?;
+        let db_type = self.db_type.ok_or_else(|| CarpathiaError {
+            message: "db_type missing".into(),
+            error_type: ErrorNumber::InvalidConfiguration,
+        })?;
 
         let db_pool = match db_type {
-            DbType::Postgres => {
-                DbPool::Postgres(
-                    PgPoolOptions::new()
-                        .connect_lazy(&format!("{db_url}/{db_name}"))
-                        .map_err(|e| CarpathiaError{ message: format!("DB error: {e}"), error_type: ErrorNumber::DatabaseConnectionError })?,
-                )
-            }
+            DbType::Postgres => DbPool::Postgres(
+                PgPoolOptions::new()
+                    .connect_lazy(&format!("{db_url}/{db_name}"))
+                    .map_err(|e| CarpathiaError {
+                        message: format!("DB error: {e}"),
+                        error_type: ErrorNumber::DatabaseConnectionError,
+                    })?,
+            ),
             DbType::Dummy => DbPool::Dummy,
         };
 
@@ -148,26 +156,10 @@ impl CarpathiaConfigBuilder {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    
 
-    fn get_config_with_cache_modus(cache_modus: CacheModus) -> CarpathiaConfig {
-        CarpathiaConfigBuilder::new()
-            .db_url("postgres://localhost")
-            .db_name("test_db")
-            .db_type(DbType::Dummy)
-            .cache_modus(cache_modus)
-            .output_directory("./output")
-            .cache_directory("./cache")
-            .print_schema(false)
-            .print_db_types(false)
-            .build()
-            .expect("Failed to build CarpathiaConfig")
-    }
-    
     #[test]
     fn test_config_builder() {
         let config = CarpathiaConfigBuilder::new()
@@ -185,7 +177,10 @@ mod tests {
         //assert_eq!(config.db_pool, DbPool::Dummy);
         assert_eq!(config.cache_modus, CacheModus::UseCache);
         assert_eq!(config.output_directory, PathBuf::from("./output"));
-        assert_eq!(config.cache_file, PathBuf::from("./cache").join("carpathia_cache.json"));
+        assert_eq!(
+            config.cache_file,
+            PathBuf::from("./cache").join("carpathia_cache.json")
+        );
         assert!(config.print_schema);
         assert!(config.print_db_types);
     }
@@ -203,4 +198,3 @@ mod tests {
         assert_eq!(error.message, "db_url missing");
     }
 }
-

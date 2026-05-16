@@ -37,10 +37,18 @@ pub(crate) fn print_db_types_as_json(
     // to give the users an overview ot the types found in the database
     // and helping them creating a mapping file for their types they wnat
     // to use in the generated code.
-    let mut db_types: BTreeMap<&str, String> = BTreeMap::new();
+    let mut db_types: BTreeMap<&str, BTreeMap<String, String>> = BTreeMap::new();
+
     for key in table_info_map.tables.keys() {
         for attribute in table_info_map.tables[key].attributes.values() {
-            db_types.insert(&attribute.data_type, attribute.data_type.clone());
+            db_types
+                .entry(&attribute.data_type)
+                .or_insert_with(BTreeMap::new)
+                .insert("u_type".to_string(), "".to_string());
+            db_types
+                .entry(&attribute.data_type)
+                .or_insert_with(BTreeMap::new)
+                .insert("u_import".to_string(), "".to_string());
         }
     }
     match serde_json::to_string_pretty(&db_types) {
