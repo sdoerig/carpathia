@@ -9,6 +9,7 @@ pub enum CacheModus {
 #[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DbType {
     Postgres,
+    Dummy,
 }
 
 pub enum DbPool {

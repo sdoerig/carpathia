@@ -10,7 +10,7 @@ mod return_values;
 use crate::cache::cache_file::Cache;
 use crate::db::parse_db_schema::DbSchemaParser;
 use crate::generator::template_engine;
-use configuration::carpathia_conf::CarpathiaConfig;
+use configuration::carpathia_conf::{CarpathiaConfig, CarpathiaConfigBuilder};
 use configuration::conf_enums::CacheModus;
 use configuration::conf_enums::DbType;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
@@ -61,16 +61,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     info!("Database Name: {}", &args.db_name);
     info!("Output Directory: {}", &args.output_directory);
 
-    let config = match CarpathiaConfig::new(
-        &args.db_url,
-        &args.db_name,
-        &args.db_type,
-        args.cache_modus,
-        &args.output_directory,
-        &args.cache_directory,
-        args.print_schema,
-        args.print_db_types,
-    ) {
+    let config = match CarpathiaConfigBuilder::new()
+            .db_url(&args.db_url)
+            .db_name(&args.db_name)
+            .db_type(args.db_type)
+            .cache_modus(args.cache_modus)
+            .output_directory(&args.output_directory)
+            .cache_directory(&args.cache_directory)
+            .print_schema( args.print_schema)
+            .print_db_types( args.print_db_types)
+            .build() {
         Ok(config) => config,
         Err(e) => {
             error!("Error creating configuration: {}", e);

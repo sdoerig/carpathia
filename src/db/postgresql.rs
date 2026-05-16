@@ -175,7 +175,7 @@ impl DatabaseQuerier for PostgresQuerier {
                         .unwrap_or(IsGenerated::Unknown(row.is_generated)),
                     generation_expression: row.generation_expression,
                     constraint_name: row.constraint_name,
-                     constraint_type: row
+                    constraint_type: row
                         .constraint_type
                         .as_ref()
                         .and_then(|s| s.parse().ok())

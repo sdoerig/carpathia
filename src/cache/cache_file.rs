@@ -86,8 +86,6 @@ mod tests {
         IsNullable, ObjectType,
     };
     use std::collections::BTreeMap;
-    use tempfile::NamedTempFile;
-    use tempfile::env::temp_dir;
 
     fn create_abstract_db_repr(
         table_name: &str,
@@ -270,7 +268,7 @@ mod tests {
     #[test]
     fn test_get_changed_entities_with_forced() {
         let config = get_config_with_cache_modus(CacheModus::BypassCache);
-        let mut new_content: AbstractDbRepr =
+        let new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
 
         match Cache::get_changed_entities(&config, &new_content) {
