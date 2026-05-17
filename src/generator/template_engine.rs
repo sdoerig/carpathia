@@ -44,8 +44,8 @@ pub(crate) fn get_db_types(table_info_map: &AbstractDbRepr) -> Result<Types, Car
                 .type_mapping
                 .entry(attribute.data_type.clone())
                 .or_insert(TypeMapping {
-                    u_import: "".to_string(),
-                    u_type: Some("".to_string()),
+                    u_import: Some("".to_string()),
+                    u_type: "".to_string(),
                 });
         }
     }
