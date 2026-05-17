@@ -9,11 +9,12 @@ use super::db_schema_structs::{
 use super::traits::DatabaseQuerier;
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
+use crate::configuration::conf_structs::TypeMapping;
 use crate::db::postgresql_structs::PgColumnInfo;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::ops::Deref;
 use std::str::FromStr;
 pub(crate) struct PostgresQuerier {
@@ -21,7 +22,10 @@ pub(crate) struct PostgresQuerier {
 }
 
 const LIMIT: i64 = 1000;
-
+const NONE_TYPE_MAPPING: &TypeMapping = &TypeMapping {
+    u_import: None,
+    u_type: String::new(),
+};
 const SCHEMA_QUERY: &str = r"
    SELECT
     t.table_type AS object_type,
@@ -128,6 +132,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 });
             }
         };
+        let type_map = &config.type_map.type_mapping;
         loop {
             let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
                 .bind(LIMIT)
@@ -157,9 +162,16 @@ impl DatabaseQuerier for PostgresQuerier {
                 } else {
                     row.data_type.clone()
                 };
+                // map the user type to the ADR
+                let u_type_map = match type_map.get(&row.data_type) {
+                    Some(t) => t,
+                    None => NONE_TYPE_MAPPING,
+                };
+
                 let attribute = AbstractAttribute {
                     column_name: row.column_name,
                     data_type,
+                    u_type: u_type_map.u_type.clone(),
                     is_nullable: row
                         .is_nullable
                         .parse()
@@ -197,25 +209,29 @@ impl DatabaseQuerier for PostgresQuerier {
                         table_info_map
                             .entry(row.table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
-                                table_name: row.table_name,
+                                table_name: row.table_name.clone(),
+                                u_imports: BTreeSet::new(),
                                 object_type: object_type,
                                 comment: row.table_comment,
                                 attributes: BTreeMap::new(),
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
+                        insert_u_import(&mut table_info_map, &row.table_name, u_type_map);
                     }
                     ObjectType::View | ObjectType::MaterializedView => {
                         view_info_map
                             .entry(row.table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
-                                table_name: row.table_name,
+                                table_name: row.table_name.clone(),
+                                u_imports: BTreeSet::new(),
                                 object_type: object_type,
                                 comment: row.table_comment,
                                 attributes: BTreeMap::new(),
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
+                        insert_u_import(&mut view_info_map, &row.table_name, u_type_map);
                     }
                     _ => {
                         error!(
@@ -236,5 +252,20 @@ impl DatabaseQuerier for PostgresQuerier {
             tables: table_info_map,
             views: view_info_map,
         })
+    }
+}
+
+fn insert_u_import(
+    view_info_map: &mut BTreeMap<String, AbstractTableRepr>,
+    table_name: &str,
+    u_type_map: &TypeMapping,
+) {
+    if let Some(atr) = view_info_map.get_mut(table_name) {
+        if let Some(import) = u_type_map.u_import.clone()
+            && import.len() > 0
+        {
+            debug!("insert_u_import {}", &import);
+            atr.u_imports.insert(import);
+        }
     }
 }

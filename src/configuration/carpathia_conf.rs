@@ -14,6 +14,7 @@ pub struct CarpathiaConfig {
     pub cache_modus: CacheModus,
     pub output_directory: PathBuf,
     pub cache_file: PathBuf,
+    pub type_map: Types,
     pub print_schema: bool,
     pub print_db_types: bool,
 }
@@ -138,6 +139,7 @@ impl CarpathiaConfigBuilder {
             cache_modus: self.cache_modus,
             output_directory: self.output_directory,
             cache_file: self.cache_directory.join("carpathia_cache.json"),
+            type_map: type_map,
             print_schema: self.print_schema,
             print_db_types: self.print_db_types,
         })

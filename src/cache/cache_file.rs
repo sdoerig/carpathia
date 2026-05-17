@@ -79,13 +79,14 @@ mod tests {
     use super::*;
     use crate::cache::cache_file::Cache;
     use crate::configuration::conf_enums::{CacheModus, DbPool};
+    use crate::configuration::conf_structs::Types;
     use crate::db::db_schema_structs::AbstractAttribute;
     use crate::db::db_schema_structs::AbstractDbRepr;
     use crate::db::db_schema_structs::{
         ABSTRACT_DB_REPR_VERSION, AbstractTableRepr, ConstraintType, IsGenerated, IsIdentity,
         IsNullable, ObjectType,
     };
-    use std::collections::BTreeMap;
+    use std::collections::{BTreeMap, BTreeSet};
 
     fn create_abstract_db_repr(
         table_name: &str,
@@ -113,6 +114,7 @@ mod tests {
             AbstractAttribute {
                 column_name: column_name.to_string(),
                 data_type: "integer".to_string(),
+                u_type: "whatever".to_string(),
                 is_nullable: "NO".parse().unwrap_or(IsNullable::No),
                 column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
                 character_maximum_length: None,
@@ -132,6 +134,7 @@ mod tests {
         let atr = AbstractTableRepr {
             table_name: table_name.to_string(),
             object_type: object_type,
+            u_imports: BTreeSet::new(),
             comment: Some("Test table".to_string()),
             attributes: abstract_attribte_map,
         };
@@ -146,6 +149,7 @@ mod tests {
             cache_modus: cache_modus,
             output_directory: tempfile::tempdir().unwrap().path().to_path_buf(),
             cache_file: cache_file_path,
+            type_map: Types::new(),
             print_schema: false,
             print_db_types: false,
         }

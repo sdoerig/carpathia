@@ -4,7 +4,10 @@
 // in a table.
 // The DbType enum represents the supported database types, which can be extended in the future to support more databases.
 use log::debug;
-use std::{collections::BTreeMap, str::FromStr};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    str::FromStr,
+};
 
 pub const ABSTRACT_DB_REPR_VERSION: &str = env!("CARGO_PKG_VERSION");
 
@@ -21,6 +24,7 @@ pub(crate) struct AbstractDbRepr {
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct AbstractTableRepr {
     pub object_type: ObjectType,
+    pub u_imports: BTreeSet<String>,
     pub table_name: String,
     pub comment: Option<String>,
     pub attributes: BTreeMap<String, AbstractAttribute>,
@@ -31,6 +35,7 @@ pub(crate) struct AbstractTableRepr {
 pub(crate) struct AbstractAttribute {
     pub column_name: String,
     pub data_type: String,
+    pub u_type: String,
     pub is_nullable: IsNullable,
     pub column_default: Option<String>,
     pub character_maximum_length: Option<i32>,
@@ -174,6 +179,7 @@ mod tests {
         let attribute = AbstractAttribute {
             column_name: column_name.to_string(),
             data_type: "integer".to_string(),
+            u_type: "whatever".to_string(),
             is_nullable: "NO".parse().unwrap_or(IsNullable::No),
             column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
             character_maximum_length: None,
@@ -196,6 +202,7 @@ mod tests {
             table_name: table_name.to_string(),
             object_type: "BASE TABLE".parse().unwrap_or(ObjectType::BaseTable),
             attributes: BTreeMap::new(),
+            u_imports: BTreeSet::new(),
             comment: Some("Users table".to_string()),
         };
         table_info
