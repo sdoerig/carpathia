@@ -26,6 +26,7 @@ impl DbSchemaParser {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::configuration::carpathia_conf::CarpathiaConfigBuilder;
 
     fn setup_test_config() -> CarpathiaConfig {
         // Lade .env.test (falls vorhanden)
@@ -37,17 +38,18 @@ mod tests {
 
         let db_name = std::env::var("TEST_DB_NAME").unwrap_or_else(|_| "postgres".to_string());
 
-        CarpathiaConfig::new(
-            &db_url,
-            &db_name,
-            &DbType::Postgres,
-            crate::configuration::conf_enums::CacheModus::BypassCache,
-            &"./output".to_string(),
-            &"./cache".to_string(),
-            false,
-            false,
-        )
-        .expect("Failed to create test configuration")
+        CarpathiaConfigBuilder::new()
+            .db_url(&db_url)
+            .db_name(&db_name)
+            .db_type(DbType::Postgres)
+            .cache_modus(crate::configuration::conf_enums::CacheModus::BypassCache)
+            .carpathia_type_mapping(&"carpathia_type_mapping.json".to_string())
+            .output_directory(&"./output".to_string())
+            .cache_directory(&"./cache".to_string())
+            .print_schema(false)
+            .print_db_types(false)
+            .build()
+            .expect("Config building failed...")
     }
 
     #[tokio::test]

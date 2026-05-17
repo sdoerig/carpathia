@@ -1,4 +1,5 @@
 use crate::cache::cache_structs::CacheFile;
+use crate::configuration::conf_structs::{TypeMapping, Types};
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
@@ -30,38 +31,36 @@ impl TemplateEngine {
     }
 }
 
-pub(crate) fn print_db_types_as_json(
-    table_info_map: &AbstractDbRepr,
-) -> Result<(), CarpathiaError> {
+pub(crate) fn get_db_types(table_info_map: &AbstractDbRepr) -> Result<Types, CarpathiaError> {
     // Printing the types found in the database this is needed
     // to give the users an overview ot the types found in the database
     // and helping them creating a mapping file for their types they wnat
     // to use in the generated code.
-    let mut db_types: BTreeMap<&str, BTreeMap<String, String>> = BTreeMap::new();
+    let mut types = Types::new();
 
     for key in table_info_map.tables.keys() {
         for attribute in table_info_map.tables[key].attributes.values() {
-            db_types
-                .entry(&attribute.data_type)
-                .or_insert_with(BTreeMap::new)
-                .insert("u_type".to_string(), "".to_string());
-            db_types
-                .entry(&attribute.data_type)
-                .or_insert_with(BTreeMap::new)
-                .insert("u_import".to_string(), "".to_string());
+            types
+                .type_mapping
+                .entry(attribute.data_type.clone())
+                .or_insert(TypeMapping {
+                    u_import: "".to_string(),
+                    u_type: Some("".to_string()),
+                });
         }
     }
-    match serde_json::to_string_pretty(&db_types) {
-        Ok(json) => {
-            println!("{json}");
-            Ok(())
-        }
-        Err(e) => {
-            error!("Failed to serialize database schema to JSON: {e}");
-            Err(CarpathiaError {
-                message: format!("Failed to serialize database schema to JSON: {e}"),
-                error_type: crate::return_values::carpathia_errors::ErrorNumber::Other,
-            })
-        }
-    }
+    Ok(types)
+    //    match serde_json::to_string_pretty(&db_types) {
+    //        Ok(json) => {
+    //            println!("{json}");
+    //            Ok(())
+    //        }
+    //        Err(e) => {
+    //            error!("Failed to serialize database schema to JSON: {e}");
+    //            Err(CarpathiaError {
+    //                message: format!("Failed to serialize database schema to JSON: {e}"),
+    //                error_type: crate::return_values::carpathia_errors::ErrorNumber::Other,
+    //            })
+    //        }
+    //    }
 }

@@ -1,7 +1,9 @@
 use super::conf_enums::CacheModus;
 use super::conf_enums::{DbPool, DbType};
+use super::conf_file_reader::load_type_mappings;
+use super::conf_structs::Types;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
-use log::error;
+use log::{error, info};
 use sqlx::postgres::PgPoolOptions;
 use std::path::PathBuf;
 
@@ -16,42 +18,6 @@ pub struct CarpathiaConfig {
     pub print_db_types: bool,
 }
 
-impl CarpathiaConfig {
-    pub fn new(
-        db_url: &str,
-        db_name: &str,
-        db_type: &DbType,
-        cache_modus: CacheModus,
-        output_directory: &str,
-        cache_directory: &str,
-        print_schema: bool,
-        print_db_types: bool,
-    ) -> Result<Self, CarpathiaError> {
-        let db_pool = match db_type {
-            DbType::Postgres => DbPool::Postgres(PgPoolOptions::new()
-            .connect_lazy(&format!("{db_url}/{db_name}"))
-            .map_err(|e| {
-                error!("Error creating database connection pool: {e}");
-                CarpathiaError {
-                    message: format!("Failed to create database connection pool: {e}"),
-                    error_type: crate::return_values::carpathia_errors::ErrorNumber::DatabaseConnectionError,
-                }
-            })?),
-            // Future support for MySQL and SQLite can be added here by adding new variants to the DbPool enum and handling them accordingly.
-            DbType::Dummy => DbPool::Dummy,
-        };
-
-        Ok(CarpathiaConfig {
-            db_pool,
-            cache_modus,
-            output_directory: PathBuf::from(output_directory),
-            cache_file: PathBuf::from(cache_directory).join(CACHE_FILE_NAME),
-            print_schema,
-            print_db_types,
-        })
-    }
-}
-
 pub struct CarpathiaConfigBuilder {
     db_url: Option<String>,
     db_name: Option<String>,
@@ -59,6 +25,7 @@ pub struct CarpathiaConfigBuilder {
     cache_modus: CacheModus,
     output_directory: PathBuf,
     cache_directory: PathBuf,
+    type_mapping_file: PathBuf,
     print_schema: bool,
     print_db_types: bool,
 }
@@ -72,6 +39,7 @@ impl CarpathiaConfigBuilder {
             cache_modus: CacheModus::UseCache,
             output_directory: ".".into(),
             cache_directory: ".".into(),
+            type_mapping_file: "carpathia_type_mapping.json".into(),
             print_schema: false,
             print_db_types: false,
         }
@@ -107,6 +75,11 @@ impl CarpathiaConfigBuilder {
         self
     }
 
+    pub fn carpathia_type_mapping(mut self, file: impl Into<PathBuf>) -> Self {
+        self.type_mapping_file = file.into();
+        self
+    }
+
     pub fn print_schema(mut self, val: bool) -> Self {
         self.print_schema = val;
         self
@@ -132,6 +105,21 @@ impl CarpathiaConfigBuilder {
             message: "db_type missing".into(),
             error_type: ErrorNumber::InvalidConfiguration,
         })?;
+
+        let type_map = match load_type_mappings(&self.type_mapping_file) {
+            Ok(types) => {
+                info!(
+                    "Successfully loaded file {:?} with types {:?}",
+                    self.type_mapping_file.as_os_str(),
+                    types
+                );
+                types
+            }
+            Err(_) => {
+                info!("Could not load {:?}", self.type_mapping_file.as_os_str());
+                Types::new()
+            }
+        };
 
         let db_pool = match db_type {
             DbType::Postgres => DbPool::Postgres(

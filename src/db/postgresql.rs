@@ -1,3 +1,7 @@
+/// PostgreSQL schema querieer. Currently implemented
+/// - Basic tables
+/// - Views
+/// - Materialized Views
 use super::db_schema_structs::{
     ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ConstraintType,
     IsGenerated, IsIdentity, IsNullable, ObjectType,

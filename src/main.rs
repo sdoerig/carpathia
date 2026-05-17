@@ -37,6 +37,9 @@ struct Args {
     /// NOT IMPLEMENTED: Output directory for the generated code   
     #[arg(long, default_value = "./src/db_layer")]
     output_directory: String,
+    /// JSON mapping file. Here, maps the database types to the users types and imports.    
+    #[arg(long, default_value = "carpathia_type_mapping.json")]
+    carpathia_type_mapping_file: String,
     /// directory containing the `carpatia_cache.json`. The cache file contains hashes of the previously generated database entities   
     #[arg(long, default_value = ".")]
     cache_directory: String,
@@ -66,6 +69,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .db_name(&args.db_name)
         .db_type(args.db_type)
         .cache_modus(args.cache_modus)
+        .carpathia_type_mapping(args.carpathia_type_mapping_file)
         .output_directory(&args.output_directory)
         .cache_directory(&args.cache_directory)
         .print_schema(args.print_schema)
@@ -96,7 +100,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 );
             }
             if config.print_db_types {
-                template_engine::print_db_types_as_json(&table_info_map)?;
+                match template_engine::get_db_types(&table_info_map) {
+                    Ok(db_types) => match serde_json::to_string_pretty(&db_types) {
+                        Ok(json) => println!("{json}"),
+                        Err(_) => todo!(),
+                    },
+
+                    Err(e) => {
+                        error!("Could not print type mapping {}", e);
+                    }
+                }
             }
         }
         Err(e) => {
