@@ -1,54 +1,24 @@
-// Copyright 2026 Stefan Dörig
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
+use crate::configuration::carpathia_conf::CarpathiaConfig;
+use crate::configuration::conf_enums::{DbPool, DbType};
 /// This module extracts the datebase schema from a `PostgreSQL` database and
 /// generates a Rust struct for each table in the database. It also proviedes the
 /// intermeditate data structures to hold the extracted schema information.
 use crate::db::db_schema_structs::AbstractDbRepr;
-use crate::db::db_schema_structs::DbType;
 use crate::db::postgresql::PostgresQuerier;
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
 
 pub(crate) struct DbSchemaParser {
     // You can add fields here if needed, for example, to hold configuration or state
-    db_name: String,
-    db_url: String,
-    db_type: DbType,
 }
 
 impl DbSchemaParser {
-    pub(crate) fn new(db_url: String, db_name: String, db_type: DbType) -> Self {
-        Self {
-            db_name,
-            db_url,
-            db_type,
-        }
-    }
-
-    pub(crate) async fn parse_schema(&self) -> Result<AbstractDbRepr, CarpathiaError> {
-        match self.db_type {
-            DbType::Postgres => {
-                let querier = PostgresQuerier::new(&self.db_url, &self.db_name)?;
-                querier.get_schema().await
-            }
-            DbType::MySql => {
-                unimplemented!("MySQL support is not implemented yet");
-            }
-            DbType::Sqlite => {
-                unimplemented!("SQLite support is not implemented yet");
-            }
+    pub(crate) async fn parse_schema(
+        config: &CarpathiaConfig,
+    ) -> Result<AbstractDbRepr, CarpathiaError> {
+        match config.db_pool {
+            DbPool::Postgres(_) => PostgresQuerier::get_schema(config).await,
+            DbPool::Dummy => todo!("Dummy database pool not implemented"),
         }
     }
 }
@@ -56,8 +26,9 @@ impl DbSchemaParser {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[tokio::test]
-    async fn test_db_schema_parser() {
+    use crate::configuration::carpathia_conf::CarpathiaConfigBuilder;
+
+    fn setup_test_config() -> CarpathiaConfig {
         // Lade .env.test (falls vorhanden)
         dotenv::from_filename(".env.test").ok();
 
@@ -67,8 +38,27 @@ mod tests {
 
         let db_name = std::env::var("TEST_DB_NAME").unwrap_or_else(|_| "postgres".to_string());
 
-        let parser = DbSchemaParser::new(db_url, db_name, DbType::Postgres);
-        let schema = parser.parse_schema().await.unwrap();
+        CarpathiaConfigBuilder::new()
+            .db_url(&db_url)
+            .db_name(&db_name)
+            .db_type(DbType::Postgres)
+            .cache_modus(crate::configuration::conf_enums::CacheModus::BypassCache)
+            .carpathia_type_mapping(&"carpathia_type_mapping.json".to_string())
+            .output_directory(&"./output".to_string())
+            .cache_directory(&"./cache".to_string())
+            .print_schema(false)
+            .print_db_types(false)
+            .build()
+            .expect("Config building failed...")
+    }
+
+    #[tokio::test]
+    async fn test_db_schema_parser() {
+        // Lade .env.test (falls vorhanden)
+        dotenv::from_filename(".env.test").ok();
+
+        let config = setup_test_config();
+        let schema = DbSchemaParser::parse_schema(&config).await.unwrap();
         assert!(!schema.tables.is_empty(), "Schema should not be empty");
     }
 }

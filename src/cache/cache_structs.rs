@@ -1,32 +1,12 @@
-// Copyright 2026 Stefan Dörig
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
+use crate::configuration::conf_enums::CacheModus;
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
-use clap::ValueEnum;
+use blake3::Hasher as Blake3Hasher;
 use log::{error, info};
 use serde::Serialize;
-use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
-
-#[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub(crate) enum CacheModus {
-    BypassCache,
-    UseCache,
-}
 
 pub(crate) struct CacheSectionDiff {
     pub to_generate: Vec<String>,
@@ -85,39 +65,52 @@ impl CacheFile {
     pub(crate) fn from_abstract_db_repr(db_repr: &AbstractDbRepr) -> Self {
         let mut cache_file = CacheFile::new();
         for (table_name, table_repr) in &db_repr.tables {
-            let table_hash = sha256_hash(table_repr);
+            let table_hash = match blake3_hash(table_repr) {
+                Ok(hash) => hash,
+                Err(e) => {
+                    error!("Failed to hash table representation for table {table_name}: {e}");
+                    continue; // Skip this table and continue with the next one
+                }
+            };
             cache_file.tables.insert(table_name.clone(), table_hash);
         }
         for (view_name, view_repr) in &db_repr.views {
-            let view_hash = sha256_hash(view_repr);
+            let view_hash = match blake3_hash(view_repr) {
+                Ok(hash) => hash,
+                Err(e) => {
+                    error!("Failed to hash view representation for view {view_name}: {e}");
+                    continue; // Skip this view and continue with the next one
+                }
+            };
             cache_file.views.insert(view_name.clone(), view_hash);
         }
         cache_file
     }
 
     pub(crate) fn save_to_file(&self, path: &PathBuf) -> Result<(), CarpathiaError> {
-        match fs::create_dir_all(path.parent().unwrap()) {
+        // Try to create the parent directory if it doesn't exist, but ignore errors (e.g., if it already exists)
+        // or if the path is void.
+        let _ = fs::create_dir_all(path.parent().unwrap()).map_err(|e| {
+            error!("Failed to create cache directory: {e}");
+        });
+
+        //let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
+        let cache_content_json = serde_json::to_string_pretty(&self).map_err(|e| {
+            error!("Failed to serialize cache content to JSON: {e}");
+            CarpathiaError {
+                message: "Failed to serialize cache content to JSON".to_string(),
+                error_type: ErrorNumber::CacheFileError,
+            }
+        })?;
+        match fs::write(path, cache_content_json) {
             Ok(()) => {
-                //let cache_file_path = format!("{}/{}", &self.path, CACHE_FILE_NAME);
-                let cache_content_json = serde_json::to_string_pretty(&self).unwrap();
-                match fs::write(path, cache_content_json) {
-                    Ok(()) => {
-                        info!("Cache file updated successfully at {}", &path.display());
-                        Ok(())
-                    }
-                    Err(e) => {
-                        error!("Failed to write cache file: {e}");
-                        Err(CarpathiaError {
-                            message: "Failed to write cache file".to_string(),
-                            error_type: ErrorNumber::CacheFileError,
-                        })
-                    }
-                }
+                info!("Cache file updated successfully at {}", &path.display());
+                Ok(())
             }
             Err(e) => {
-                error!("Failed to create cache directory: {e}");
+                error!("Failed to write cache file: {e}");
                 Err(CarpathiaError {
-                    message: "Failed to create cache directory".to_string(),
+                    message: "Failed to write cache file".to_string(),
                     error_type: ErrorNumber::CacheFileError,
                 })
             }
@@ -171,10 +164,19 @@ fn diff_btrees(
     );
 }
 
-fn sha256_hash<T: Serialize>(item: &T) -> String {
-    let json_string = serde_json::to_string(item).unwrap();
-    let mut hasher = Sha256::new();
+fn blake3_hash<T: Serialize>(item: &T) -> Result<String, CarpathiaError> {
+    let json_string = match serde_json::to_string(item) {
+        Ok(s) => s,
+        Err(e) => {
+            error!("Failed to serialize item to JSON: {e}");
+            return Err(CarpathiaError {
+                message: "Failed to serialize item to JSON".to_string(),
+                error_type: ErrorNumber::Other,
+            });
+        }
+    };
+    let mut hasher = Blake3Hasher::new();
     hasher.update(json_string.as_bytes());
     let hash_result = hasher.finalize();
-    format!("{hash_result:x}")
+    Ok(hash_result.to_hex().to_string())
 }

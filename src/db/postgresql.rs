@@ -1,31 +1,31 @@
-// Copyright 2026 Stefan Dörig
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-use std::collections::BTreeMap;
-
-use super::db_schema_structs::{AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ABSTRACT_DB_REPR_VERSION};
+/// PostgreSQL schema querieer. Currently implemented
+/// - Basic tables
+/// - Views
+/// - Materialized Views
+use super::db_schema_structs::{
+    ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ConstraintType,
+    IsGenerated, IsIdentity, IsNullable, ObjectType,
+};
 use super::traits::DatabaseQuerier;
+use crate::configuration::carpathia_conf::CarpathiaConfig;
+use crate::configuration::conf_enums::DbPool;
+use crate::configuration::conf_structs::TypeMapping;
 use crate::db::postgresql_structs::PgColumnInfo;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
 use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
+use std::collections::{BTreeMap, BTreeSet};
+use std::ops::Deref;
+use std::str::FromStr;
 pub(crate) struct PostgresQuerier {
     pool: Pool<Postgres>,
 }
 
 const LIMIT: i64 = 1000;
-
+const NONE_TYPE_MAPPING: &TypeMapping = &TypeMapping {
+    u_import: None,
+    u_type: String::new(),
+};
 const SCHEMA_QUERY: &str = r"
    SELECT
     t.table_type AS object_type,
@@ -112,41 +112,32 @@ OFFSET $2;
 impl PostgresQuerier {}
 
 impl DatabaseQuerier for PostgresQuerier {
-    fn new(db_url: &str, db_name: &str) -> Result<Self, CarpathiaError> {
-        let full_db_url = format!("{db_url}/{db_name}");
-        let pool = PgPoolOptions::new()
-            .connect_lazy(&full_db_url)
-            .map_err(|e| {
-                error!("Error creating database connection pool: {e}");
-                CarpathiaError {
-                    message: format!("Failed to create database connection pool: {e}"),
-                    error_type: crate::return_values::carpathia_errors::ErrorNumber::DatabaseConnectionError,
-                }
-            })?;
-        Ok(Self { pool })
-    }
-    async fn get_schema(&self) -> Result<AbstractDbRepr, CarpathiaError> {
+    async fn get_schema(config: &CarpathiaConfig) -> Result<AbstractDbRepr, CarpathiaError> {
         // Here you would implement the logic to query the database for its schema
         // and populate your data structures with the extracted information.
         // This is just a placeholder for demonstration purposes.
-        info!(
-            "Parsing schema for PostgreSQL database: {}",
-            &self
-                .pool
-                .connect_options()
-                .get_database()
-                .unwrap_or("unknown database")
-        );
+        info!("Parsing schema for PostgreSQL database:");
         let mut table_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
             std::collections::BTreeMap::new();
         let mut view_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
             std::collections::BTreeMap::new();
         let mut offset = 0;
+        let pool = match config.db_pool {
+            DbPool::Postgres(ref pool) => pool,
+            _ => {
+                return Err(CarpathiaError {
+                    message: "Invalid database pool type for PostgreSQL querier".to_string(),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::InvalidPoolType,
+                });
+            }
+        };
+        let type_map = &config.type_map.type_mapping;
         loop {
             let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
                 .bind(LIMIT)
                 .bind(offset)
-                .fetch_all(&self.pool)
+                .fetch_all(pool)
                 .await
                 .map_err(|e| {
                     debug!("Error executing schema query: {e}");
@@ -171,51 +162,79 @@ impl DatabaseQuerier for PostgresQuerier {
                 } else {
                     row.data_type.clone()
                 };
+                // map the user type to the ADR
+                let u_type_map = match type_map.get(&row.data_type) {
+                    Some(t) => t,
+                    None => NONE_TYPE_MAPPING,
+                };
+
                 let attribute = AbstractAttribute {
                     column_name: row.column_name,
                     data_type,
-                    is_nullable: row.is_nullable,
+                    u_type: u_type_map.u_type.clone(),
+                    is_nullable: row
+                        .is_nullable
+                        .parse()
+                        .unwrap_or(IsNullable::Unknown(row.is_nullable)),
                     column_default: row.column_default,
                     character_maximum_length: row.character_maximum_length,
                     numeric_precision: row.numeric_precision,
                     numeric_scale: row.numeric_scale,
-                    is_identity: row.is_identity,
+                    is_identity: row
+                        .is_identity
+                        .parse()
+                        .unwrap_or(IsIdentity::Unknown(row.is_identity)),
                     identity_generation: row.identity_generation,
-                    is_generated: row.is_generated,
+                    is_generated: row
+                        .is_generated
+                        .parse()
+                        .unwrap_or(IsGenerated::Unknown(row.is_generated)),
                     generation_expression: row.generation_expression,
                     constraint_name: row.constraint_name,
-                    constraint_type: row.constraint_type,
+                    constraint_type: row
+                        .constraint_type
+                        .as_ref()
+                        .and_then(|s| s.parse().ok())
+                        .unwrap_or(ConstraintType::None),
                     referenced_table: row.referenced_table,
                     referenced_column: row.referenced_column,
                     comment: row.column_comment,
                 };
-                match row.object_type.as_str() {
-                    "BASE TABLE" => {
+                let object_type = row.object_type.parse().unwrap_or_else(|_| {
+                    debug!("Unknown object type: {}", row.object_type);
+                    ObjectType::Other
+                });
+                match object_type {
+                    ObjectType::BaseTable => {
                         table_info_map
                             .entry(row.table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
-                                table_name: row.table_name,
-                                object_type: row.object_type,
+                                table_name: row.table_name.clone(),
+                                u_imports: BTreeSet::new(),
+                                object_type: object_type,
                                 comment: row.table_comment,
                                 attributes: BTreeMap::new(),
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
+                        insert_u_import(&mut table_info_map, &row.table_name, u_type_map);
                     }
-                    "VIEW" | "MATERIALIZED VIEW" => {
+                    ObjectType::View | ObjectType::MaterializedView => {
                         view_info_map
                             .entry(row.table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
-                                table_name: row.table_name,
-                                object_type: row.object_type,
+                                table_name: row.table_name.clone(),
+                                u_imports: BTreeSet::new(),
+                                object_type: object_type,
                                 comment: row.table_comment,
                                 attributes: BTreeMap::new(),
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
+                        insert_u_import(&mut view_info_map, &row.table_name, u_type_map);
                     }
                     _ => {
-                        debug!(
+                        error!(
                             "Skipping unsupported object type: {} for table {}",
                             row.object_type, row.table_name
                         );
@@ -229,9 +248,24 @@ impl DatabaseQuerier for PostgresQuerier {
         }
 
         Ok(AbstractDbRepr {
-            version: ABSTRACT_DB_REPR_VERSION,
+            version: ABSTRACT_DB_REPR_VERSION.to_string(),
             tables: table_info_map,
             views: view_info_map,
         })
+    }
+}
+
+fn insert_u_import(
+    view_info_map: &mut BTreeMap<String, AbstractTableRepr>,
+    table_name: &str,
+    u_type_map: &TypeMapping,
+) {
+    if let Some(atr) = view_info_map.get_mut(table_name) {
+        if let Some(import) = u_type_map.u_import.clone()
+            && import.len() > 0
+        {
+            debug!("insert_u_import {}", &import);
+            atr.u_imports.insert(import);
+        }
     }
 }

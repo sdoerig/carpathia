@@ -186,7 +186,7 @@ Options:
           [default: ./src/db_layer]
 
       --cache-directory <CACHE_DIRECTORY>
-          directory containing the `carpatia_cache.json`. The cache file contains hashes of the previously generated database entities
+          directory containing the `carpathia_cache.json`. The cache file contains hashes of the previously generated database entities
           
           [default: .]
 

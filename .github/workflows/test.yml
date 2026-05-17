@@ -2,9 +2,11 @@ name: Test
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - '**' 
   pull_request:
-    branches: [ main ]
+    branches: 
+      - '**'
 
 env:
   CARGO_TERM_COLOR: always
@@ -33,32 +35,36 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Rust Toolchain einrichten
-        uses: actions-rs/toolchain@v1
+      # Rust toolchain + caching
+      - name: Rust toolchain einrichten
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cargo Cache aktivieren
+        uses: Swatinem/rust-cache@v2
         with:
-          toolchain: stable
+          cache-all-crates: true
 
       - name: Abhängigkeiten installieren
-        run: sudo apt-get update && sudo apt-get install -y libpq-dev postgresql-client wget
+        run: sudo apt-get update && sudo apt-get install -y libpq-dev postgresql-client
 
-      # Fetch the Pagila schema from the official repository - hopefully this is stable and won't break in the future
-      - name: Pagila schema downloaden
-        run: |
-          wget https://raw.githubusercontent.com/devrimgunduz/pagila/master/pagila-schema.sql -O pagila-schema.sql
+      # Pagila-Schema aus dem Repo statt wget
+      - name: Pagila-Schema bereitstellen
+        run: cp fixtures/pagila-schema.sql pagila-schema.sql
 
-      # Import the Pagila schema into the PostgreSQL service
       - name: Pagila-Schema in PostgreSQL importieren
         run: |
-          # Takes a while for PostgreSQL to be ready, so we wait until it's responsive
           until pg_isready -h localhost -U postgres; do
             sleep 1
           done
-
-          # Import the Pagila schema into the "carpathia" database - sorry for renaming but I just name the database after the project name
           psql -h localhost -U postgres -d carpathia -f pagila-schema.sql
         env:
           PGPASSWORD: postgres
 
+      # Linting
+      #- name: Rust Linting (clippy)
+      #  run: cargo clippy --all-targets --all-features -- -D warnings
+
+      # Tests
       - name: Tests ausführen
         run: cargo test
         env:
