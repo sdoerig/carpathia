@@ -1,3 +1,7 @@
+//! Configuration consists of 
+//! - CarpathiaConfig 
+//! - CarpathiaConfigBuilder
+//! to avoid parameter explosion.
 use super::conf_enums::CacheModus;
 use super::conf_enums::{DbPool, DbType};
 use super::conf_file_reader::load_type_mappings;
@@ -9,16 +13,27 @@ use std::path::PathBuf;
 
 const CACHE_FILE_NAME: &str = "carpathia_cache.json";
 
+/// Structured configuration - to build it use
+/// CarpathiaConfigBuilder.
 pub struct CarpathiaConfig {
+    /// Database pool to connect to, feed with 
+    /// - db_url
+    /// - db_name
+    /// - db_type
+    /// CarpathiaConfigBuilder does it for you.
     pub db_pool: DbPool,
     pub cache_modus: CacheModus,
     pub output_directory: PathBuf,
     pub cache_file: PathBuf,
+    /// Database types mapped to user types
     pub type_map: Types,
     pub print_schema: bool,
     pub print_db_types: bool,
 }
 
+/// CarpathiaConfigBuilder is close related to all the 
+/// configuration parameters. E.g. from a CLI.
+/// Its only purpose is to create the CarpathiaConfig.
 pub struct CarpathiaConfigBuilder {
     db_url: Option<String>,
     db_name: Option<String>,
@@ -93,6 +108,7 @@ impl CarpathiaConfigBuilder {
 }
 
 impl CarpathiaConfigBuilder {
+    /// Building CarpathiaConfig.
     pub fn build(self) -> Result<CarpathiaConfig, CarpathiaError> {
         let db_url = self.db_url.ok_or_else(|| CarpathiaError {
             message: "db_url missing".into(),

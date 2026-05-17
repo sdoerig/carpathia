@@ -30,12 +30,9 @@ impl TemplateEngine {
         Ok(())
     }
 }
-
+/// Returning all the types found in the database schema - the users need this to 
+/// create their own mapping.
 pub(crate) fn get_db_types(table_info_map: &AbstractDbRepr) -> Result<Types, CarpathiaError> {
-    // Printing the types found in the database this is needed
-    // to give the users an overview ot the types found in the database
-    // and helping them creating a mapping file for their types they wnat
-    // to use in the generated code.
     let mut types = Types::new();
 
     for key in table_info_map.tables.keys() {
@@ -50,17 +47,4 @@ pub(crate) fn get_db_types(table_info_map: &AbstractDbRepr) -> Result<Types, Car
         }
     }
     Ok(types)
-    //    match serde_json::to_string_pretty(&db_types) {
-    //        Ok(json) => {
-    //            println!("{json}");
-    //            Ok(())
-    //        }
-    //        Err(e) => {
-    //            error!("Failed to serialize database schema to JSON: {e}");
-    //            Err(CarpathiaError {
-    //                message: format!("Failed to serialize database schema to JSON: {e}"),
-    //                error_type: crate::return_values::carpathia_errors::ErrorNumber::Other,
-    //            })
-    //        }
-    //    }
 }
