@@ -1,0 +1,148 @@
+{# ================================================================
+   SQLx Struct + Query Builder Generator
+   Input: tables = your JSON object containing table definitions
+   ================================================================ #}
+
+{% for table_name, table in tables %}
+
+{# ----------------------------- #}
+{# Imports                      #}
+{# ----------------------------- #}
+use sqlx::{FromRow, PgPool};
+{% for imp in table.u_imports %}
+use {{ imp }};
+{% endfor %}
+
+{# ----------------------------- #}
+{# Struct Definition             #}
+{# ----------------------------- #}
+
+#[derive(Debug, Clone, FromRow)]
+pub struct {{ table.table_name | capitalize }} {
+    {% for attr_name, attr in table.attributes %}
+    pub {{ attr.column_name }}: {{ attr.u_type }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+}
+
+{# ----------------------------- #}
+{# Builder Definition            #}
+{# ----------------------------- #}
+
+pub struct {{ table.table_name | capitalize }}Builder<'a> {
+    pool: &'a PgPool,
+
+    {# Fields used for insert/update operations #}
+    {% for attr_name, attr in table.attributes %}
+    pub {{ attr.column_name }}: Option<{{ attr.u_type }}>{% if not loop.last %},{% endif %}
+    {% endfor %}
+}
+
+impl<'a> {{ table.table_name | capitalize }}Builder<'a> {
+
+    {# Constructor injecting the PgPool #}
+    pub fn new(pool: &'a PgPool) -> Self {
+        Self {
+            pool,
+            {% for attr_name, attr in table.attributes %}
+            {{ attr.column_name }}: None{% if not loop.last %},{% endif %}
+            {% endfor %}
+        }
+    }
+
+    {# Setter methods for each field #}
+    {% for attr_name, attr in table.attributes %}
+    pub fn {{ attr.column_name }}(mut self, value: {{ attr.u_type }}) -> Self {
+        self.{{ attr.column_name }} = Some(value);
+        self
+    }
+    {% endfor %}
+
+    {# ----------------------------- #}
+    {# SELECT by primary key         #}
+    {# ----------------------------- #}
+
+    pub async fn fetch_by_id(&self, id: i32) -> sqlx::Result<{{ table.table_name | capitalize }}> {
+        let row = sqlx::query_as!(
+            {{ table.table_name | capitalize }},
+            "SELECT * FROM {{ table.table_name }} WHERE {{ table.attributes | filter(attribute => attribute.constraint_type == \"PrimaryKey\") | first().column_name }} = $1",
+            id
+        )
+        .fetch_one(self.pool)
+        .await?;
+
+        Ok(row)
+    }
+
+    {# ----------------------------- #}
+    {# INSERT                        #}
+    {# ----------------------------- #}
+
+    pub async fn insert(&self) -> sqlx::Result<{{ table.table_name | capitalize }}> {
+        let row = sqlx::query_as!(
+            {{ table.table_name | capitalize }},
+            "
+            INSERT INTO {{ table.table_name }} (
+                {% for attr_name, attr in table.attributes %}
+                {{ attr.column_name }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ) VALUES (
+                {% for attr_name, attr in table.attributes %}
+                {{ "$" ~ loop.index }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            )
+            RETURNING *
+            ",
+            {% for attr_name, attr in table.attributes %}
+            self.{{ attr.column_name }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+        )
+        .fetch_one(self.pool)
+        .await?;
+
+        Ok(row)
+    }
+
+    {# ----------------------------- #}
+    {# UPDATE by primary key         #}
+    {# ----------------------------- #}
+
+    pub async fn update(&self, id: i32) -> sqlx::Result<{{ table.table_name | capitalize }}> {
+        let row = sqlx::query_as!(
+            {{ table.table_name | capitalize }},
+            "
+            UPDATE {{ table.table_name }}
+            SET
+                {% for attr_name, attr in table.attributes %}
+                {{ attr.column_name }} = COALESCE({{ "$" ~ loop.index }}, {{ attr.column_name }}){% if not loop.last %},{% endif %}
+                {% endfor %}
+            WHERE {{ table.attributes | filter(attribute => attribute.constraint_type == "PrimaryKey") | first().column_name }} = ${{ table.attributes | length + 1 }}
+            RETURNING *
+            ",
+            {% for attr_name, attr in table.attributes %}
+            self.{{ attr.column_name }}{% if not loop.last %},{% endif %}
+            {% endfor %},
+            id
+        )
+        .fetch_one(self.pool)
+        .await?;
+
+        Ok(row)
+    }
+
+    {# ----------------------------- #}
+    {# DELETE by primary key         #}
+    {# ----------------------------- #}
+
+    pub async fn delete(&self, id: i32) -> sqlx::Result<u64> {
+        let result = sqlx::query!(
+            "DELETE FROM {{ table.table_name }} WHERE {{ table.attributes | filter(attribute => attribute.constraint_type == \"PrimaryKey\") | first().column_name }} = $1",
+            id
+        )
+        .execute(self.pool)
+        .await?;
+
+        Ok(result.rows_affected())
+    }
+}
+
+{% endfor %}
