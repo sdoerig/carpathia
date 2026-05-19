@@ -1,0 +1,23 @@
+{# ================================================================
+   SUMMARY MODULE GENERATOR
+   Generates:
+     pub mod <table_name>;
+     pub mod <view_name>;
+   for all tables and views in the schema.
+   ================================================================ #}
+
+{# ----------------------------- #}
+{# Tables                       #}
+{# ----------------------------- #}
+
+{% for table_name, table in tables %}
+pub mod {{ table.table_name }};
+{% endfor %}
+
+{# ----------------------------- #}
+{# Views                        #}
+{# ----------------------------- #}
+
+{% for view_name, view in views %}
+pub mod {{ view.view_name }};
+{% endfor %}
