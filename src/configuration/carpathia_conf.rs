@@ -1,5 +1,5 @@
-//! Configuration consists of 
-//! - CarpathiaConfig 
+//! Configuration consists of
+//! - CarpathiaConfig
 //! - CarpathiaConfigBuilder
 //! to avoid parameter explosion.
 use super::conf_enums::CacheModus;
@@ -16,7 +16,7 @@ const CACHE_FILE_NAME: &str = "carpathia_cache.json";
 /// Structured configuration - to build it use
 /// CarpathiaConfigBuilder.
 pub struct CarpathiaConfig {
-    /// Database pool to connect to, feed with 
+    /// Database pool to connect to, feed with
     /// - db_url
     /// - db_name
     /// - db_type
@@ -31,7 +31,7 @@ pub struct CarpathiaConfig {
     pub print_db_types: bool,
 }
 
-/// CarpathiaConfigBuilder is close related to all the 
+/// CarpathiaConfigBuilder is close related to all the
 /// configuration parameters. E.g. from a CLI.
 /// Its only purpose is to create the CarpathiaConfig.
 pub struct CarpathiaConfigBuilder {

@@ -4,6 +4,7 @@ use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
 use std::collections::BTreeMap;
+use tera::{Context, Tera};
 
 pub(crate) struct TemplateEngine {
     cache_result: CacheFile,
@@ -21,16 +22,20 @@ impl TemplateEngine {
         }
     }
 
-    pub(crate) fn generate_code(&self) -> Result<(), CarpathiaError> {
-        // Here you would implement the logic to generate code based on the database schema and the cache result.
-        // This is just a placeholder for demonstration purposes.
-        info!("Generating code based on the database schema and cache result...");
-        debug!("Cache result: {:?}", self.cache_result);
-        debug!("Database schema: {:?}", self.db_schema);
-        Ok(())
+    pub fn render_from_repr(
+        tera: &Tera,
+        template_name: &str,
+        repr: &AbstractDbRepr,
+    ) -> Result<String, tera::Error> {
+        let mut ctx = Context::new();
+        ctx.insert("version", &repr.version);
+        ctx.insert("tables", &repr.tables);
+        ctx.insert("views", &repr.views);
+
+        tera.render(template_name, &ctx)
     }
 }
-/// Returning all the types found in the database schema - the users need this to 
+/// Returning all the types found in the database schema - the users need this to
 /// create their own mapping.
 pub(crate) fn get_db_types(table_info_map: &AbstractDbRepr) -> Result<Types, CarpathiaError> {
     let mut types = Types::new();

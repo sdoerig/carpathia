@@ -9,7 +9,7 @@ mod return_values;
 use crate::cache::cache_file::Cache;
 use crate::db::parse_db_schema::DbSchemaParser;
 use crate::generator::template_engine;
-use configuration::carpathia_conf::{CarpathiaConfigBuilder};
+use configuration::carpathia_conf::CarpathiaConfigBuilder;
 use configuration::conf_enums::CacheModus;
 use configuration::conf_enums::DbType;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
