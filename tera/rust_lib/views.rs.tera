@@ -1,0 +1,137 @@
+{# ================================================================
+   SQLx View Struct + Relations + Dynamic Filtering
+   Views are read-only: no insert/update/delete/builder
+   Expects: views = your JSON object containing view definitions
+   ================================================================ #}
+
+{% for view_name, view in views %}
+
+{# ----------------------------- #}
+{# Imports                      #}
+{# ----------------------------- #}
+use sqlx::{FromRow, PgPool, Postgres, QueryBuilder};
+{% for imp in view.u_imports %}
+use {{ imp }};
+{% endfor %}
+
+{# ----------------------------- #}
+{# Struct Definition             #}
+{# ----------------------------- #}
+
+#[derive(Debug, Clone, FromRow)]
+pub struct {{ view.view_name | capitalize }} {
+    {% for attr_name, attr in view.attributes %}
+    pub {{ attr.column_name }}: {{ attr.u_type }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+}
+
+{# ----------------------------- #}
+{# Forward Relations (FK -> parent) #}
+{# ----------------------------- #}
+
+impl {{ view.view_name | capitalize }} {
+
+    {% for attr_name, attr in view.attributes %}
+        {% if attr.constraint_type == "ForeignKey" %}
+
+    /// Fetches the related {{ attr.referenced_table | capitalize }} record.
+    pub async fn {{ attr.referenced_table }}(&self, pool: &PgPool)
+        -> sqlx::Result<{{ attr.referenced_table | capitalize }}>
+    {
+        sqlx::query_as!(
+            {{ attr.referenced_table | capitalize }},
+            "SELECT * FROM {{ attr.referenced_table }} WHERE {{ attr.referenced_column }} = $1",
+            self.{{ attr.column_name }}
+        )
+        .fetch_one(pool)
+        .await
+    }
+        {% endif %}
+    {% endfor %}
+}
+
+{# ----------------------------- #}
+{# Reverse Relations (parent -> children in view) #}
+{# ----------------------------- #}
+
+impl {{ view.view_name | capitalize }} {
+
+    {% for other_name, other in views %}
+        {% for other_attr_name, other_attr in other.attributes %}
+            {% if other_attr.constraint_type == "ForeignKey" and other_attr.referenced_table == view.view_name %}
+
+    /// Fetches all related {{ other.view_name | capitalize }} rows.
+    pub async fn {{ other.view_name | pluralize }}(&self, pool: &PgPool)
+        -> sqlx::Result<Vec<{{ other.view_name | capitalize }}}>
+    {
+        sqlx::query_as!(
+            {{ other.view_name | capitalize }},
+            "SELECT * FROM {{ other.view_name }} WHERE {{ other_attr.column_name }} = $1",
+            self.{{ other_attr.referenced_column }}
+        )
+        .fetch_all(pool)
+        .await
+    }
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+}
+
+{# ----------------------------- #}
+{# Dynamic, Injection-Safe Filtering #}
+{# ----------------------------- #}
+
+pub struct {{ view.view_name | capitalize }}Filter {
+    {% for attr_name, attr in view.attributes %}
+    pub {{ attr.column_name }}: Option<{{ attr.u_type }}>{% if not loop.last %},{% endif %}
+    {% endfor %}
+}
+
+impl {{ view.view_name | capitalize }}Filter {
+
+    /// Creates a new empty filter (no conditions).
+    pub fn new() -> Self {
+        Self {
+            {% for attr_name, attr in view.attributes %}
+            {{ attr.column_name }}: None{% if not loop.last %},{% endif %}
+            {% endfor %}
+        }
+    }
+
+    {# Fluent setters for each filterable field #}
+    {% for attr_name, attr in view.attributes %}
+    pub fn {{ attr.column_name }}(mut self, value: {{ attr.u_type }}) -> Self {
+        self.{{ attr.column_name }} = Some(value);
+        self
+    }
+    {% endfor %}
+
+    /// Executes a SELECT with dynamically built WHERE clauses.
+    /// Uses QueryBuilder with bound parameters to avoid SQL injection.
+    pub async fn fetch_all(&self, pool: &PgPool)
+        -> sqlx::Result<Vec<{{ view.view_name | capitalize }}}>
+    {
+        let mut qb = QueryBuilder::<Postgres>::new("SELECT * FROM {{ view.view_name }}");
+
+        let mut has_where = false;
+
+        {% for attr_name, attr in view.attributes %}
+        if self.{{ attr.column_name }}.is_some() {
+            if !has_where {
+                qb.push(" WHERE ");
+                has_where = true;
+            } else {
+                qb.push(" AND ");
+            }
+            qb.push("{{ attr.column_name }} = ");
+            qb.push_bind(self.{{ attr.column_name }}.as_ref().unwrap());
+        }
+        {% endfor %}
+
+        let query = qb.build_query_as::<{{ view.view_name | capitalize }}>();
+        let rows = query.fetch_all(pool).await?;
+        Ok(rows)
+    }
+}
+
+{% endfor %}
