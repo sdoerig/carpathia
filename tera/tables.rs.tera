@@ -1,6 +1,7 @@
 {# ================================================================
-   SQLx Struct + Query Builder Generator
-   Input: tables = your JSON object containing table definitions
+   SQLx Struct + Query Builder + Relations (both directions)
+   Dynamic, injection-safe filtering via sqlx::QueryBuilder
+   Expects: tables = your JSON object with table definitions
    ================================================================ #}
 
 {% for table_name, table in tables %}
@@ -8,7 +9,7 @@
 {# ----------------------------- #}
 {# Imports                      #}
 {# ----------------------------- #}
-use sqlx::{FromRow, PgPool};
+use sqlx::{FromRow, PgPool, Postgres, QueryBuilder};
 {% for imp in table.u_imports %}
 use {{ imp }};
 {% endfor %}
@@ -21,6 +22,62 @@ use {{ imp }};
 pub struct {{ table.table_name | capitalize }} {
     {% for attr_name, attr in table.attributes %}
     pub {{ attr.column_name }}: {{ attr.u_type }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+}
+
+{# ----------------------------- #}
+{# Forward Relations (FK -> parent) #}
+{# Example: city.country(&pool).await #}
+{# ----------------------------- #}
+
+impl {{ table.table_name | capitalize }} {
+
+    {# For each foreign key on this table, generate a method to fetch the referenced row #}
+    {% for attr_name, attr in table.attributes %}
+        {% if attr.constraint_type == "ForeignKey" %}
+
+    /// Fetches the related {{ attr.referenced_table | capitalize }} record.
+    pub async fn {{ attr.referenced_table }}(&self, pool: &PgPool)
+        -> sqlx::Result<{{ attr.referenced_table | capitalize }}>
+    {
+        sqlx::query_as!(
+            {{ attr.referenced_table | capitalize }},
+            "SELECT * FROM {{ attr.referenced_table }} WHERE {{ attr.referenced_column }} = $1",
+            self.{{ attr.column_name }}
+        )
+        .fetch_one(pool)
+        .await
+    }
+        {% endif %}
+    {% endfor %}
+}
+
+{# ----------------------------- #}
+{# Reverse Relations (parent -> children) #}
+{# Example: country.cities(&pool).await   #}
+{# ----------------------------- #}
+
+impl {{ table.table_name | capitalize }} {
+
+    {# Scan all tables to find foreign keys pointing to this table #}
+    {% for other_table_name, other_table in tables %}
+        {% for other_attr_name, other_attr in other_table.attributes %}
+            {% if other_attr.constraint_type == "ForeignKey" and other_attr.referenced_table == table.table_name %}
+
+    /// Fetches all related {{ other_table.table_name | capitalize }} records.
+    pub async fn {{ other_table.table_name | pluralize }}(&self, pool: &PgPool)
+        -> sqlx::Result<Vec<{{ other_table.table_name | capitalize }}}>
+    {
+        sqlx::query_as!(
+            {{ other_table.table_name | capitalize }},
+            "SELECT * FROM {{ other_table.table_name }} WHERE {{ other_attr.column_name }} = $1",
+            self.{{ other_attr.referenced_column }}
+        )
+        .fetch_all(pool)
+        .await
+    }
+            {% endif %}
+        {% endfor %}
     {% endfor %}
 }
 
@@ -39,7 +96,7 @@ pub struct {{ table.table_name | capitalize }}Builder<'a> {
 
 impl<'a> {{ table.table_name | capitalize }}Builder<'a> {
 
-    {# Constructor injecting the PgPool #}
+    /// Creates a new builder with an injected PgPool.
     pub fn new(pool: &'a PgPool) -> Self {
         Self {
             pool,
@@ -142,6 +199,62 @@ impl<'a> {{ table.table_name | capitalize }}Builder<'a> {
         .await?;
 
         Ok(result.rows_affected())
+    }
+}
+
+{# ----------------------------- #}
+{# Dynamic, Typed Filtering       #}
+{# Uses sqlx::QueryBuilder<Postgres> with bound parameters only   #}
+{# ----------------------------- #}
+
+pub struct {{ table.table_name | capitalize }}Filter {
+    {% for attr_name, attr in table.attributes %}
+    pub {{ attr.column_name }}: Option<{{ attr.u_type }}>{% if not loop.last %},{% endif %}
+    {% endfor %}
+}
+
+impl {{ table.table_name | capitalize }}Filter {
+
+    /// Creates a new empty filter (no conditions).
+    pub fn new() -> Self {
+        Self {
+            {% for attr_name, attr in table.attributes %}
+            {{ attr.column_name }}: None{% if not loop.last %},{% endif %}
+            {% endfor %}
+        }
+    }
+
+    {# Fluent setters for each filterable field #}
+    {% for attr_name, attr in table.attributes %}
+    pub fn {{ attr.column_name }}(mut self, value: {{ attr.u_type }}) -> Self {
+        self.{{ attr.column_name }} = Some(value);
+        self
+    }
+    {% endfor %}
+
+    /// Executes a SELECT with dynamically built WHERE clauses.
+    /// All values are bound via QueryBuilder to avoid SQL injection.
+    pub async fn fetch_all(&self, pool: &PgPool) -> sqlx::Result<Vec<{{ table.table_name | capitalize }}>> {
+        let mut qb = QueryBuilder::<Postgres>::new("SELECT * FROM {{ table.table_name }}");
+
+        let mut has_where = false;
+
+        {% for attr_name, attr in table.attributes %}
+        if self.{{ attr.column_name }}.is_some() {
+            if !has_where {
+                qb.push(" WHERE ");
+                has_where = true;
+            } else {
+                qb.push(" AND ");
+            }
+            qb.push("{{ attr.column_name }} = ");
+            qb.push_bind(self.{{ attr.column_name }}.as_ref().unwrap());
+        }
+        {% endfor %}
+
+        let query = qb.build_query_as::<{{ table.table_name | capitalize }}>();
+        let rows = query.fetch_all(pool).await?;
+        Ok(rows)
     }
 }
 
