@@ -1,0 +1,26 @@
+[package]
+name = "carpathia-core"
+version = "0.2.1-alpha.4"
+edition = "2024"
+license = "Apache-2.0"
+authors = ["Stefan Dörig", "sdoerig@bluewin.ch"]
+description = "Database schema parser and language agnostic generator"
+repository = "https://github.com/sdoerig/carpathia"
+homepage = "https://github.com/sdoerig/carpathia"
+categories = ["command-line-utilities", "database"]
+
+[dependencies]
+tokio = {version = "1", features = ["rt-multi-thread", "macros"]}
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sqlx = { version = "0.8", features = [ "postgres", "runtime-tokio", "tls-native-tls" ] }
+blake3 = "1.8.5"
+hex = "0.4"
+log = "0.4"
+env_logger = "0.10"
+tera = "1.19"
+clap = { version = "4.4", features = ["derive"] }
+
+[dev-dependencies]
+dotenv = "0.15"
+tempfile = "3.8"
