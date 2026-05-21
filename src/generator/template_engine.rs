@@ -2,16 +2,16 @@ use crate::cache::cache_structs::CacheFile;
 use crate::configuration::conf_structs::{TypeMapping, Types};
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
-use log::{debug, error, info};
-use std::collections::BTreeMap;
 use tera::{Context, Tera};
 
+#[expect(dead_code)]
 pub(crate) struct TemplateEngine {
     cache_result: CacheFile,
     db_schema: std::collections::HashMap<String, AbstractDbRepr>,
 }
 
 impl TemplateEngine {
+    #[expect(dead_code)]
     pub(crate) fn new(
         cache_result: CacheFile,
         db_schema: std::collections::HashMap<String, AbstractDbRepr>,
@@ -22,6 +22,7 @@ impl TemplateEngine {
         }
     }
 
+    #[expect(dead_code)]
     pub fn render_from_repr(
         tera: &Tera,
         template_name: &str,

@@ -131,14 +131,13 @@ mod tests {
                 comment: Some("Primary key for users table".to_string()),
             },
         );
-        let atr = AbstractTableRepr {
+        AbstractTableRepr {
             table_name: table_name.to_string(),
-            object_type: object_type,
+            object_type,
             u_imports: BTreeSet::new(),
             comment: Some("Test table".to_string()),
             attributes: abstract_attribte_map,
-        };
-        atr
+        }
     }
 
     fn get_config_with_cache_modus(cache_modus: CacheModus) -> CarpathiaConfig {
@@ -146,7 +145,7 @@ mod tests {
         let cache_file_path = temp_dir.path().to_path_buf().join("carpathia_cache.json");
         CarpathiaConfig {
             db_pool: DbPool::Dummy,
-            cache_modus: cache_modus,
+            cache_modus,
             output_directory: tempfile::tempdir().unwrap().path().to_path_buf(),
             cache_file: cache_file_path,
             type_map: Types::new(),

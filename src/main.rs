@@ -34,7 +34,7 @@ struct Args {
     #[arg(long, value_enum, default_value_t = CacheModus::UseCache)]
     cache_modus: CacheModus,
     /// NOT IMPLEMENTED: Output directory for the generated code   
-    #[arg(long, default_value = "./src/db_layer")]
+    #[arg(long, default_value = "./generated_files")]
     output_directory: String,
     /// JSON mapping file. Here, maps the database types to the users types and imports.    
     #[arg(long, default_value = "carpathia_type_mapping.json")]

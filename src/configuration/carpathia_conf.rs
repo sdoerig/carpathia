@@ -1,28 +1,32 @@
 //! Configuration consists of
+//! 
 //! - CarpathiaConfig
 //! - CarpathiaConfigBuilder
+//! 
 //! to avoid parameter explosion.
 use super::conf_enums::CacheModus;
 use super::conf_enums::{DbPool, DbType};
 use super::conf_file_reader::load_type_mappings;
 use super::conf_structs::Types;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
-use log::{error, info};
+use log::info;
 use sqlx::postgres::PgPoolOptions;
 use std::path::PathBuf;
 
-const CACHE_FILE_NAME: &str = "carpathia_cache.json";
-
 /// Structured configuration - to build it use
-/// CarpathiaConfigBuilder.
+///   CarpathiaConfigBuilder.
 pub struct CarpathiaConfig {
     /// Database pool to connect to, feed with
+    /// 
     /// - db_url
     /// - db_name
     /// - db_type
+    /// 
     /// CarpathiaConfigBuilder does it for you.
     pub db_pool: DbPool,
     pub cache_modus: CacheModus,
+    #[allow(unfulfilled_lint_expectations)]
+    #[allow(dead_code)]
     pub output_directory: PathBuf,
     pub cache_file: PathBuf,
     /// Database types mapped to user types
@@ -155,7 +159,7 @@ impl CarpathiaConfigBuilder {
             cache_modus: self.cache_modus,
             output_directory: self.output_directory,
             cache_file: self.cache_directory.join("carpathia_cache.json"),
-            type_map: type_map,
+            type_map,
             print_schema: self.print_schema,
             print_db_types: self.print_db_types,
         })

@@ -1,8 +1,8 @@
-use crate::configuration::carpathia_conf::CarpathiaConfig;
-use crate::configuration::conf_enums::{DbPool, DbType};
 /// This module extracts the datebase schema from a `PostgreSQL` database and
 /// generates a Rust struct for each table in the database. It also proviedes the
 /// intermeditate data structures to hold the extracted schema information.
+use crate::configuration::carpathia_conf::CarpathiaConfig;
+use crate::configuration::conf_enums::DbPool;
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::db::postgresql::PostgresQuerier;
 use crate::db::traits::DatabaseQuerier;
@@ -27,6 +27,7 @@ impl DbSchemaParser {
 mod tests {
     use super::*;
     use crate::configuration::carpathia_conf::CarpathiaConfigBuilder;
+    use crate::configuration::conf_enums::DbType;
 
     fn setup_test_config() -> CarpathiaConfig {
         // Lade .env.test (falls vorhanden)
@@ -43,9 +44,9 @@ mod tests {
             .db_name(&db_name)
             .db_type(DbType::Postgres)
             .cache_modus(crate::configuration::conf_enums::CacheModus::BypassCache)
-            .carpathia_type_mapping(&"carpathia_type_mapping.json".to_string())
-            .output_directory(&"./output".to_string())
-            .cache_directory(&"./cache".to_string())
+            .carpathia_type_mapping("carpathia_type_mapping.json".to_string())
+            .output_directory("./output".to_string())
+            .cache_directory("./cache".to_string())
             .print_schema(false)
             .print_db_types(false)
             .build()

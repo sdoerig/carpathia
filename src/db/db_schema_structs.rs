@@ -176,7 +176,7 @@ mod tests {
     use super::*;
 
     fn create_column_info(column_name: &str) -> AbstractAttribute {
-        let attribute = AbstractAttribute {
+        AbstractAttribute {
             column_name: column_name.to_string(),
             data_type: "integer".to_string(),
             u_type: "whatever".to_string(),
@@ -194,18 +194,16 @@ mod tests {
             referenced_table: None,
             referenced_column: None,
             comment: Some("Primary key for users table".to_string()),
-        };
-        attribute
+        }
     }
     fn create_table_info(table_name: &str) -> AbstractTableRepr {
-        let mut table_info = AbstractTableRepr {
+        AbstractTableRepr {
             table_name: table_name.to_string(),
             object_type: "BASE TABLE".parse().unwrap_or(ObjectType::BaseTable),
             attributes: BTreeMap::new(),
             u_imports: BTreeSet::new(),
             comment: Some("Users table".to_string()),
-        };
-        table_info
+        }
     }
 
     #[test]
