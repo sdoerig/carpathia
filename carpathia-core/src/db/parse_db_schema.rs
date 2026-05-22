@@ -44,7 +44,7 @@ mod tests {
             .cache_modus(crate::configuration::conf_enums::CacheModus::BypassCache)
             .carpathia_type_mapping("carpathia_type_mapping.json".to_string())
             .output_directory("./output".to_string())
-            .cache_directory("./cache".to_string())
+            .cache_file("./cache/carpathia_cache.json".to_string())
             .print_schema(false)
             .print_db_types(false)
             .build()

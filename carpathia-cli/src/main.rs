@@ -36,9 +36,9 @@ struct Args {
     /// JSON mapping file. Here, maps the database types to the users types and imports.    
     #[arg(long, default_value = "carpathia_type_mapping.json")]
     carpathia_type_mapping_file: String,
-    /// directory containing the `carpatia_cache.json`. The cache file contains hashes of the previously generated database entities   
-    #[arg(long, default_value = ".")]
-    cache_directory: String,
+    /// Where to store carpathias cache file. The cache file contains hashes of the previously generated database entities   
+    #[arg(long, default_value = "./carpathia_cache.json")]
+    cache_file: String,
     /// print the extracted database schema to the console in JSON format for debugging purposes.
     #[arg(long, default_value_t = false)]
     print_schema: bool,
@@ -67,7 +67,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .cache_modus(args.cache_modus)
         .carpathia_type_mapping(args.carpathia_type_mapping_file)
         .output_directory(&args.output_directory)
-        .cache_directory(&args.cache_directory)
+        .cache_file(&args.cache_file)
         .print_schema(args.print_schema)
         .print_db_types(args.print_db_types)
         .build()

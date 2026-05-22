@@ -44,7 +44,7 @@ pub struct CarpathiaConfigBuilder {
     db_type: Option<DbType>,
     cache_modus: CacheModus,
     output_directory: PathBuf,
-    cache_directory: PathBuf,
+    cache_file: PathBuf,
     type_mapping_file: PathBuf,
     print_schema: bool,
     print_db_types: bool,
@@ -64,7 +64,7 @@ impl CarpathiaConfigBuilder {
             db_type: None,
             cache_modus: CacheModus::UseCache,
             output_directory: ".".into(),
-            cache_directory: ".".into(),
+            cache_file: "./carpathia_cache.json".into(),
             type_mapping_file: "carpathia_type_mapping.json".into(),
             print_schema: false,
             print_db_types: false,
@@ -96,8 +96,8 @@ impl CarpathiaConfigBuilder {
         self
     }
 
-    pub fn cache_directory(mut self, dir: impl Into<PathBuf>) -> Self {
-        self.cache_directory = dir.into();
+    pub fn cache_file(mut self, file: impl Into<PathBuf>) -> Self {
+        self.cache_file = file.into();
         self
     }
 
@@ -164,7 +164,7 @@ impl CarpathiaConfigBuilder {
             db_pool,
             cache_modus: self.cache_modus,
             output_directory: self.output_directory,
-            cache_file: self.cache_directory.join("carpathia_cache.json"),
+            cache_file: self.cache_file,
             type_map,
             print_schema: self.print_schema,
             print_db_types: self.print_db_types,
@@ -184,7 +184,7 @@ mod tests {
             .db_type(DbType::Dummy)
             .cache_modus(CacheModus::UseCache)
             .output_directory("./output")
-            .cache_directory("./cache")
+            .cache_file("./cache/carpathia_cache.json")
             .print_schema(true)
             .print_db_types(true)
             .build()
