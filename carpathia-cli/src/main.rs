@@ -1,6 +1,7 @@
 use crate::cache::cache_file::Cache;
 use crate::db::parse_db_schema::DbSchemaParser;
 use crate::generator::template_engine;
+use crate::return_values::carpathia_errors::ErrorNumber;
 use carpathia_core::*;
 use clap::Parser;
 use configuration::carpathia_conf::CarpathiaConfigBuilder;
@@ -85,28 +86,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             exit(i32::from(e.error_type));
         }
     };
-
-    match Cache::get_changed_entities(&config, &table_info_map) {
-        Ok(_changed_entities) => {
-            if config.print_schema {
-                println!(
-                    "Extracted database schema in JSON format:\n{}",
-                    serde_json::to_string_pretty(&table_info_map)?
-                );
-            }
-            if config.print_db_types {
-                match template_engine::get_db_types(&table_info_map) {
-                    Ok(db_types) => match serde_json::to_string_pretty(&db_types) {
-                        Ok(json) => println!("{json}"),
-                        Err(_) => todo!(),
-                    },
-
-                    Err(e) => {
-                        error!("Could not print type mapping {}", e);
-                    }
+    if config.print_schema {
+        println!(
+            "Extracted database schema in JSON format:\n{}",
+            serde_json::to_string_pretty(&table_info_map)?
+        );
+    }
+    if config.print_db_types {
+        match template_engine::get_db_types(&config, &table_info_map) {
+            Ok(db_types) => match serde_json::to_string_pretty(&db_types) {
+                Ok(json) => println!("{json}"),
+                Err(e) => {
+                    error!("Could not get DB types {e}");
+                    exit(i32::from(ErrorNumber::Other));
                 }
+            },
+
+            Err(e) => {
+                error!("Could not print type mapping {}", e);
             }
         }
+    }
+    match Cache::get_changed_entities(&config, &table_info_map) {
+        Ok(_changed_entities) => {}
         Err(e) => {
             error!("Error while checking for changed entities: {e}");
             exit(i32::from(e.error_type));

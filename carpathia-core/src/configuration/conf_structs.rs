@@ -4,6 +4,11 @@ use crate::db::db_schema_structs::ABSTRACT_DB_REPR_VERSION;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
+pub(crate) const DEFAULT_TYPE_MAPPING: &TypeMapping = &TypeMapping {
+    u_import: Some(String::new()),
+    u_type: String::new(),
+};
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Types {
     pub version: String,
@@ -25,7 +30,7 @@ impl Types {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct TypeMapping {
     pub u_import: Option<String>,
     pub u_type: String,
