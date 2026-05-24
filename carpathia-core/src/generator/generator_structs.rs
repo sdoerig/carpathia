@@ -11,7 +11,10 @@ impl Template {
     #[expect(dead_code)]
     fn new(file_name: &str) -> Self {
         let _file_name_tokens: Vec<&str> = file_name.split('.').collect();
-        Template {template_type: TemplateType::Unknown, suffix: String::new()}
+        Template {
+            template_type: TemplateType::Unknown,
+            suffix: String::new(),
+        }
     }
 }
 

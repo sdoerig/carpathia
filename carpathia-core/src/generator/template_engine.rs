@@ -1,5 +1,5 @@
 use crate::cache::cache_file::Cache;
-use crate::cache::cache_structs::{CacheFile};
+use crate::cache::cache_structs::CacheFile;
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_structs::{DEFAULT_TYPE_MAPPING, Types};
 use crate::db::db_schema_structs::AbstractDbRepr;
@@ -10,8 +10,6 @@ use std::fs;
 use std::io;
 use std::path::PathBuf;
 use tera::{Context, Tera};
-
-
 
 #[expect(dead_code)]
 pub struct TemplateEngine {
