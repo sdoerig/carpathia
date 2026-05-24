@@ -1,7 +1,7 @@
-use crate::cache::cache_file::Cache;
 use crate::db::parse_db_schema::DbSchemaParser;
 use crate::generator::template_engine;
 use crate::return_values::carpathia_errors::ErrorNumber;
+use crate::template_engine::TemplateEngine;
 use carpathia_core::*;
 use clap::Parser;
 use configuration::carpathia_conf::CarpathiaConfigBuilder;
@@ -107,16 +107,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
     }
-    match Cache::get_changed_entities(&config, &table_info_map) {
-        Ok(_changed_entities) => {}
+    match TemplateEngine::generate_code(&config, &table_info_map) {
+        Ok(_) => {
+            info!(
+                "Successfully parsed database schema. Found {} tables.",
+                table_info_map.tables.len()
+            );
+            exit(0);
+        }
         Err(e) => {
             error!("Error while checking for changed entities: {e}");
             exit(i32::from(e.error_type));
         }
-    }
-    info!(
-        "Successfully parsed database schema. Found {} tables.",
-        table_info_map.tables.len()
-    );
-    exit(0);
+    };
 }

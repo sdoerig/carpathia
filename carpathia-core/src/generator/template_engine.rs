@@ -1,10 +1,17 @@
-use crate::cache::cache_structs::{CacheFile, CacheFileDiff};
+use crate::cache::cache_file::Cache;
+use crate::cache::cache_structs::{CacheFile};
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_structs::{DEFAULT_TYPE_MAPPING, Types};
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
-use log::debug;
+use log::{debug, error};
+use std::collections::BTreeMap;
+use std::fs;
+use std::io;
+use std::path::PathBuf;
 use tera::{Context, Tera};
+
+
 
 #[expect(dead_code)]
 pub struct TemplateEngine {
@@ -28,10 +35,36 @@ impl TemplateEngine {
     pub fn generate_code(
         config: &CarpathiaConfig,
         adr: &AbstractDbRepr,
-        cache_diff: &CacheFileDiff,
-    ) {
+    ) -> Result<(), CarpathiaError> {
         debug!("tera template directory is {:?}", config.template_directory);
         debug!("output directory is {:?}", config.output_directory);
+        let templates = match list_files(&config.template_directory) {
+            Ok(templates) => {
+                debug!("templates found {:?}", templates);
+                templates
+            }
+            Err(e) => {
+                error!("No templates found");
+                return Err(CarpathiaError {
+                    message: format!(
+                        "No templates found in directory {:?}, error {}",
+                        config.template_directory, e
+                    ),
+                    error_type: ErrorNumber::NoTemplatesFound,
+                });
+            }
+        };
+        let cache_diff = match Cache::get_changed_entities(config, adr, &templates) {
+            Ok(cache_diff) => cache_diff,
+            Err(e) => {
+                error!("Error while checking for changed entities: {e}");
+                return Err(CarpathiaError {
+                    message: format!("Error while checking for changed entities: {}", e),
+                    error_type: ErrorNumber::CacheFileError,
+                });
+            }
+        };
+        Ok(())
     }
 
     pub fn render_from_repr(
@@ -46,6 +79,17 @@ impl TemplateEngine {
 
         tera.render(template_name, &ctx)
     }
+}
+
+fn list_files(dir: &PathBuf) -> io::Result<BTreeMap<String, PathBuf>> {
+    let mut files: BTreeMap<String, PathBuf> = BTreeMap::new();
+    for entry in fs::read_dir(dir)? {
+        let file_name = entry?.file_name().to_string_lossy().into_owned();
+        if file_name.ends_with(".tera") {
+            files.insert(file_name.clone(), dir.to_path_buf().join(file_name));
+        }
+    }
+    Ok(files)
 }
 
 /// Returning all the types found in the database schema - the users need this to

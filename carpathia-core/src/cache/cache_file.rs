@@ -17,7 +17,7 @@ use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{error, info};
 
-use std::fs;
+use std::{collections::BTreeMap, fs, path::PathBuf};
 
 pub struct Cache {}
 
@@ -25,6 +25,7 @@ impl Cache {
     pub fn get_changed_entities(
         config: &CarpathiaConfig,
         new_content: &AbstractDbRepr,
+        templates: &BTreeMap<String, PathBuf>,
     ) -> Result<CacheFileDiff, CarpathiaError> {
         let old_cache = match CacheFile::from_file(&config.cache_file) {
             Ok(cache) => cache,
@@ -36,7 +37,7 @@ impl Cache {
                 CacheFile::new()
             }
         };
-        let new_cache = CacheFile::from_abstract_db_repr(new_content);
+        let new_cache = CacheFile::from_new_run(new_content, templates);
         let cache_diff = compare_cache_files(&old_cache, &new_cache, config.cache_modus);
         match new_cache.save_to_file(&config.cache_file) {
             Ok(()) => {
@@ -87,7 +88,7 @@ mod tests {
         IsNullable, ObjectType,
     };
     use std::collections::{BTreeMap, BTreeSet};
-
+    const TEMPLATES: &BTreeMap<String, PathBuf> = &BTreeMap::new();
     fn create_abstract_db_repr(
         table_name: &str,
         column_name: &str,
@@ -161,7 +162,7 @@ mod tests {
         //let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
         let new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
-        match Cache::get_changed_entities(&config, &new_content) {
+        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -201,7 +202,7 @@ mod tests {
         //cache.remove_cache_file(); // Ensure we start with a clean slate
         let mut new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
-        match Cache::get_changed_entities(&config, &new_content) {
+        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -221,7 +222,7 @@ mod tests {
 
         //let cache_after_first_run = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
 
-        match Cache::get_changed_entities(&config, &new_content) {
+        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -248,7 +249,7 @@ mod tests {
             ),
         );
         //let config_third_run = get_config_with_cache_modus(CacheModus::UseCache);
-        match Cache::get_changed_entities(&config, &new_content) {
+        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -275,7 +276,7 @@ mod tests {
         let new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
 
-        match Cache::get_changed_entities(&config, &new_content) {
+        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -293,7 +294,7 @@ mod tests {
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         };
         let config_after_first_run = get_config_with_cache_modus(CacheModus::BypassCache);
-        match Cache::get_changed_entities(&config_after_first_run, &new_content) {
+        match Cache::get_changed_entities(&config_after_first_run, &new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -320,7 +321,7 @@ mod tests {
         let mut new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
 
-        match Cache::get_changed_entities(&config, &new_content) {
+        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -341,7 +342,7 @@ mod tests {
         // Now we remove the entry from the new content and check if it is detected as removed
         new_content.tables.remove("test_table");
         //let config_third_run = get_config_with_cache_modus(CacheModus::UseCache);
-        match Cache::get_changed_entities(&config, &new_content) {
+        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
