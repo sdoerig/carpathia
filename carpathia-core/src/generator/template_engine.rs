@@ -1,8 +1,9 @@
-use crate::cache::cache_structs::CacheFile;
+use crate::cache::cache_structs::{CacheFile, CacheFileDiff};
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_structs::{DEFAULT_TYPE_MAPPING, Types};
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
+use log::debug;
 use tera::{Context, Tera};
 
 #[expect(dead_code)]
@@ -23,6 +24,16 @@ impl TemplateEngine {
         }
     }
 
+    #[allow(unused_variables)]
+    pub fn generate_code(
+        config: &CarpathiaConfig,
+        adr: &AbstractDbRepr,
+        cache_diff: &CacheFileDiff,
+    ) {
+        debug!("tera template directory is {:?}", config.template_directory);
+        debug!("output directory is {:?}", config.output_directory);
+    }
+
     pub fn render_from_repr(
         tera: &Tera,
         template_name: &str,
@@ -39,7 +50,7 @@ impl TemplateEngine {
 
 /// Returning all the types found in the database schema - the users need this to
 /// create their own mapping.
-/// 
+///
 /// If there is a mapping file provided, the old mapping is merged into the
 /// new mapping structure.
 pub fn get_db_types(
@@ -56,7 +67,9 @@ pub fn get_db_types(
     let mut types = Types::new();
 
     // Chaining loops - otherwhise I had to create loop in loop.
-    table_info_map.tables.values()
+    table_info_map
+        .tables
+        .values()
         .flat_map(|table| table.attributes.values())
         .for_each(|attribute| {
             let u_import_old = config
@@ -65,7 +78,8 @@ pub fn get_db_types(
                 .get(&attribute.data_type)
                 .unwrap_or(DEFAULT_TYPE_MAPPING);
 
-            types.type_mapping
+            types
+                .type_mapping
                 .entry(attribute.data_type.clone())
                 .or_insert_with(|| u_import_old.clone());
         });

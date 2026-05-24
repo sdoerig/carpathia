@@ -25,6 +25,7 @@ pub struct CarpathiaConfig {
     /// CarpathiaConfigBuilder does it for you.
     pub db_pool: DbPool,
     pub cache_modus: CacheModus,
+    pub template_directory: PathBuf,
     #[allow(unfulfilled_lint_expectations)]
     #[allow(dead_code)]
     pub output_directory: PathBuf,
@@ -43,6 +44,7 @@ pub struct CarpathiaConfigBuilder {
     db_name: Option<String>,
     db_type: Option<DbType>,
     cache_modus: CacheModus,
+    template_directory: PathBuf,
     output_directory: PathBuf,
     cache_file: PathBuf,
     type_mapping_file: PathBuf,
@@ -63,6 +65,7 @@ impl CarpathiaConfigBuilder {
             db_name: None,
             db_type: None,
             cache_modus: CacheModus::UseCache,
+            template_directory: "tera/rust_lib".into(),
             output_directory: ".".into(),
             cache_file: "./carpathia_cache.json".into(),
             type_mapping_file: "carpathia_type_mapping.json".into(),
@@ -88,6 +91,11 @@ impl CarpathiaConfigBuilder {
 
     pub fn cache_modus(mut self, modus: CacheModus) -> Self {
         self.cache_modus = modus;
+        self
+    }
+
+    pub fn template_directory(mut self, dir: impl Into<PathBuf>) -> Self {
+        self.template_directory = dir.into();
         self
     }
 
@@ -163,6 +171,7 @@ impl CarpathiaConfigBuilder {
         Ok(CarpathiaConfig {
             db_pool,
             cache_modus: self.cache_modus,
+            template_directory: self.template_directory,
             output_directory: self.output_directory,
             cache_file: self.cache_file,
             type_map,

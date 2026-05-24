@@ -30,9 +30,12 @@ struct Args {
     /// Forces the generator to overwrite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
     #[arg(long, value_enum, default_value_t = CacheModus::UseCache)]
     cache_modus: CacheModus,
-    /// NOT IMPLEMENTED: Output directory for the generated code   
+    /// Output directory for the generated code   
     #[arg(long, default_value = "./generated_files")]
     output_directory: String,
+    /// Template directory containing the tera templates   
+    #[arg(long, default_value = "./tera/rust_lib")]
+    template_directory: String,
     /// JSON mapping file. Here, maps the database types to the users types and imports.    
     #[arg(long, default_value = "carpathia_type_mapping.json")]
     carpathia_type_mapping_file: String,
@@ -87,10 +90,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     };
     if config.print_schema {
-        println!(
-            "Extracted database schema in JSON format:\n{}",
-            serde_json::to_string_pretty(&table_info_map)?
-        );
+        println!("{}", serde_json::to_string_pretty(&table_info_map)?);
     }
     if config.print_db_types {
         match template_engine::get_db_types(&config, &table_info_map) {

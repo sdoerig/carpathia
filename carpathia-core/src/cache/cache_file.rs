@@ -146,6 +146,7 @@ mod tests {
         CarpathiaConfig {
             db_pool: DbPool::Dummy,
             cache_modus,
+            template_directory: tempfile::tempdir().unwrap().path().to_path_buf(),
             output_directory: tempfile::tempdir().unwrap().path().to_path_buf(),
             cache_file: cache_file_path,
             type_map: Types::new(),
