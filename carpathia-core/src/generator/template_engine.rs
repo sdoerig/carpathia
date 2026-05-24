@@ -62,18 +62,19 @@ impl TemplateEngine {
                 });
             }
         };
+        for (template, path) in templates {}
         Ok(())
     }
 
     pub fn render_from_repr(
         tera: &Tera,
         template_name: &str,
-        repr: &AbstractDbRepr,
+        repr: impl serde::Serialize,
     ) -> Result<String, tera::Error> {
         let mut ctx = Context::new();
-        ctx.insert("version", &repr.version);
-        ctx.insert("tables", &repr.tables);
-        ctx.insert("views", &repr.views);
+        //ctx.insert("version", &repr.version);
+        ctx.insert("tables", &repr);
+        ctx.insert("views", &repr);
 
         tera.render(template_name, &ctx)
     }
