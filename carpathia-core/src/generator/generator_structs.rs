@@ -10,7 +10,7 @@ pub(crate) struct Template {
 
 impl Template {
     #[allow(dead_code)]
-    fn new(file_name: &str) -> Self {
+    pub fn new(file_name: &str) -> Self {
         let file_name_tokens: Vec<&str> = file_name.split('.').collect();
         let template_type: TemplateType = file_name_tokens
             .first()
