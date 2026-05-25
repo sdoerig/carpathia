@@ -8,13 +8,14 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::PathBuf;
 
-pub(crate) struct CacheSectionDiff {
+pub struct CacheSectionDiff {
     pub to_generate: Vec<String>,
     pub to_remove: Vec<String>,
 }
-pub(crate) struct CacheFileDiff {
+pub struct CacheFileDiff {
     pub tables: CacheSectionDiff,
     pub views: CacheSectionDiff,
+    pub templates: CacheSectionDiff,
 }
 impl CacheFileDiff {
     pub(crate) fn new() -> Self {
@@ -27,6 +28,10 @@ impl CacheFileDiff {
                 to_generate: Vec::new(),
                 to_remove: Vec::new(),
             },
+            templates: CacheSectionDiff {
+                to_generate: Vec::new(),
+                to_remove: Vec::new(),
+            },
         }
     }
 }
@@ -35,6 +40,7 @@ impl CacheFileDiff {
 pub(crate) struct CacheFile {
     pub tables: BTreeMap<String, String>,
     pub views: BTreeMap<String, String>,
+    pub templates: BTreeMap<String, String>,
 }
 
 impl CacheFile {
@@ -42,6 +48,7 @@ impl CacheFile {
         CacheFile {
             tables: BTreeMap::new(),
             views: BTreeMap::new(),
+            templates: BTreeMap::new(),
         }
     }
     pub(crate) fn from_file(path: &PathBuf) -> Result<Self, CarpathiaError> {
@@ -62,10 +69,23 @@ impl CacheFile {
         Ok(cache_file)
     }
 
-    pub(crate) fn from_abstract_db_repr(db_repr: &AbstractDbRepr) -> Self {
+    pub(crate) fn from_new_run(
+        db_repr: &AbstractDbRepr,
+        templates: &BTreeMap<String, PathBuf>,
+    ) -> Self {
         let mut cache_file = CacheFile::new();
         for (table_name, table_repr) in &db_repr.tables {
-            let table_hash = match blake3_hash(table_repr) {
+            let json_string = match serialize_to_string(&table_repr) {
+                Ok(value) => value,
+                Err(e) => {
+                    error!(
+                        "Failed to hash table representation for table {table_name}: {:?}",
+                        e
+                    );
+                    continue; // Skip this table and continue with the next one
+                }
+            };
+            let table_hash = match blake3_hash(&json_string) {
                 Ok(hash) => hash,
                 Err(e) => {
                     error!("Failed to hash table representation for table {table_name}: {e}");
@@ -75,7 +95,17 @@ impl CacheFile {
             cache_file.tables.insert(table_name.clone(), table_hash);
         }
         for (view_name, view_repr) in &db_repr.views {
-            let view_hash = match blake3_hash(view_repr) {
+            let json_string = match serialize_to_string(&view_repr) {
+                Ok(value) => value,
+                Err(e) => {
+                    error!(
+                        "Failed to hash table representation for table {view_name}: {:?}",
+                        e
+                    );
+                    continue; // Skip this table and continue with the next one
+                }
+            };
+            let view_hash = match blake3_hash(&json_string) {
                 Ok(hash) => hash,
                 Err(e) => {
                     error!("Failed to hash view representation for view {view_name}: {e}");
@@ -83,6 +113,25 @@ impl CacheFile {
                 }
             };
             cache_file.views.insert(view_name.clone(), view_hash);
+        }
+        for (template_name, path) in templates {
+            let template_content = match std::fs::read_to_string(path) {
+                Ok(content) => content,
+                Err(e) => {
+                    error!("Could not read template {e}");
+                    continue;
+                }
+            };
+            let template_hash = match blake3_hash(&template_content) {
+                Ok(hash) => hash,
+                Err(e) => {
+                    error!("Could not hash template content {e}");
+                    continue;
+                }
+            };
+            cache_file
+                .templates
+                .insert(template_name.clone(), template_hash);
         }
         cache_file
     }
@@ -136,6 +185,12 @@ pub(crate) fn compare_cache_files(
         cache_usage,
         &mut cache_diff.views,
     );
+    diff_btrees(
+        &old_cache.templates,
+        &new_cache.templates,
+        cache_usage,
+        &mut cache_diff.templates,
+    );
     cache_diff
 }
 
@@ -164,19 +219,23 @@ fn diff_btrees(
     );
 }
 
-fn blake3_hash<T: Serialize>(item: &T) -> Result<String, CarpathiaError> {
+fn blake3_hash(item: &str) -> Result<String, CarpathiaError> {
+    let mut hasher = Blake3Hasher::new();
+    hasher.update(item.as_bytes());
+    let hash_result = hasher.finalize();
+    Ok(hash_result.to_hex().to_string())
+}
+
+fn serialize_to_string<T: Serialize>(item: &T) -> Result<String, Result<String, CarpathiaError>> {
     let json_string = match serde_json::to_string(item) {
         Ok(s) => s,
         Err(e) => {
             error!("Failed to serialize item to JSON: {e}");
-            return Err(CarpathiaError {
+            return Err(Err(CarpathiaError {
                 message: "Failed to serialize item to JSON".to_string(),
                 error_type: ErrorNumber::Other,
-            });
+            }));
         }
     };
-    let mut hasher = Blake3Hasher::new();
-    hasher.update(json_string.as_bytes());
-    let hash_result = hasher.finalize();
-    Ok(hash_result.to_hex().to_string())
+    Ok(json_string)
 }

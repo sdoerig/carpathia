@@ -1,0 +1,54 @@
+{
+  "version": "0.2.1-alpha.3",
+  "type_mapping": {
+    "boolean": {
+      "u_import": "",
+      "u_type": "bool"
+    },
+    "bytea": {
+      "u_import": "",
+      "u_type": "Vec<u8>"
+    },
+    "character": {
+      "u_import": "",
+      "u_type": "String"
+    },
+    "date": {
+      "u_import": "chrono::NaiveDate",
+      "u_type": "NaiveDate"
+    },
+    "integer": {
+      "u_import": "",
+      "u_type": "i32"
+    },
+    "mpaa_rating": {
+      "u_import": "sqlx::Type",
+      "u_type": "MpaaRating"
+    },
+    "numeric": {
+      "u_import": "rust_decimal::Decimal",
+      "u_type": "Decimal"
+    },
+    "smallint": {
+      "u_import": "",
+      "u_type": "i16"
+    },
+    "text": {
+      "u_import": "",
+      "u_type": "String"
+    },
+    "text[][1]": {
+      "u_import": "",
+      "u_type": "Vec<Vec<String>>"
+    },
+    "timestamp with time zone": {
+      "u_import": "chrono::{DateTime, Utc}",
+      "u_type": "DateTime<Utc>"
+    },
+    "tsvector": {
+      "u_import": "",
+      "u_type": "String"
+    }
+  }
+}
+

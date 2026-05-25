@@ -1,17 +1,14 @@
-use clap::Parser;
-use log::{error, info};
-use std::process::exit;
-mod cache;
-mod configuration;
-mod db;
-mod generator;
-mod return_values;
-use crate::cache::cache_file::Cache;
 use crate::db::parse_db_schema::DbSchemaParser;
 use crate::generator::template_engine;
-use configuration::carpathia_conf::{CarpathiaConfigBuilder};
+use crate::return_values::carpathia_errors::ErrorNumber;
+use crate::template_engine::TemplateEngine;
+use carpathia_core::*;
+use clap::Parser;
+use configuration::carpathia_conf::CarpathiaConfigBuilder;
 use configuration::conf_enums::CacheModus;
 use configuration::conf_enums::DbType;
+use log::{error, info};
+use std::process::exit;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
 #[derive(Parser, Debug)]
 #[command(
@@ -33,15 +30,18 @@ struct Args {
     /// Forces the generator to overwrite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
     #[arg(long, value_enum, default_value_t = CacheModus::UseCache)]
     cache_modus: CacheModus,
-    /// NOT IMPLEMENTED: Output directory for the generated code   
-    #[arg(long, default_value = "./src/db_layer")]
+    /// Output directory for the generated code   
+    #[arg(long, default_value = "./generated_files")]
     output_directory: String,
+    /// Template directory containing the tera templates   
+    #[arg(long, default_value = "./tera/rust_lib")]
+    template_directory: String,
     /// JSON mapping file. Here, maps the database types to the users types and imports.    
     #[arg(long, default_value = "carpathia_type_mapping.json")]
     carpathia_type_mapping_file: String,
-    /// directory containing the `carpatia_cache.json`. The cache file contains hashes of the previously generated database entities   
-    #[arg(long, default_value = ".")]
-    cache_directory: String,
+    /// Where to store carpathias cache file. The cache file contains hashes of the previously generated database entities   
+    #[arg(long, default_value = "./carpathia_cache.json")]
+    cache_file: String,
     /// print the extracted database schema to the console in JSON format for debugging purposes.
     #[arg(long, default_value_t = false)]
     print_schema: bool,
@@ -70,7 +70,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .cache_modus(args.cache_modus)
         .carpathia_type_mapping(args.carpathia_type_mapping_file)
         .output_directory(&args.output_directory)
-        .cache_directory(&args.cache_directory)
+        .cache_file(&args.cache_file)
         .print_schema(args.print_schema)
         .print_db_types(args.print_db_types)
         .build()
@@ -89,36 +89,35 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             exit(i32::from(e.error_type));
         }
     };
-
-    match Cache::get_changed_entities(&config, &table_info_map) {
-        Ok(_changed_entities) => {
-            if config.print_schema {
-                println!(
-                    "Extracted database schema in JSON format:\n{}",
-                    serde_json::to_string_pretty(&table_info_map)?
-                );
-            }
-            if config.print_db_types {
-                match template_engine::get_db_types(&table_info_map) {
-                    Ok(db_types) => match serde_json::to_string_pretty(&db_types) {
-                        Ok(json) => println!("{json}"),
-                        Err(_) => todo!(),
-                    },
-
-                    Err(e) => {
-                        error!("Could not print type mapping {}", e);
-                    }
+    if config.print_schema {
+        println!("{}", serde_json::to_string_pretty(&table_info_map)?);
+    }
+    if config.print_db_types {
+        match template_engine::get_db_types(&config, &table_info_map) {
+            Ok(db_types) => match serde_json::to_string_pretty(&db_types) {
+                Ok(json) => println!("{json}"),
+                Err(e) => {
+                    error!("Could not get DB types {e}");
+                    exit(i32::from(ErrorNumber::Other));
                 }
+            },
+
+            Err(e) => {
+                error!("Could not print type mapping {}", e);
             }
+        }
+    }
+    match TemplateEngine::generate_code(&config, &table_info_map) {
+        Ok(_) => {
+            info!(
+                "Successfully parsed database schema. Found {} tables.",
+                table_info_map.tables.len()
+            );
+            exit(0);
         }
         Err(e) => {
             error!("Error while checking for changed entities: {e}");
             exit(i32::from(e.error_type));
         }
-    }
-    info!(
-        "Successfully parsed database schema. Found {} tables.",
-        table_info_map.tables.len()
-    );
-    exit(0);
+    };
 }

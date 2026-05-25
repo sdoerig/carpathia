@@ -1,0 +1,82 @@
+{# ================================================================
+   TABLE Template mod:lib
+   ================================================================ #}
+use sqlx::{FromRow, PgPool, Postgres, QueryBuilder};
+{% for imp in table.u_imports %}
+use {{ imp }};
+{% endfor %}
+
+#[derive(Debug, Clone, FromRow)]
+pub struct {{ table.table_name | capitalize }} {
+    {% for key, attr in table.attributes %}
+    pub {{ attr.column_name }}: {{ attr.u_type }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+}
+
+impl {{ table.table_name | capitalize }} {
+
+    {# Forward Relations #}
+    {% for key, attr in table.attributes %}
+        {% if attr.constraint_type == "ForeignKey" %}
+    pub async fn {{ attr.referenced_table }}(&self, pool: &PgPool)
+        -> sqlx::Result<{{ attr.referenced_table | capitalize }}>
+    {
+        sqlx::query_as!(
+            {{ attr.referenced_table | capitalize }},
+            "SELECT * FROM {{ attr.referenced_table }} WHERE {{ attr.referenced_column }} = $1",
+            self.{{ attr.column_name }}
+        )
+        .fetch_one(pool)
+        .await
+    }
+        {% endif %}
+    {% endfor %}
+}
+
+pub struct {{ table.table_name | capitalize }}Filter {
+    {% for key, attr in table.attributes %}
+    pub {{ attr.column_name }}: Option<{{ attr.u_type }}>{% if not loop.last %},{% endif %}
+    {% endfor %}
+}
+
+impl {{ table.table_name | capitalize }}Filter {
+
+    pub fn new() -> Self {
+        Self {
+            {% for key, attr in table.attributes %}
+            {{ attr.column_name }}: None{% if not loop.last %},{% endif %}
+            {% endfor %}
+        }
+    }
+
+    {% for key, attr in table.attributes %}
+    pub fn {{ attr.column_name }}(mut self, value: {{ attr.u_type }}) -> Self {
+        self.{{ attr.column_name }} = Some(value);
+        self
+    }
+    {% endfor %}
+
+    pub async fn fetch_all(&self, pool: &PgPool)
+        -> sqlx::Result<Vec<{{ table.table_name | capitalize }}}>
+    {
+        let mut qb = QueryBuilder::<Postgres>::new("SELECT * FROM {{ table.table_name }}");
+
+        let mut first = true;
+
+        {% for key, attr in table.attributes %}
+        if self.{{ attr.column_name }}.is_some() {
+            if first {
+                qb.push(" WHERE ");
+                first = false;
+            } else {
+                qb.push(" AND ");
+            }
+            qb.push("{{ attr.column_name }} = ");
+            qb.push_bind(self.{{ attr.column_name }}.as_ref().unwrap());
+        }
+        {% endfor %}
+
+        let query = qb.build_query_as::<{{ table.table_name | capitalize }}>>();
+        query.fetch_all(pool).await
+    }
+}

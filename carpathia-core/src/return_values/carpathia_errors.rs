@@ -14,6 +14,9 @@ pub enum ErrorNumber {
     InvalidObjectType,
     InvalidPoolType,
     InvalidConfiguration,
+    NoDbObjectsDiscovered,
+    NoTemplatesFound,
+    FileWriteError,
     Success,
 }
 
@@ -42,6 +45,9 @@ impl From<ErrorNumber> for i32 {
             ErrorNumber::InvalidObjectType => 7,
             ErrorNumber::InvalidPoolType => 8,
             ErrorNumber::InvalidConfiguration => 9,
+            ErrorNumber::NoDbObjectsDiscovered => 10,
+            ErrorNumber::NoTemplatesFound => 11,
+            ErrorNumber::FileWriteError => 12,
             ErrorNumber::Success => 0,
         }
     }

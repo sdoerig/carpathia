@@ -12,7 +12,7 @@ use std::{
 pub const ABSTRACT_DB_REPR_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
-pub(crate) struct AbstractDbRepr {
+pub struct AbstractDbRepr {
     // Apply the version as string, might have to deserialize it back to a struct.
     // Furthermore as there will be differnt versions and users can
     // print out the ADR the version might help in case of debugging.
@@ -22,7 +22,7 @@ pub(crate) struct AbstractDbRepr {
 }
 
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
-pub(crate) struct AbstractTableRepr {
+pub struct AbstractTableRepr {
     pub object_type: ObjectType,
     pub u_imports: BTreeSet<String>,
     pub table_name: String,
@@ -32,7 +32,7 @@ pub(crate) struct AbstractTableRepr {
 
 // This module defines the intermediate database attribute representation.
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
-pub(crate) struct AbstractAttribute {
+pub struct AbstractAttribute {
     pub column_name: String,
     pub data_type: String,
     pub u_type: String,
@@ -176,7 +176,7 @@ mod tests {
     use super::*;
 
     fn create_column_info(column_name: &str) -> AbstractAttribute {
-        let attribute = AbstractAttribute {
+        AbstractAttribute {
             column_name: column_name.to_string(),
             data_type: "integer".to_string(),
             u_type: "whatever".to_string(),
@@ -194,18 +194,16 @@ mod tests {
             referenced_table: None,
             referenced_column: None,
             comment: Some("Primary key for users table".to_string()),
-        };
-        attribute
+        }
     }
     fn create_table_info(table_name: &str) -> AbstractTableRepr {
-        let mut table_info = AbstractTableRepr {
+        AbstractTableRepr {
             table_name: table_name.to_string(),
             object_type: "BASE TABLE".parse().unwrap_or(ObjectType::BaseTable),
             attributes: BTreeMap::new(),
             u_imports: BTreeSet::new(),
             comment: Some("Users table".to_string()),
-        };
-        table_info
+        }
     }
 
     #[test]

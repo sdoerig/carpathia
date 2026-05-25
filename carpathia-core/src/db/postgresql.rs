@@ -13,13 +13,8 @@ use crate::configuration::conf_structs::TypeMapping;
 use crate::db::postgresql_structs::PgColumnInfo;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
-use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 use std::collections::{BTreeMap, BTreeSet};
-use std::ops::Deref;
-use std::str::FromStr;
-pub(crate) struct PostgresQuerier {
-    pool: Pool<Postgres>,
-}
+pub(crate) struct PostgresQuerier {}
 
 const LIMIT: i64 = 1000;
 const NONE_TYPE_MAPPING: &TypeMapping = &TypeMapping {
@@ -211,7 +206,7 @@ impl DatabaseQuerier for PostgresQuerier {
                             .or_insert_with(|| AbstractTableRepr {
                                 table_name: row.table_name.clone(),
                                 u_imports: BTreeSet::new(),
-                                object_type: object_type,
+                                object_type,
                                 comment: row.table_comment,
                                 attributes: BTreeMap::new(),
                             })
@@ -225,7 +220,7 @@ impl DatabaseQuerier for PostgresQuerier {
                             .or_insert_with(|| AbstractTableRepr {
                                 table_name: row.table_name.clone(),
                                 u_imports: BTreeSet::new(),
-                                object_type: object_type,
+                                object_type,
                                 comment: row.table_comment,
                                 attributes: BTreeMap::new(),
                             })
@@ -260,12 +255,11 @@ fn insert_u_import(
     table_name: &str,
     u_type_map: &TypeMapping,
 ) {
-    if let Some(atr) = view_info_map.get_mut(table_name) {
-        if let Some(import) = u_type_map.u_import.clone()
-            && import.len() > 0
-        {
-            debug!("insert_u_import {}", &import);
-            atr.u_imports.insert(import);
-        }
+    if let Some(atr) = view_info_map.get_mut(table_name)
+        && let Some(import) = u_type_map.u_import.clone()
+        && !import.is_empty()
+    {
+        debug!("insert_u_import {}", &import);
+        atr.u_imports.insert(import);
     }
 }
