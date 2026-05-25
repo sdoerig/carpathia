@@ -92,7 +92,11 @@ impl TemplateEngine {
                     // Wir generieren Code NUR für die Tabellen, die der Cache als "geändert" markiert hat
                     for table_name in adr.tables.keys() {
                         if let Some(table_repr) = adr.tables.get(table_name)
-                        //&& cache_diff.tables.to_generate.contains(table_name)
+                            && (cache_diff.tables.to_generate.contains(table_name)
+                                || cache_diff
+                                    .templates
+                                    .to_generate
+                                    .contains(template_file_name))
                         {
                             Self::render_table_or_view(
                                 &tera,
@@ -110,7 +114,11 @@ impl TemplateEngine {
                 TemplateType::View => {
                     for view_name in adr.views.keys() {
                         if let Some(view_repr) = adr.views.get(view_name)
-                            && cache_diff.views.to_generate.contains(view_name)
+                            && (cache_diff.views.to_generate.contains(view_name)
+                                || cache_diff
+                                    .templates
+                                    .to_generate
+                                    .contains(template_file_name))
                         {
                             Self::render_table_or_view(
                                 &tera,
