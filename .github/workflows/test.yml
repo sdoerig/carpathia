@@ -57,6 +57,7 @@ jobs:
             sleep 1
           done
           psql -h localhost -U postgres -d carpathia -f pagila-schema.sql
+          rm .env.test
         env:
           PGPASSWORD: postgres
 

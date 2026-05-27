@@ -31,14 +31,6 @@ mod tests {
         // Load .env.test (if available)
         dotenv::from_filename(".env.test").ok();
 
-        // Use env vars with fallback
-        // TEST_DB_TYPE=postgres
-        // TEST_DB_HOST=127.0.2.15
-        // TEST_DB_PORT=5432
-        // TEST_DB_USER=doerig
-        // TEST_DB_PASSWORD=doerig
-        // TEST_DB_NAME=carpathia
-
         let db_type = std::env::var("TEST_DB_TYPE")
             .unwrap()
             .parse::<DbType>()
@@ -74,7 +66,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_db_schema_parser() {
-        // Lade .env.test (falls vorhanden)
+        // load .env.test if available.
         dotenv::from_filename(".env.test").ok();
 
         let config = setup_test_config();
