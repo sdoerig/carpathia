@@ -35,14 +35,15 @@ impl TemplateEngine {
         adr: &AbstractDbRepr,
     ) -> Result<(), CarpathiaError> {
         if !config.execute_templates {
-            return Ok(())
+            return Ok(());
         }
         debug!("tera template directory is {:?}", config.template_directory);
         debug!("output directory is {:?}", config.output_directory);
         // make sure output directory exists
-        let _ = fs::create_dir_all(&config.output_directory).map_err(|e| {
-            error!("Failed to create output directory: {e}");
-        });
+        fs::create_dir_all(&config.output_directory).map_err(|e| CarpathiaError {
+            message: format!("Could not create output directory: {e}"),
+            error_type: ErrorNumber::Other,
+        })?;
         let templates = match list_files(&config.template_directory) {
             Ok(templates) => {
                 debug!("templates found {:?}", templates);
@@ -146,8 +147,13 @@ impl TemplateEngine {
                     {
                         //println!("Tera VERSION = {}", tera::Tera::version());
                         //println!("TYPE adr = {}", std::any::type_name_of_val(adr));
-                        let rendered = Self::render_from_repr(&tera, template_file_name, &adr, vec!["tables", "views"])
-                            .map_err(|e| CarpathiaError {
+                        let rendered = Self::render_from_repr(
+                            &tera,
+                            template_file_name,
+                            &adr,
+                            vec!["tables", "views"],
+                        )
+                        .map_err(|e| CarpathiaError {
                             message: e.to_string(),
                             error_type: ErrorNumber::Other,
                         })?;
@@ -193,7 +199,6 @@ impl TemplateEngine {
                 })
             }
         }
-
     }
 
     fn render_table_or_view(
