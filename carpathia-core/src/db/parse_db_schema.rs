@@ -31,15 +31,15 @@ mod tests {
         // Load .env.test (if available)
         dotenv::from_filename(".env.test").ok();
 
-        let db_type = std::env::var("TEST_DB_TYPE")
-            .unwrap()
-            .parse::<DbType>()
-            .unwrap_or(DbType::Postgres);
+        let db_type = match std::env::var("TEST_DB_TYPE") {
+            Ok(s) => s.parse::<DbType>().unwrap_or(DbType::Postgres),
+            Err(_) => DbType::Postgres,
+        };
         let db_host = std::env::var("TEST_DB_HOST").unwrap_or_else(|_| "localhost".to_string());
-        let db_port = std::env::var("TEST_DB_PORT")
-            .unwrap()
-            .parse::<i32>()
-            .unwrap_or(5432);
+        let db_port = match std::env::var("TEST_DB_PORT") {
+            Ok(s) => s.parse::<i32>().unwrap_or(5432),
+            Err(_) => 5432,
+        };
         let db_user = std::env::var("TEST_DB_USER").unwrap_or_else(|_| "postgres".to_string());
         let db_password =
             std::env::var("TEST_DB_PASSWORD").unwrap_or_else(|_| "postgres".to_string());
