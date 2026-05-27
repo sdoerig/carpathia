@@ -30,11 +30,13 @@ impl TemplateEngine {
         }
     }
 
-    #[allow(unused_variables)]
     pub fn generate_code(
         config: &CarpathiaConfig,
         adr: &AbstractDbRepr,
     ) -> Result<(), CarpathiaError> {
+        if !config.execute_templates {
+            return Ok(())
+        }
         debug!("tera template directory is {:?}", config.template_directory);
         debug!("output directory is {:?}", config.output_directory);
         // make sure output directory exists
@@ -144,7 +146,7 @@ impl TemplateEngine {
                     {
                         //println!("Tera VERSION = {}", tera::Tera::version());
                         //println!("TYPE adr = {}", std::any::type_name_of_val(adr));
-                        let rendered = Self::render_from_adr_repr(&tera, template_file_name, adr)
+                        let rendered = Self::render_from_repr(&tera, template_file_name, &adr, vec!["tables", "views"])
                             .map_err(|e| CarpathiaError {
                             message: e.to_string(),
                             error_type: ErrorNumber::Other,
@@ -192,21 +194,6 @@ impl TemplateEngine {
             }
         }
 
-        //eprintln!("TERA ERROR: {:#?} template_name {}", res, template_name);
-        //res
-    }
-
-    fn render_from_adr_repr(
-        tera: &Tera,
-        template_name: &str,
-        repr: &AbstractDbRepr,
-    ) -> Result<String, tera::Error> {
-        let mut ctx = Context::new();
-        ctx.insert("tables", &repr.tables);
-        ctx.insert("views", &repr.views);
-        let res = tera.render(template_name, &ctx);
-        //eprintln!("TERA ERROR: {:#?} template_name {}", res, template_name);
-        res
     }
 
     fn render_table_or_view(

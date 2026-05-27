@@ -28,17 +28,38 @@ mod tests {
     use crate::configuration::conf_enums::DbType;
 
     fn setup_test_config() -> CarpathiaConfig {
-        // Lade .env.test (falls vorhanden)
+        // Load .env.test (if available)
         dotenv::from_filename(".env.test").ok();
 
-        // Verwende Umgebungsvariablen mit Fallback für CI
-        let db_url = std::env::var("TEST_DB_URL")
-            .unwrap_or_else(|_| "postgres://postgres:postgres@localhost:5432/postgres".to_string());
+        // Use env vars with fallback
+        // TEST_DB_TYPE=postgres
+        // TEST_DB_HOST=127.0.2.15
+        // TEST_DB_PORT=5432
+        // TEST_DB_USER=doerig
+        // TEST_DB_PASSWORD=doerig
+        // TEST_DB_NAME=carpathia
+
+        let db_type = std::env::var("TEST_DB_TYPE")
+            .unwrap()
+            .parse::<DbType>()
+            .unwrap_or(DbType::Postgres);
+        let db_host = std::env::var("TEST_DB_HOST").unwrap_or_else(|_| "localhost".to_string());
+        let db_port = std::env::var("TEST_DB_PORT")
+            .unwrap()
+            .parse::<i32>()
+            .unwrap_or(5432);
+        let db_user = std::env::var("TEST_DB_USER").unwrap_or_else(|_| "postgres".to_string());
+        let db_password =
+            std::env::var("TEST_DB_PASSWORD").unwrap_or_else(|_| "postgres".to_string());
 
         let db_name = std::env::var("TEST_DB_NAME").unwrap_or_else(|_| "postgres".to_string());
 
         CarpathiaConfigBuilder::new()
-            .db_url(&db_url)
+            .db_type(db_type)
+            .db_host(db_host)
+            .db_port(db_port)
+            .db_user(db_user)
+            .db_password(db_password)
             .db_name(&db_name)
             .db_type(DbType::Postgres)
             .cache_modus(crate::configuration::conf_enums::CacheModus::BypassCache)

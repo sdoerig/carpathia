@@ -15,12 +15,21 @@ use std::process::exit;
     author = env!("CARGO_PKG_AUTHORS"),
     version = env!("CARGO_PKG_VERSION"),
     about = env!("CARGO_PKG_DESCRIPTION"),
-    long_about = "It generates code for database access based on a given schema. You write the templates - it genrates the code. Note: It is still in early development and not functional yet."
+    long_about = "It generates code for database access based on a given schema. You write the templates - it genrates the code. Note: It is funktional but in beta status."
 )]
 struct Args {
-    /// Database URL in the format - JUST host and port NOT the database name: <postgres://user:password@localhost:5432>
+    /// Database host
     #[arg(long)]
-    db_url: String,
+    db_host: String,
+    /// Database port
+    #[arg(long)]
+    db_port: i32,
+    /// Database user name - read only will do it
+    #[arg(long)]
+    db_username: String,
+    /// Database passwqord
+    #[arg(long)]
+    db_password: String,
     /// Database name you would like to generate code for - just the name NOT the full URL: `my_database`
     #[arg(long)]
     db_name: String,
@@ -48,6 +57,9 @@ struct Args {
     /// print a json file of the database types to the console. You might need this.
     #[arg(long, default_value_t = false)]
     print_db_types: bool,
+    /// execute templates.
+    #[arg(long, default_value_t = false)]
+    execute_templates: bool,
 }
 
 #[tokio::main]
@@ -59,12 +71,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         info!("Using cache - only changed files will be overwritten.");
     }
-    info!("Database URL: {}", &args.db_url);
+    info!(
+        "Database Type: {} User: {} Port: {} Database name: {}",
+        &args.db_type, &args.db_username, args.db_port, &args.db_name
+    );
     info!("Database Name: {}", &args.db_name);
     info!("Output Directory: {}", &args.output_directory);
 
     let config = match CarpathiaConfigBuilder::new()
-        .db_url(&args.db_url)
+        .db_host(&args.db_host)
+        .db_port(args.db_port)
+        .db_user(&args.db_username)
+        .db_password(&args.db_password)
         .db_name(&args.db_name)
         .db_type(args.db_type)
         .cache_modus(args.cache_modus)
@@ -73,6 +91,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .cache_file(&args.cache_file)
         .print_schema(args.print_schema)
         .print_db_types(args.print_db_types)
+        .execute_templates(args.execute_templates)
         .build()
     {
         Ok(config) => config,

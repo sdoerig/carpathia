@@ -153,6 +153,7 @@ mod tests {
             type_map: Types::new(),
             print_schema: false,
             print_db_types: false,
+            execute_templates: false,
         }
     }
 

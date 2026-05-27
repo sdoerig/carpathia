@@ -1,5 +1,5 @@
 {# ================================================================
-   TABLE Template mod:lib
+   TABLE Template 
    ================================================================ #}
 use sqlx::{FromRow, PgPool, Postgres, QueryBuilder};
 {% for imp in table.u_imports %}

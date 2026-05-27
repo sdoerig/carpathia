@@ -18,7 +18,7 @@ use std::path::PathBuf;
 pub struct CarpathiaConfig {
     /// Database pool to connect to, feed with
     ///
-    /// - db_url
+    /// - db_user
     /// - db_name
     /// - db_type
     ///
@@ -34,13 +34,17 @@ pub struct CarpathiaConfig {
     pub type_map: Types,
     pub print_schema: bool,
     pub print_db_types: bool,
+    pub execute_templates: bool,
 }
 
 /// CarpathiaConfigBuilder is close related to all the
 /// configuration parameters. E.g. from a CLI.
 /// Its only purpose is to create the CarpathiaConfig.
 pub struct CarpathiaConfigBuilder {
-    db_url: Option<String>,
+    db_host: Option<String>,
+    db_port: Option<i32>,
+    db_user: Option<String>,
+    db_password: Option<String>,
     db_name: Option<String>,
     db_type: Option<DbType>,
     cache_modus: CacheModus,
@@ -50,6 +54,7 @@ pub struct CarpathiaConfigBuilder {
     type_mapping_file: PathBuf,
     print_schema: bool,
     print_db_types: bool,
+    execute_templates: bool,
 }
 
 impl Default for CarpathiaConfigBuilder {
@@ -61,7 +66,10 @@ impl Default for CarpathiaConfigBuilder {
 impl CarpathiaConfigBuilder {
     pub fn new() -> Self {
         Self {
-            db_url: None,
+            db_host: None,
+            db_port: None,
+            db_user: None,
+            db_password: None,
             db_name: None,
             db_type: None,
             cache_modus: CacheModus::UseCache,
@@ -71,11 +79,25 @@ impl CarpathiaConfigBuilder {
             type_mapping_file: "carpathia_type_mapping.json".into(),
             print_schema: false,
             print_db_types: false,
+            execute_templates: false,
         }
     }
+    pub fn db_host(mut self, host: impl Into<String>) -> Self {
+        self.db_host = Some(host.into());
+        self
+    }
+    pub fn db_port(mut self, port: impl Into<i32>) -> Self {
+        self.db_port = Some(port.into());
+        self
+    }
 
-    pub fn db_url(mut self, url: impl Into<String>) -> Self {
-        self.db_url = Some(url.into());
+    pub fn db_user(mut self, user: impl Into<String>) -> Self {
+        self.db_user = Some(user.into());
+        self
+    }
+
+    pub fn db_password(mut self, password: impl Into<String>) -> Self {
+        self.db_password = Some(password.into());
         self
     }
 
@@ -123,13 +145,26 @@ impl CarpathiaConfigBuilder {
         self.print_db_types = val;
         self
     }
+
+    pub fn execute_templates(mut self, val: bool) -> Self {
+        self.execute_templates = val;
+        self
+    }
 }
 
 impl CarpathiaConfigBuilder {
     /// Building CarpathiaConfig.
     pub fn build(self) -> Result<CarpathiaConfig, CarpathiaError> {
-        let db_url = self.db_url.ok_or_else(|| CarpathiaError {
-            message: "db_url missing".into(),
+        let db_host = self.db_host.ok_or_else(|| CarpathiaError {
+            message: "db_host missing".into(),
+            error_type: ErrorNumber::InvalidConfiguration,
+        })?;
+        let db_user = self.db_user.ok_or_else(|| CarpathiaError {
+            message: "db_user missing".into(),
+            error_type: ErrorNumber::InvalidConfiguration,
+        })?;
+        let db_password = self.db_password.ok_or_else(|| CarpathiaError {
+            message: "db_password missing".into(),
             error_type: ErrorNumber::InvalidConfiguration,
         })?;
         let db_name = self.db_name.ok_or_else(|| CarpathiaError {
@@ -156,10 +191,17 @@ impl CarpathiaConfigBuilder {
             }
         };
 
+        let db_port: i32 = match self.db_port {
+            Some(p) => p,
+            None => i32::from(db_type),
+        };
         let db_pool = match db_type {
+            // building an url like string db_type://user_name:user_password@db_host/db_name
             DbType::Postgres => DbPool::Postgres(
                 PgPoolOptions::new()
-                    .connect_lazy(&format!("{db_url}/{db_name}"))
+                    .connect_lazy(&format!(
+                        "{db_type}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+                    ))
                     .map_err(|e| CarpathiaError {
                         message: format!("DB error: {e}"),
                         error_type: ErrorNumber::DatabaseConnectionError,
@@ -177,6 +219,7 @@ impl CarpathiaConfigBuilder {
             type_map,
             print_schema: self.print_schema,
             print_db_types: self.print_db_types,
+            execute_templates: self.execute_templates,
         })
     }
 }
@@ -188,7 +231,10 @@ mod tests {
     #[test]
     fn test_config_builder() {
         let config = CarpathiaConfigBuilder::new()
-            .db_url("postgres://localhost")
+            .db_type(DbType::Postgres)
+            .db_host("localhost")
+            .db_user("db_user")
+            .db_password("db_password")
             .db_name("test_db")
             .db_type(DbType::Dummy)
             .cache_modus(CacheModus::UseCache)
@@ -198,7 +244,6 @@ mod tests {
             .print_db_types(true)
             .build()
             .expect("Failed to build CarpathiaConfig");
-
         //assert_eq!(config.db_pool, DbPool::Dummy);
         assert_eq!(config.cache_modus, CacheModus::UseCache);
         assert_eq!(config.output_directory, PathBuf::from("./output"));
@@ -220,6 +265,6 @@ mod tests {
         assert!(result.is_err());
         let error = result.err().unwrap();
         assert_eq!(error.error_type, ErrorNumber::InvalidConfiguration);
-        assert_eq!(error.message, "db_url missing");
+        assert!(error.message.contains("missing"));
     }
 }
