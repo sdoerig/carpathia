@@ -2,7 +2,6 @@ use std::{path::PathBuf, str::FromStr};
 
 use log::debug;
 
-const NO_SUMMARY_FILE_NAMES: [&str; 2] = ["tables", "views"];
 pub(crate) struct Template<'a> {
     pub template_type: TemplateType,
     pub file_path: &'a PathBuf,

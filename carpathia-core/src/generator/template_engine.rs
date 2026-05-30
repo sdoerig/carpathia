@@ -39,11 +39,7 @@ impl TemplateEngine {
         }
         debug!("tera template directory is {:?}", config.template_directory);
         debug!("output directory is {:?}", config.output_directory);
-        // make sure output directory exists
-        fs::create_dir_all(&config.output_directory).map_err(|e| CarpathiaError {
-            message: format!("Could not create output directory: {e}"),
-            error_type: ErrorNumber::Other,
-        })?;
+
         let templates = match list_files(&config.template_directory) {
             Ok(templates) => {
                 info!("templates found {:?}", templates);
@@ -84,15 +80,28 @@ impl TemplateEngine {
         // Zielverzeichnis sicherstellen (falls es noch nicht existiert)
         let output_dir = PathBuf::from(&config.output_directory);
 
-        // Wir loopen durch alle gefundenen Template-Dateien
+        // Found some templates, let's loop through them
         for (template_file_name, template_path) in templates {
-            // Wir jagen den Dateinamen durch den neuen Parser des Autors!
             let parsed_template = Template::new(&template_path);
-
+            // Mirroing the directory structure of the template directory in the output directory,
+            // so that we can write the rendered templates to the correct location.
+            let rendered_template_path = output_dir
+                .clone()
+                .join(parsed_template.file_path)
+                .parent()
+                .unwrap_or(&output_dir)
+                .to_path_buf();
+            fs::create_dir_all(&rendered_template_path).map_err(|e| CarpathiaError {
+                message: format!("Could not create output directory: {e}"),
+                error_type: ErrorNumber::Other,
+            })?;
             match parsed_template.template_type {
-                // FALL 1: Es ist ein Template für Tabellen (z.B. "tables.rs.tera")
+                // tables.*.tera
                 TemplateType::Table => {
-                    // Wir generieren Code NUR für die Tabellen, die der Cache als "geändert" markiert hat
+                    // Generate code for all tables, if the template is a table template and
+                    // either the table itself or the template has changed.
+                    // Each AbstractTableRepr is passed separately to each template.
+                    // This because the user can create as may templates of this type as feeling in need of.
                     for table_name in adr.tables.keys() {
                         if let Some(table_repr) = adr.tables.get(table_name)
                             && (cache_diff.tables.to_generate.contains(table_name)
@@ -103,7 +112,7 @@ impl TemplateEngine {
                         {
                             Self::render_table_or_view(
                                 &tera,
-                                &output_dir,
+                                &rendered_template_path,
                                 &template_file_name,
                                 &parsed_template,
                                 table_name,
@@ -113,8 +122,12 @@ impl TemplateEngine {
                     }
                 }
 
-                // FALL 2: Es ist ein Template für Views (z.B. "views.rs.tera")
+                // views.*.tera
                 TemplateType::View => {
+                    // Generate code for all views, if the template is a view template and
+                    // either the view itself or the template has changed.
+                    // Each AbstractTableRepr is passed separately to each template.
+                    // This because the user can create as may templates of this type as feeling in need of.
                     for view_name in adr.views.keys() {
                         if let Some(view_repr) = adr.views.get(view_name)
                             && (cache_diff.views.to_generate.contains(view_name)
@@ -125,7 +138,7 @@ impl TemplateEngine {
                         {
                             Self::render_table_or_view(
                                 &tera,
-                                &output_dir,
+                                &rendered_template_path,
                                 &template_file_name,
                                 &parsed_template,
                                 view_name,
@@ -135,9 +148,10 @@ impl TemplateEngine {
                     }
                 }
 
-                // FALL 3: Es ist ein globales Summary-Template (z.B. "summary.mod.rs.tera")
+                // summary.*.tera
                 TemplateType::Summary => {
-                    // Summary wird generiert, wenn sich IRGENDETWAS (Tabelle, View oder das Template selbst) geändert hat
+                    // Generate summary, if the template is a summary template and if either a table, a view or the template itself has changed.
+                    // Passing the whole ADR to the template, so that the template can decide on its own what to render. This is necessary, because the summary template might want to render a summary of all tables and views, so it needs the whole ADR to do so.
                     if !cache_diff.tables.to_generate.is_empty()
                         || !cache_diff.views.to_generate.is_empty()
                         || cache_diff
@@ -159,7 +173,7 @@ impl TemplateEngine {
                         })?;
 
                         // Nutzt den aus dem Namen parsten Dateinamen: z.B. "./generated_files/mod.rs"
-                        let file_path = output_dir.join(format!(
+                        let file_path = rendered_template_path.join(format!(
                             "{}.{}",
                             parsed_template.file_name, parsed_template.suffix
                         ));
