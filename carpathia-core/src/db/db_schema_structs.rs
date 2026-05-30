@@ -18,7 +18,7 @@ use std::{
 ///   A change like this will for example add new attributes to the ADR.
 /// - Patch changes e.g. 0.1.0 to 0.1.1 will just fix bugs e.g. if the database constrant UNIQUE would have ben
 ///   given back as none, fixig it to return unique would be such a change.
-pub const ABSTRACT_DB_REPR_VERSION: &str = "0,1,0";
+pub const ABSTRACT_DB_REPR_VERSION: &str = "0.1.0";
 
 /// Wrapping structure holding the database representation.
 #[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]

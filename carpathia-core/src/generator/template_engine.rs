@@ -5,7 +5,7 @@ use crate::configuration::conf_structs::{DEFAULT_TYPE_MAPPING, Types};
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::generator::generator_structs::{Template, TemplateType};
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
-use log::{debug, error};
+use log::{debug, error, info};
 use std::collections::BTreeMap;
 use std::fs;
 use std::io;
@@ -46,7 +46,7 @@ impl TemplateEngine {
         })?;
         let templates = match list_files(&config.template_directory) {
             Ok(templates) => {
-                debug!("templates found {:?}", templates);
+                info!("templates found {:?}", templates);
                 templates
             }
             Err(e) => {
@@ -85,9 +85,9 @@ impl TemplateEngine {
         let output_dir = PathBuf::from(&config.output_directory);
 
         // Wir loopen durch alle gefundenen Template-Dateien
-        for template_file_name in templates.keys() {
+        for (template_file_name, template_path) in templates {
             // Wir jagen den Dateinamen durch den neuen Parser des Autors!
-            let parsed_template = Template::new(template_file_name);
+            let parsed_template = Template::new(&template_path);
 
             match parsed_template.template_type {
                 // FALL 1: Es ist ein Template für Tabellen (z.B. "tables.rs.tera")
@@ -99,12 +99,12 @@ impl TemplateEngine {
                                 || cache_diff
                                     .templates
                                     .to_generate
-                                    .contains(template_file_name))
+                                    .contains(&template_file_name))
                         {
                             Self::render_table_or_view(
                                 &tera,
                                 &output_dir,
-                                template_file_name,
+                                &template_file_name,
                                 &parsed_template,
                                 table_name,
                                 table_repr,
@@ -121,12 +121,12 @@ impl TemplateEngine {
                                 || cache_diff
                                     .templates
                                     .to_generate
-                                    .contains(template_file_name))
+                                    .contains(&template_file_name))
                         {
                             Self::render_table_or_view(
                                 &tera,
                                 &output_dir,
-                                template_file_name,
+                                &template_file_name,
                                 &parsed_template,
                                 view_name,
                                 view_repr,
@@ -143,13 +143,13 @@ impl TemplateEngine {
                         || cache_diff
                             .templates
                             .to_generate
-                            .contains(template_file_name)
+                            .contains(&template_file_name)
                     {
                         //println!("Tera VERSION = {}", tera::Tera::version());
                         //println!("TYPE adr = {}", std::any::type_name_of_val(adr));
                         let rendered = Self::render_from_repr(
                             &tera,
-                            template_file_name,
+                            &template_file_name,
                             &adr,
                             vec!["tables", "views"],
                         )
@@ -229,10 +229,18 @@ impl TemplateEngine {
 
 fn list_files(dir: &PathBuf) -> io::Result<BTreeMap<String, PathBuf>> {
     let mut files: BTreeMap<String, PathBuf> = BTreeMap::new();
-    for entry in fs::read_dir(dir)? {
-        let file_name = entry?.file_name().to_string_lossy().into_owned();
-        if file_name.ends_with(".tera") {
-            files.insert(file_name.clone(), dir.to_path_buf().join(file_name));
+
+    if let Ok(entries) = fs::read_dir(dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                files.extend(list_files(&path).unwrap_or_default());
+            } else if path.extension().map(|ext| ext == "tera").unwrap_or(false) {
+                files.insert(
+                    path.to_path_buf().to_string_lossy().to_string(),
+                    path.to_path_buf(),
+                );
+            }
         }
     }
     Ok(files)
