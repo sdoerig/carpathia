@@ -77,21 +77,12 @@ impl TemplateEngine {
                 })?;
         }
 
-        // Zielverzeichnis sicherstellen (falls es noch nicht existiert)
-        let output_dir = PathBuf::from(&config.output_directory);
-
         // Found some templates, let's loop through them
         for (template_file_name, template_path) in templates {
-            let parsed_template = Template::new(&template_path);
+            let parsed_template = Template::new(&config.output_directory,&template_path);
             // Mirroing the directory structure of the template directory in the output directory,
             // so that we can write the rendered templates to the correct location.
-            let rendered_template_path = output_dir
-                .clone()
-                .join(parsed_template.file_path)
-                .parent()
-                .unwrap_or(&output_dir)
-                .to_path_buf();
-            fs::create_dir_all(&rendered_template_path).map_err(|e| CarpathiaError {
+            fs::create_dir_all(&parsed_template.file_path).map_err(|e| CarpathiaError {
                 message: format!("Could not create output directory: {e}"),
                 error_type: ErrorNumber::Other,
             })?;
@@ -112,7 +103,7 @@ impl TemplateEngine {
                         {
                             Self::render_table_or_view(
                                 &tera,
-                                &rendered_template_path,
+                                &parsed_template.file_path,
                                 &template_file_name,
                                 &parsed_template,
                                 table_name,
@@ -138,7 +129,7 @@ impl TemplateEngine {
                         {
                             Self::render_table_or_view(
                                 &tera,
-                                &rendered_template_path,
+                                &parsed_template.file_path,
                                 &template_file_name,
                                 &parsed_template,
                                 view_name,
@@ -173,7 +164,7 @@ impl TemplateEngine {
                         })?;
 
                         // Nutzt den aus dem Namen parsten Dateinamen: z.B. "./generated_files/mod.rs"
-                        let file_path = rendered_template_path.join(format!(
+                        let file_path = parsed_template.file_path.join(format!(
                             "{}.{}",
                             parsed_template.file_name, parsed_template.suffix
                         ));

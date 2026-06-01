@@ -1,16 +1,16 @@
-use std::{path::PathBuf, str::FromStr};
+use std::{path::Path, path::PathBuf, str::FromStr};
 
 use log::debug;
 
-pub(crate) struct Template<'a> {
+pub(crate) struct Template {
     pub template_type: TemplateType,
-    pub file_path: &'a PathBuf,
+    pub file_path: PathBuf,
     pub file_name: String,
     pub suffix: String,
 }
 
-impl<'a> Template<'a> {
-    pub fn new(file_path: &'a PathBuf) -> Self {
+impl Template {
+    pub fn new(output_path: &Path, file_path: &PathBuf) -> Self {
         let file_name = match file_path.file_name() {
             Some(name) => name.to_string_lossy(),
             None => {
@@ -37,7 +37,7 @@ impl<'a> Template<'a> {
 
         Template {
             template_type,
-            file_path,
+            file_path: output_path.join(file_path),
             file_name,
             suffix,
         }
@@ -82,6 +82,7 @@ mod tests {
     }
     #[test]
     fn test_template() {
+        let output_path = PathBuf::from("output/test");
         let test_caseses = vec![
             // summary
             TestCase {
@@ -158,7 +159,7 @@ mod tests {
             },
         ];
         for test_case in test_caseses {
-            let template = Template::new(&test_case.file_path);
+            let template = Template::new(&output_path, &test_case.file_path);
             assert_eq!(
                 template.template_type, test_case.expected_template_type,
                 "{}",
@@ -177,67 +178,4 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_template_views() {
-        let path_buf = PathBuf::from("views.html.tera");
-        let template = Template::new(&path_buf);
-        assert_eq!(template.template_type, TemplateType::View);
-        assert_eq!(template.suffix, "html");
-        assert_eq!(template.file_path, &PathBuf::from("views.html.tera"));
-    }
-
-    #[test]
-    fn test_template_tables() {
-        let path_buf = PathBuf::from("tables.html.tera");
-        let template = Template::new(&path_buf);
-        assert_eq!(template.template_type, TemplateType::Table);
-        assert_eq!(template.suffix, "html");
-        assert_eq!(template.file_path, &PathBuf::from("tables.html.tera"));
-    }
-    #[test]
-    fn test_template_unknown() {
-        let path_buf = PathBuf::from("scrapyard.rst");
-        let template = Template::new(&path_buf);
-        assert_eq!(template.template_type, TemplateType::Unknown);
-        assert_eq!(template.suffix, "unknown");
-        assert_eq!(template.file_path, &PathBuf::from("scrapyard.rst"));
-    }
-
-    #[test]
-    fn test_template_summary_in_dirs() {
-        let path_buf = PathBuf::from("a/summary.index.html.tera");
-        let template = Template::new(&path_buf);
-        assert_eq!(template.template_type, TemplateType::Summary);
-        assert_eq!(template.suffix, "html");
-        assert_eq!(
-            template.file_path,
-            &PathBuf::from("a/summary.index.html.tera")
-        );
-    }
-
-    #[test]
-    fn test_template_views_in_dirs() {
-        let path_buf = PathBuf::from("a/views.html.tera");
-        let template = Template::new(&path_buf);
-        assert_eq!(template.template_type, TemplateType::View);
-        assert_eq!(template.suffix, "html");
-        assert_eq!(template.file_path, &PathBuf::from("a/views.html.tera"));
-    }
-
-    #[test]
-    fn test_template_tables_in_dirs() {
-        let path_buf = PathBuf::from("a/tables.html.tera");
-        let template = Template::new(&path_buf);
-        assert_eq!(template.template_type, TemplateType::Table);
-        assert_eq!(template.suffix, "html");
-        assert_eq!(template.file_path, &PathBuf::from("a/tables.html.tera"));
-    }
-    #[test]
-    fn test_template_unknown_in_dirs() {
-        let path_buf = PathBuf::from("a/scrapyard.rst");
-        let template = Template::new(&path_buf);
-        assert_eq!(template.template_type, TemplateType::Unknown);
-        assert_eq!(template.suffix, "unknown");
-        assert_eq!(template.file_path, &PathBuf::from("a/scrapyard.rst"));
-    }
 }
