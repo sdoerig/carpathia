@@ -79,7 +79,19 @@ impl TemplateEngine {
 
         // Found some templates, let's loop through them
         for (template_file_name, template_path) in templates {
-            let parsed_template = Template::new(&config.output_directory,&template_path);
+            let parsed_template = match Template::new(&config.output_directory, &template_path) {
+                Ok(template) => template,
+                Err(e) => {
+                    error!("Error while parsing template {}: {}", template_file_name, e);
+                    return Err(CarpathiaError {
+                        message: format!(
+                            "Error while parsing template {}: {}",
+                            template_file_name, e
+                        ),
+                        error_type: ErrorNumber::InvalidConfiguration,
+                    });
+                }
+            };
             // Mirroing the directory structure of the template directory in the output directory,
             // so that we can write the rendered templates to the correct location.
             fs::create_dir_all(&parsed_template.file_path).map_err(|e| CarpathiaError {
