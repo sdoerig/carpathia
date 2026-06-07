@@ -19,7 +19,7 @@ pub enum ErrorNumber {
     FileWriteError,
     PathCanonicalizationError,
     PathEscapesOutputDir,
-        TemplateWriteError,
+    TemplateWriteError,
     Success,
 }
 

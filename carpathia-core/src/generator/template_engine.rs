@@ -8,13 +8,10 @@ use log::{debug, error, info};
 use std::collections::BTreeMap;
 use std::fs;
 use std::io;
-use std::path::{PathBuf};
+use std::path::PathBuf;
 use tera::{Context, Tera};
 
-
-pub struct TemplateEngine {
-   
-}
+pub struct TemplateEngine {}
 
 impl TemplateEngine {
     pub fn generate_code(
@@ -79,7 +76,7 @@ impl TemplateEngine {
                     });
                 }
             };
-            
+
             match parsed_template.template_type {
                 // tables.*.tera
                 TemplateType::Table => {
@@ -160,7 +157,11 @@ impl TemplateEngine {
                 }
 
                 TemplateType::Unknown => {
-                    // Ignorieren oder loggen – der Parser hat die Datei nicht als Carpathia-Template erkannt
+                    // Unknown template type, skippinging
+                    info!(
+                        "Unknown template type for template {}, skipping",
+                        template_file_name
+                    );
                 }
             }
         }
@@ -202,7 +203,7 @@ impl TemplateEngine {
                 message: e.to_string(),
                 error_type: ErrorNumber::Other,
             })?;
-        
+
         parsed_template.write_rendered_template(&rendered, &table_name.to_lowercase())?;
         Ok(())
     }

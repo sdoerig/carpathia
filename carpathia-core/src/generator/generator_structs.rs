@@ -74,12 +74,30 @@ impl Template {
             suffix,
         })
     }
-
-    pub (crate) fn write_rendered_template(&self, rendered_content: &str, db_object_name: &str) -> Result<(), CarpathiaError> {
-        let file_path = self.file_path.join(format!(
-                            "{}{}.{}",
-                            db_object_name, self.file_name, self.suffix
-                        ));
+    /// Writes the rendered template content to the file system at the location specified by the template's file path.
+    /// The file name is constructed using the template's file name and suffix, and is placed
+    /// in the same directory as the template file. The method ensures that the parent directory exists and
+    /// handles any errors that may occur during the file writing process.
+    pub(crate) fn write_rendered_template(
+        &self,
+        rendered_content: &str,
+        db_object_name: &str,
+    ) -> Result<(), CarpathiaError> {
+        let parent_dir = self.file_path.parent().ok_or_else(|| CarpathiaError {
+            message: format!(
+                "Failed to get parent directory for template path: {:?}",
+                self.file_path
+            ),
+            error_type: ErrorNumber::TemplateWriteError,
+        })?;
+        // Note that the file written can have an addtional name than the datebase object name
+        // e.g. actor_repo.rs. If no addtional name is provided in the template e.g.
+        // table.repo.rs.tera the addtional file name will be an empty string.
+        let file_path = parent_dir.to_path_buf().join(format!(
+            "{}{}.{}",
+            db_object_name, self.file_name, self.suffix
+        ));
+        debug!("Writing rendered template to file: {:?}", file_path);
         std::fs::write(&file_path, rendered_content).map_err(|e| CarpathiaError {
             message: format!("Failed to write rendered template: {}", e),
             error_type: ErrorNumber::TemplateWriteError,
@@ -229,7 +247,7 @@ mod tests {
     }
 
     #[test]
-    fn test_template() {
+    fn test_template_path_traversal() {
         let temp_dir = TempDir::new().expect("Failed to create temporary directory");
         let output_path = temp_dir.path();
 
@@ -290,6 +308,46 @@ mod tests {
                 "{}",
                 test_case.error_message
             );
+        }
+    }
+
+    #[test]
+    fn test_file_writing() {
+        let temp_dir = TempDir::new().expect("Failed to create temporary directory");
+        let output_path = temp_dir.path();
+
+        // Testfall: Erfolgreiches Schreiben einer gerenderten Vorlage
+        let template = Template {
+            template_type: TemplateType::View,
+            file_path: output_path.join("views.index.html.tera"),
+            file_name: "index".to_string(),
+            suffix: "html".to_string(),
+        };
+
+        let rendered_content = "<html><body>Test</body></html>";
+        let db_object_name = "test_object";
+
+        // Schreiben der gerenderten Vorlage
+        match template.write_rendered_template(rendered_content, db_object_name) {
+            Ok(_) => {
+                let expected_file_path = output_path
+                    .join("views.index.html.tera")
+                    .parent()
+                    .unwrap()
+                    .join(format!(
+                        "{}{}.{}",
+                        db_object_name, template.file_name, template.suffix
+                    ));
+                assert!(
+                    expected_file_path.exists(),
+                    "Expected file was not created: {:?}",
+                    expected_file_path
+                );
+                let content = std::fs::read_to_string(expected_file_path)
+                    .expect("Failed to read written file");
+                assert_eq!(content, rendered_content, "File content does not match");
+            }
+            Err(e) => panic!("Failed to write rendered template: {}", e),
         }
     }
 }
