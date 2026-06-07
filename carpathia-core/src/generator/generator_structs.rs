@@ -316,7 +316,7 @@ mod tests {
         let temp_dir = TempDir::new().expect("Failed to create temporary directory");
         let output_path = temp_dir.path();
 
-        // Testfall: Erfolgreiches Schreiben einer gerenderten Vorlage
+        // Try to write a rendered template using the Template struct
         let template = Template {
             template_type: TemplateType::View,
             file_path: output_path.join("views.index.html.tera"),
@@ -327,7 +327,7 @@ mod tests {
         let rendered_content = "<html><body>Test</body></html>";
         let db_object_name = "test_object";
 
-        // Schreiben der gerenderten Vorlage
+        // Writing...
         match template.write_rendered_template(rendered_content, db_object_name) {
             Ok(_) => {
                 let expected_file_path = output_path
