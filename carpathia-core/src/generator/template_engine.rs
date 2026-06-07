@@ -1,5 +1,4 @@
 use crate::cache::cache_file::Cache;
-use crate::cache::cache_structs::CacheFile;
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_structs::{DEFAULT_TYPE_MAPPING, Types};
 use crate::db::db_schema_structs::AbstractDbRepr;
@@ -9,27 +8,15 @@ use log::{debug, error, info};
 use std::collections::BTreeMap;
 use std::fs;
 use std::io;
-use std::path::{Path, PathBuf};
+use std::path::{PathBuf};
 use tera::{Context, Tera};
 
-#[expect(dead_code)]
+
 pub struct TemplateEngine {
-    cache_result: CacheFile,
-    db_schema: std::collections::HashMap<String, AbstractDbRepr>,
+   
 }
 
 impl TemplateEngine {
-    #[expect(dead_code)]
-    pub(crate) fn new(
-        cache_result: CacheFile,
-        db_schema: std::collections::HashMap<String, AbstractDbRepr>,
-    ) -> Self {
-        Self {
-            cache_result,
-            db_schema,
-        }
-    }
-
     pub fn generate_code(
         config: &CarpathiaConfig,
         adr: &AbstractDbRepr,
@@ -92,12 +79,7 @@ impl TemplateEngine {
                     });
                 }
             };
-            // Mirroing the directory structure of the template directory in the output directory,
-            // so that we can write the rendered templates to the correct location.
-            fs::create_dir_all(&parsed_template.file_path).map_err(|e| CarpathiaError {
-                message: format!("Could not create output directory: {e}"),
-                error_type: ErrorNumber::Other,
-            })?;
+            
             match parsed_template.template_type {
                 // tables.*.tera
                 TemplateType::Table => {
@@ -115,7 +97,6 @@ impl TemplateEngine {
                         {
                             Self::render_table_or_view(
                                 &tera,
-                                &parsed_template.file_path,
                                 &template_file_name,
                                 &parsed_template,
                                 table_name,
@@ -141,7 +122,6 @@ impl TemplateEngine {
                         {
                             Self::render_table_or_view(
                                 &tera,
-                                &parsed_template.file_path,
                                 &template_file_name,
                                 &parsed_template,
                                 view_name,
@@ -175,15 +155,7 @@ impl TemplateEngine {
                             error_type: ErrorNumber::Other,
                         })?;
 
-                        // Nutzt den aus dem Namen parsten Dateinamen: z.B. "./generated_files/mod.rs"
-                        let file_path = parsed_template.file_path.join(format!(
-                            "{}.{}",
-                            parsed_template.file_name, parsed_template.suffix
-                        ));
-                        fs::write(file_path, rendered).map_err(|e| CarpathiaError {
-                            message: format!("Could not write rendered file {e}"),
-                            error_type: ErrorNumber::FileWriteError,
-                        })?;
+                        parsed_template.write_rendered_template(&rendered, "")?;
                     }
                 }
 
@@ -220,7 +192,6 @@ impl TemplateEngine {
 
     fn render_table_or_view(
         tera: &Tera,
-        output_dir: &Path,
         template_file_name: &str,
         parsed_template: &Template,
         table_name: &str,
@@ -231,15 +202,8 @@ impl TemplateEngine {
                 message: e.to_string(),
                 error_type: ErrorNumber::Other,
             })?;
-        let file_path = output_dir.join(format!(
-            "{}.{}",
-            table_name.to_lowercase(),
-            parsed_template.suffix
-        ));
-        fs::write(file_path, rendered).map_err(|e| CarpathiaError {
-            message: format!("Could not write rendered file {e}"),
-            error_type: ErrorNumber::FileWriteError,
-        })?;
+        
+        parsed_template.write_rendered_template(&rendered, &table_name.to_lowercase())?;
         Ok(())
     }
 }

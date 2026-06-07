@@ -74,13 +74,24 @@ impl Template {
             suffix,
         })
     }
+
+    pub (crate) fn write_rendered_template(&self, rendered_content: &str, db_object_name: &str) -> Result<(), CarpathiaError> {
+        let file_path = self.file_path.join(format!(
+                            "{}{}.{}",
+                            db_object_name, self.file_name, self.suffix
+                        ));
+        std::fs::write(&file_path, rendered_content).map_err(|e| CarpathiaError {
+            message: format!("Failed to write rendered template: {}", e),
+            error_type: ErrorNumber::TemplateWriteError,
+        })
+    }
 }
 
 fn check_and_provide_canonical_path(
     output_path: &Path,
     template_path: &PathBuf,
 ) -> Result<PathBuf, CarpathiaError> {
-    // 1. output_path als absoluten Pfad sicherstellen
+    // 1. output_path is absolute or relative
     let output_path = if output_path.is_absolute() {
         output_path.to_path_buf()
     } else {
@@ -89,20 +100,20 @@ fn check_and_provide_canonical_path(
             .join(output_path)
     };
 
-    // 2. template_path behandeln:
-    //    - Falls absolut: als relativ zu output_path interpretieren
-    //    - Falls relativ: normal mit output_path verbinden
+    // 2. template_path:
+    //    - if asolute treat it as relative to the output_path
+    //    - if absolute just add it to the output_path (e.g. /home/joan/templates → output_path/home/joan/templates)
     let full_template_path = if template_path.is_absolute() {
-        // Absoluten Pfad in einen relativen zu output_path umwandeln
+        // Transfer absolute to relative by stripping the leading `/` and joining with output_path
         // z. B. `/etc/passwd` → `output_path/etc/passwd`
         let stripped = template_path.strip_prefix("/").unwrap_or(template_path);
         output_path.join(stripped)
     } else {
-        // Relativen Pfad normal mit output_path verbinden
+        // Relative path joined with output_path
         output_path.join(template_path)
     };
 
-    // 3. Enthält der Pfad `..`? → Ablehnen
+    // 3. Crawls upward to check if the path contains `..` → Reject
     if full_template_path
         .components()
         .any(|c| matches!(c, std::path::Component::ParentDir))
@@ -116,7 +127,7 @@ fn check_and_provide_canonical_path(
         });
     }
 
-    // 4. Alle fehlenden Verzeichnisse erstellen
+    // 4. Create missirng directories if necessary (e.g. for absolute paths that are being replicated under output_path)
     if let Some(parent_dir) = full_template_path.parent() {
         std::fs::create_dir_all(parent_dir).map_err(|e| CarpathiaError {
             message: format!("Failed to create parent directories: {}", e),
@@ -124,8 +135,8 @@ fn check_and_provide_canonical_path(
         })?;
     }
 
-    // 5. Prüfen, ob der Pfad innerhalb von output_path liegt
-    //    (ohne canonicalize: einfach String-Vergleich)
+    // 5. check if the path is within the output_path
+    //    (without canonicalize: simple string comparison)
     let full_template_path_str = full_template_path.to_string_lossy();
     let output_path_str = output_path.to_string_lossy();
     if !full_template_path_str.starts_with(&*output_path_str) {
