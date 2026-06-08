@@ -216,7 +216,11 @@ fn list_files(dir: &PathBuf) -> io::Result<BTreeMap<String, PathBuf>> {
         for entry in entries.flatten() {
             let path = entry.path();
             if path.is_dir() {
-                files.extend(list_files(&path).unwrap_or_default());
+                if let Ok(sub_files) = list_files(&path) {
+                    files.extend(sub_files);
+                } else {
+                    error!("Failed to list directory: {:?}", &path);
+                }
             } else if path.extension().map(|ext| ext == "tera").unwrap_or(false) {
                 files.insert(
                     path.to_path_buf().to_string_lossy().to_string(),
