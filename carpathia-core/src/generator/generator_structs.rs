@@ -155,9 +155,7 @@ fn check_and_provide_canonical_path(
 
     // 5. check if the path is within the output_path
     //    (without canonicalize: simple string comparison)
-    let full_template_path_str = full_template_path.to_string_lossy();
-    let output_path_str = output_path.to_string_lossy();
-    if !full_template_path_str.starts_with(&*output_path_str) {
+    if !full_template_path.starts_with(&*output_path) {
         return Err(CarpathiaError {
             message: format!(
                 "Template path escapes output directory: {:?} (resolved to: {:?})",
