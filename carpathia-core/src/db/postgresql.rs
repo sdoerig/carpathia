@@ -9,7 +9,6 @@ use super::db_schema_structs::{
 use super::traits::DatabaseQuerier;
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
-use crate::configuration::conf_structs::TypeMapping;
 use crate::db::postgresql_structs::PgColumnInfo;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
@@ -17,10 +16,6 @@ use std::collections::{BTreeMap, BTreeSet};
 pub(crate) struct PostgresQuerier {}
 
 const LIMIT: i64 = 1000;
-const NONE_TYPE_MAPPING: &TypeMapping = &TypeMapping {
-    u_import: None,
-    u_type: String::new(),
-};
 const SCHEMA_QUERY: &str = r"
    SELECT
     t.table_type AS object_type,
@@ -127,7 +122,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 });
             }
         };
-        let type_map = &config.type_map.type_mapping;
+        //// let type_map = &config.type_map.type_mapping;
         loop {
             let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
                 .bind(LIMIT)
@@ -158,15 +153,15 @@ impl DatabaseQuerier for PostgresQuerier {
                     row.data_type.clone()
                 };
                 // map the user type to the ADR
-                let u_type_map = match type_map.get(&row.data_type) {
-                    Some(t) => t,
-                    None => NONE_TYPE_MAPPING,
-                };
+                ////let u_type_map = match type_map.get(&row.data_type) {
+                ////    Some(t) => t,
+                ////    None => NONE_TYPE_MAPPING,
+                ////};
 
                 let attribute = AbstractAttribute {
                     column_name: row.column_name,
                     data_type,
-                    u_type: u_type_map.u_type.clone(),
+                    u_type: String::new(), // Placeholder, will be filled in by enrich_adr
                     is_nullable: row
                         .is_nullable
                         .parse()
@@ -212,7 +207,7 @@ impl DatabaseQuerier for PostgresQuerier {
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
-                        insert_u_import(&mut table_info_map, &row.table_name, u_type_map);
+                        //insert_u_import(&mut table_info_map, &row.table_name, u_type_map);
                     }
                     ObjectType::View | ObjectType::MaterializedView => {
                         view_info_map
@@ -226,7 +221,6 @@ impl DatabaseQuerier for PostgresQuerier {
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
-                        insert_u_import(&mut view_info_map, &row.table_name, u_type_map);
                     }
                     _ => {
                         error!(
@@ -247,19 +241,5 @@ impl DatabaseQuerier for PostgresQuerier {
             tables: table_info_map,
             views: view_info_map,
         })
-    }
-}
-
-fn insert_u_import(
-    view_info_map: &mut BTreeMap<String, AbstractTableRepr>,
-    table_name: &str,
-    u_type_map: &TypeMapping,
-) {
-    if let Some(atr) = view_info_map.get_mut(table_name)
-        && let Some(import) = u_type_map.u_import.clone()
-        && !import.is_empty()
-    {
-        debug!("insert_u_import {}", &import);
-        atr.u_imports.insert(import);
     }
 }

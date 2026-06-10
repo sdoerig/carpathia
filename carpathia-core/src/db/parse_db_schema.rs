@@ -4,10 +4,10 @@
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
 use crate::db::db_schema_structs::AbstractDbRepr;
+use crate::db::enrich_adr::add_user_mapping_to_adr;
 use crate::db::postgresql::PostgresQuerier;
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
-
 pub struct DbSchemaParser {
     // You can add fields here if needed, for example, to hold configuration or state
 }
@@ -15,7 +15,13 @@ pub struct DbSchemaParser {
 impl DbSchemaParser {
     pub async fn parse_schema(config: &CarpathiaConfig) -> Result<AbstractDbRepr, CarpathiaError> {
         match config.db_pool {
-            DbPool::Postgres(_) => PostgresQuerier::get_schema(config).await,
+            DbPool::Postgres(_) => match PostgresQuerier::get_schema(config).await {
+                Ok(mut schema) => {
+                    add_user_mapping_to_adr(config, &mut schema);
+                    Ok(schema)
+                }
+                Err(e) => Err(e),
+            },
             DbPool::Dummy => todo!("Dummy database pool not implemented"),
         }
     }
