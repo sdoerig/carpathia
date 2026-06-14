@@ -2,11 +2,13 @@ use crate::db::parse_db_schema::DbSchemaParser;
 use crate::generator::template_engine;
 use crate::return_values::carpathia_errors::ErrorNumber;
 use crate::template_engine::TemplateEngine;
+mod enums;
 use carpathia_core::*;
 use clap::Parser;
 use configuration::carpathia_conf::CarpathiaConfigBuilder;
 use configuration::conf_enums::CacheModus;
 use configuration::conf_enums::DbType;
+use enums::{CacheModusClap, DbTypeClap};
 use log::{error, info};
 use std::process::exit;
 /// Database layer generator for Rust. It generates code for database access based on a given schema.
@@ -34,11 +36,11 @@ struct Args {
     #[arg(long)]
     db_name: String,
     /// Database type - currently only `Postgres` is supported, MySQL  and SQLite planned in the future.
-    #[arg(long, value_enum, default_value_t = DbType::Postgres)]
-    db_type: DbType,
+    #[arg(long, value_enum, default_value_t = DbTypeClap::Postgres)]
+    db_type: DbTypeClap,
     /// Forces the generator to overwrite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
-    #[arg(long, value_enum, default_value_t = CacheModus::UseCache)]
-    cache_modus: CacheModus,
+    #[arg(long, value_enum, default_value_t = CacheModusClap::UseCache)]
+    cache_modus: CacheModusClap,
     /// Output directory for the generated code   
     #[arg(long, default_value = "./generated_files")]
     output_directory: String,
@@ -66,14 +68,16 @@ struct Args {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
     let args = Args::parse();
-    if args.cache_modus == CacheModus::BypassCache {
+    let core_db_type: DbType = args.db_type.into();
+    let core_cache_modus: CacheModus = args.cache_modus.into();
+    if core_cache_modus == CacheModus::BypassCache {
         info!("Bypassing cache - existing files will be overwritten.");
     } else {
         info!("Using cache - only changed files will be overwritten.");
     }
     info!(
         "Database Type: {} User: {} Port: {} Database name: {}",
-        &args.db_type, &args.db_username, args.db_port, &args.db_name
+        &core_db_type, &args.db_username, args.db_port, &args.db_name
     );
     info!("Database Name: {}", &args.db_name);
     info!("Output Directory: {}", &args.output_directory);
@@ -84,8 +88,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .db_user(&args.db_username)
         .db_password(&args.db_password)
         .db_name(&args.db_name)
-        .db_type(args.db_type)
-        .cache_modus(args.cache_modus)
+        .db_type(core_db_type)
+        .cache_modus(core_cache_modus)
         .carpathia_type_mapping(args.carpathia_type_mapping_file)
         .output_directory(&args.output_directory)
         .cache_file(&args.cache_file)

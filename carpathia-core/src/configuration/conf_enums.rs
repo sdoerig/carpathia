@@ -1,7 +1,6 @@
-use clap::ValueEnum;
 use sqlx::{Pool, Postgres};
 use std::{fmt::Display, str::FromStr};
-#[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum CacheModus {
     BypassCache,
     UseCache,
@@ -12,7 +11,7 @@ pub enum CacheModus {
 ///
 /// - From for i32 is used for the default port
 /// - Display for DbType is used as the protocol to connect to the database.
-#[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DbType {
     Postgres,
     Dummy,
