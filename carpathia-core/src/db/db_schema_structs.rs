@@ -21,7 +21,7 @@ use std::{
 pub const ABSTRACT_DB_REPR_VERSION: &str = "0.1.0";
 
 /// Wrapping structure holding the database representation.
-#[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AbstractDbRepr {
     /// The version of ADR
     pub version: String,
@@ -36,7 +36,7 @@ pub struct AbstractDbRepr {
 /// - table
 /// - view
 /// - materalized view
-#[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AbstractTableRepr {
     pub object_type: ObjectType,
     /// Your data types mapping go into u_imports. Again the order is deterministic.
@@ -49,7 +49,7 @@ pub struct AbstractTableRepr {
 }
 
 /// This module defines the intermediate database attribute representation.
-#[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AbstractAttribute {
     pub column_name: String,
     pub data_type: String,
@@ -70,7 +70,7 @@ pub struct AbstractAttribute {
     pub comment: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum ObjectType {
     BaseTable,
     View,
@@ -95,7 +95,7 @@ impl FromStr for ObjectType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum IsNullable {
     Yes,
     No,
@@ -117,7 +117,7 @@ impl FromStr for IsNullable {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum IsIdentity {
     Yes,
     No,
@@ -139,7 +139,7 @@ impl FromStr for IsIdentity {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum IsGenerated {
     Always,
     ByDefault,
@@ -165,7 +165,7 @@ impl FromStr for IsGenerated {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum ConstraintType {
     PrimaryKey,
     ForeignKey,

@@ -29,6 +29,10 @@ impl DbSchemaParser {
 
 #[cfg(test)]
 mod tests {
+    use std::fs::File;
+    use std::io::BufReader;
+    use std::path::PathBuf;
+
     use super::*;
     use crate::configuration::carpathia_conf::CarpathiaConfigBuilder;
     use crate::configuration::conf_enums::DbType;
@@ -50,7 +54,7 @@ mod tests {
         let db_password =
             std::env::var("TEST_DB_PASSWORD").unwrap_or_else(|_| "postgres".to_string());
 
-        let db_name = std::env::var("TEST_DB_NAME").unwrap_or_else(|_| "postgres".to_string());
+        let db_name = std::env::var("TEST_DB_NAME").unwrap_or_else(|_| "carpathia".to_string());
 
         CarpathiaConfigBuilder::new()
             .db_type(db_type)
@@ -70,6 +74,19 @@ mod tests {
             .expect("Config building failed...")
     }
 
+    fn load_pagila_schema() -> Result<AbstractDbRepr, Box<dyn std::error::Error>> {
+        let manifest_dir = env!("CARGO_MANIFEST_DIR");
+        let file_path = PathBuf::from(manifest_dir)
+            .parent()
+            .unwrap() // carpathia/
+            .join("fixtures/pagila_schema.json");
+        let file = File::open(file_path)?;
+        let reader = BufReader::new(file);
+
+        let map: AbstractDbRepr = serde_json::from_reader(reader)?;
+        Ok(map)
+    }
+
     #[tokio::test]
     async fn test_db_schema_parser() {
         // load .env.test if available.
@@ -77,6 +94,18 @@ mod tests {
 
         let config = setup_test_config();
         let schema = DbSchemaParser::parse_schema(&config).await.unwrap();
-        assert!(!schema.tables.is_empty(), "Schema should not be empty");
+        assert!(
+            !schema.tables.is_empty(),
+            "Schema tables should not be empty"
+        );
+        assert!(!schema.views.is_empty(), "Schema views should not be empty");
+
+        match load_pagila_schema() {
+            Ok(expected_schema) => assert_eq!(
+                schema, expected_schema,
+                "Parsed schema does not match expected schema"
+            ),
+            Err(e) => panic!("Failed to load expected schema: {}", e),
+        }
     }
 }

@@ -14,10 +14,7 @@ const NONE_TYPE_MAPPING: &TypeMapping = &TypeMapping {
 
 pub(crate) fn add_user_mapping_to_adr(conf: &CarpathiaConfig, adr: &mut AbstractDbRepr) {
     let type_map = &conf.type_map.type_mapping;
-    for atr in adr.tables.values_mut() {
-        add_to_atr(type_map, atr);
-    }
-    for atr in adr.views.values_mut() {
+    for atr in adr.tables.values_mut().chain(adr.views.values_mut()) {
         add_to_atr(type_map, atr);
     }
 }

@@ -1,9 +1,8 @@
 #![allow(unfulfilled_lint_expectations)]
 use flate2::read::GzDecoder;
 //use std::fs::File;
-use std::io::{Cursor};
+use std::io::Cursor;
 use tar::Archive;
-
 
 const EMBEDDED_TAR_GZ: &[u8] = include_bytes!("../../../tera/rust_lib.tar.gz");
 

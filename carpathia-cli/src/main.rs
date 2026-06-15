@@ -108,12 +108,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let table_info_map = match DbSchemaParser::parse_schema(&config).await {
         Ok(schema) => schema,
         Err(e) => {
-            //error!("Error parsing database schema: {}", e);
+            error!("Error parsing database schema: {}", e);
             exit(i32::from(e.error_type));
         }
     };
     if config.print_schema {
         println!("{}", serde_json::to_string_pretty(&table_info_map)?);
+        exit(0);
     }
     if config.print_db_types {
         match template_engine::get_db_types(&config, &table_info_map) {
@@ -129,6 +130,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 error!("Could not print type mapping {}", e);
             }
         }
+        exit(0);
     }
     match TemplateEngine::generate_code(&config, &table_info_map) {
         Ok(_) => {
