@@ -226,15 +226,15 @@ fn blake3_hash(item: &str) -> Result<String, CarpathiaError> {
     Ok(hash_result.to_hex().to_string())
 }
 
-fn serialize_to_string<T: Serialize>(item: &T) -> Result<String, Result<String, CarpathiaError>> {
+fn serialize_to_string<T: Serialize>(item: &T) -> Result<String, CarpathiaError> {
     let json_string = match serde_json::to_string(item) {
         Ok(s) => s,
         Err(e) => {
             error!("Failed to serialize item to JSON: {e}");
-            return Err(Err(CarpathiaError {
+            return Err(CarpathiaError {
                 message: "Failed to serialize item to JSON".to_string(),
                 error_type: ErrorNumber::Other,
-            }));
+            });
         }
     };
     Ok(json_string)
