@@ -1,5 +1,5 @@
 /// This module maps CLI enums to core enums so core does not need to depend on clap
-/// 
+///
 use carpathia_core::configuration::conf_enums::{CacheModus, DbType};
 use clap::ValueEnum;
 #[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
