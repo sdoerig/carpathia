@@ -29,6 +29,7 @@ impl DbSchemaParser {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeMap;
     use std::fs::File;
     use std::io::BufReader;
     use std::path::PathBuf;
@@ -36,6 +37,7 @@ mod tests {
     use super::*;
     use crate::configuration::carpathia_conf::CarpathiaConfigBuilder;
     use crate::configuration::conf_enums::DbType;
+    use crate::db::db_schema_structs::AbstractTableRepr;
 
     fn setup_test_config() -> CarpathiaConfig {
         // Load .env.test (if available)
@@ -87,6 +89,85 @@ mod tests {
         Ok(map)
     }
 
+    fn test_schema(
+        retrieved_atr: &BTreeMap<String, AbstractTableRepr>,
+        reference_atr: &BTreeMap<String, AbstractTableRepr>,
+    ) {
+        for reference_atr in reference_atr.values() {
+            if let Some(test_atr) = retrieved_atr.get(&reference_atr.table_name) {
+                assert!(
+                    test_atr.table_name == reference_atr.table_name,
+                    "DB object names do not match"
+                );
+                assert_eq!(
+                    test_atr.u_imports, reference_atr.u_imports,
+                    "DB object {} u_imports must be equal",
+                    reference_atr.table_name
+                );
+                assert_eq!(
+                    test_atr.attributes.len(),
+                    reference_atr.attributes.len(),
+                    "DB object {} attributes length must be equal",
+                    reference_atr.table_name
+                );
+                for reference_attr in reference_atr.attributes.values() {
+                    if let Some(test_attr) = test_atr.attributes.get(&reference_attr.column_name) {
+                        let attr_name = &reference_attr.column_name;
+                        assert_eq!(
+                            test_attr.u_type, reference_attr.u_type,
+                            "DB object {} attribute {} u_type must be equal",
+                            reference_atr.table_name, attr_name
+                        );
+                        assert_eq!(
+                            test_attr.data_type, reference_attr.data_type,
+                            "DB object {} attribute {} data_type must be equal",
+                            reference_atr.table_name, attr_name
+                        );
+                        assert!(
+                            test_attr.is_nullable == reference_attr.is_nullable,
+                            "DB object {} attribute {} is_nullable must be equal",
+                            reference_atr.table_name,
+                            attr_name
+                        );
+
+                        assert!(
+                            test_attr.constraint_type == reference_attr.constraint_type,
+                            "DB object {} attribute {} constraint_type must be equal",
+                            reference_atr.table_name,
+                            attr_name
+                        );
+                        assert!(
+                            test_attr.is_generated == reference_attr.is_generated,
+                            "DB object {} attribute {} is_generated must be equal",
+                            reference_atr.table_name,
+                            attr_name
+                        );
+                        assert!(
+                            test_attr.is_identity == reference_attr.is_identity,
+                            "DB object {} attribute {} is_identity must be equal",
+                            reference_atr.table_name,
+                            attr_name
+                        );
+                        assert!(
+                            test_attr.referenced_column == reference_attr.referenced_column,
+                            "DB object {} attribute {} referenced_column must be equal",
+                            reference_atr.table_name,
+                            attr_name
+                        );
+                        assert!(
+                            test_attr.referenced_table == reference_attr.referenced_table,
+                            "DB object {} attribute {} referenced_table must be equal",
+                            reference_atr.table_name,
+                            attr_name
+                        );
+                    } else {
+                        // No exprected DB object - something is seriously wrong. Now do panic...
+                        panic!("DB object {} not found", reference_atr.table_name)
+                    }
+                }
+            }
+        }
+    }
     #[tokio::test]
     async fn test_db_schema_parser() {
         // load .env.test if available.
@@ -104,21 +185,7 @@ mod tests {
             Ok(expected_schema) => expected_schema,
             Err(e) => panic!("Failed to load expected schema: {}", e),
         };
-        for reference_atr in test_adr_no_type_mapping.tables.values() {
-            if let Some(test_atr) = schema.tables.get(&reference_atr.table_name) {
-                assert!(
-                    test_atr.table_name == reference_atr.table_name,
-                    "DB object names do not match"
-                );
-                assert_eq!(
-                    test_atr.u_imports, reference_atr.u_imports,
-                    "DB object {} u_imports must be equal",
-                    reference_atr.table_name
-                );
-            } else {
-                // No exprected DB object - something is seriously wrong. Now do panic...
-                panic!("DB object {} not found", reference_atr.table_name)
-            }
-        }
+        test_schema(&schema.tables, &test_adr_no_type_mapping.tables);
+        test_schema(&schema.views, &test_adr_no_type_mapping.views);
     }
 }
