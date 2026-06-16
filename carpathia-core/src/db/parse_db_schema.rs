@@ -110,6 +110,11 @@ mod tests {
                     "DB object {} attributes length must be equal",
                     reference_atr.table_name
                 );
+                assert_eq!(
+                    test_atr.object_type, reference_atr.object_type,
+                    "DB object {} object_type must be equal",
+                    reference_atr.table_name
+                );
                 for reference_attr in reference_atr.attributes.values() {
                     if let Some(test_attr) = test_atr.attributes.get(&reference_attr.column_name) {
                         let attr_name = &reference_attr.column_name;
