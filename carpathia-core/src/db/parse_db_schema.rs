@@ -137,9 +137,11 @@ mod tests {
 
                         assert!(
                             test_attr.constraint_type == reference_attr.constraint_type,
-                            "DB object {} attribute {} constraint_type must be equal",
+                            "DB object {} attribute {} test_attr.constraint_type {:?} and reference_attr.constraint_type {:?} must be equal ",
                             reference_atr.table_name,
-                            attr_name
+                            attr_name,
+                            test_attr.constraint_type,
+                            reference_attr.constraint_type
                         );
                         assert!(
                             test_attr.is_generated == reference_attr.is_generated,
