@@ -74,13 +74,12 @@ mod tests {
             .expect("Config building failed...")
     }
 
-    #[expect(dead_code)]
     fn load_pagila_schema() -> Result<AbstractDbRepr, Box<dyn std::error::Error>> {
         let manifest_dir = env!("CARGO_MANIFEST_DIR");
         let file_path = PathBuf::from(manifest_dir)
             .parent()
             .unwrap() // carpathia/
-            .join("fixtures/pagila_schema.json");
+            .join("fixtures/pagila_schema_no_user_type_mapping.json");
         let file = File::open(file_path)?;
         let reader = BufReader::new(file);
 
@@ -101,12 +100,25 @@ mod tests {
         );
         assert!(!schema.views.is_empty(), "Schema views should not be empty");
 
-        //match load_pagila_schema() {
-        //    Ok(expected_schema) => assert_eq!(
-        //        schema, expected_schema,
-        //        "Parsed schema does not match expected schema"
-        //    ),
-        //    Err(e) => panic!("Failed to load expected schema: {}", e),
-        //}
+        let test_adr_no_type_mapping = match load_pagila_schema() {
+            Ok(expected_schema) => expected_schema,
+            Err(e) => panic!("Failed to load expected schema: {}", e),
+        };
+        for reference_atr in test_adr_no_type_mapping.tables.values() {
+            if let Some(test_atr) = schema.tables.get(&reference_atr.table_name) {
+                assert!(
+                    test_atr.table_name == reference_atr.table_name,
+                    "DB object names do not match"
+                );
+                assert_eq!(
+                    test_atr.u_imports, reference_atr.u_imports,
+                    "DB object {} u_imports must be equal",
+                    reference_atr.table_name
+                );
+            } else {
+                // No exprected DB object - something is seriously wrong. Now do panic...
+                panic!("DB object {} not found", reference_atr.table_name)
+            }
+        }
     }
 }
