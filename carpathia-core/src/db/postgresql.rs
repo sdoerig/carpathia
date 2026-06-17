@@ -17,54 +17,97 @@ pub(crate) struct PostgresQuerier {}
 
 const LIMIT: i64 = 1000;
 const SCHEMA_QUERY: &str = r"
-   SELECT
-    t.table_type AS object_type,
-    c.table_name,
-    c.column_name,
-    format_type(c.udt_name::regtype, NULL) AS data_type,
-    pg_attribute.attndims AS array_dimensions,
-    c.is_nullable,
-    c.column_default,
-    t.is_insertable_into AS table_is_insertable, 
-    c.is_updatable AS column_is_updatable,        
-    c.character_maximum_length,
-    c.numeric_precision,
-    c.numeric_scale,
-    c.is_identity,
-    c.identity_generation,
-    c.is_generated,
-    c.generation_expression,
-    tc.constraint_name,
-    tc.constraint_type,
-    ccu.table_name AS referenced_table,
-    ccu.column_name AS referenced_column,
-    obj_description(pg_class.oid) AS table_comment,
-    col_description(pg_attribute.attrelid, pg_attribute.attnum) AS column_comment
-FROM information_schema.columns c
-JOIN information_schema.tables t
-    ON c.table_name = t.table_name
-    AND c.table_schema = t.table_schema
-JOIN pg_type pt
-    ON pt.typname = c.udt_name
-LEFT JOIN information_schema.key_column_usage kcu
-    ON c.table_name = kcu.table_name
-    AND c.column_name = kcu.column_name
-    AND c.table_schema = kcu.table_schema
-LEFT JOIN information_schema.table_constraints tc
-    ON kcu.constraint_name = tc.constraint_name
-    AND kcu.table_schema = tc.table_schema
-LEFT JOIN information_schema.constraint_column_usage ccu
-    ON tc.constraint_name = ccu.constraint_name
-    AND tc.table_schema = ccu.table_schema
-    AND tc.constraint_type = 'FOREIGN KEY'
-LEFT JOIN pg_class 
-    ON pg_class.relname = c.table_name 
-    AND pg_class.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = c.table_schema)
-LEFT JOIN pg_attribute 
-    ON pg_attribute.attrelid = pg_class.oid 
-    AND pg_attribute.attname = c.column_name
-WHERE c.table_schema = 'public'
+   WITH cols AS (
+    SELECT
+        n.nspname AS table_schema,
+        c.relname AS table_name,
+        a.attname AS column_name,
+        format_type(a.atttypid, a.atttypmod) AS data_type,
+        a.attndims AS array_dimensions,
+        NOT a.attnotnull AS is_nullable,
+        pg_get_expr(ad.adbin, ad.adrelid) AS column_default,
+        a.attnum,
+        c.oid AS table_oid,
+        a.attrelid AS attrelid,
+        a.attidentity,
+        a.attgenerated
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    JOIN pg_attribute a 
+        ON a.attrelid = c.oid 
+       AND a.attnum > 0 
+       AND NOT a.attisdropped
+    LEFT JOIN pg_attrdef ad 
+        ON ad.adrelid = c.oid 
+       AND ad.adnum = a.attnum
+    WHERE n.nspname = 'public'
+      AND c.relkind IN ('r','v')  -- tables + views
+),
+constraints AS (
+    SELECT
+        con.conname AS constraint_name,
+        CASE con.contype
+            WHEN 'p' THEN 'PRIMARY KEY'
+            WHEN 'f' THEN 'FOREIGN KEY'
+            WHEN 'u' THEN 'UNIQUE'
+        END AS constraint_type,
+        con.conrelid AS table_oid,
+        con.confrelid AS referenced_table_oid,
+        unnest(con.conkey) AS column_attnum,
+        unnest(con.confkey) AS referenced_attnum
+    FROM pg_constraint con
+    WHERE con.contype IN ('p','u','f')
+)
+SELECT
+    CASE c.relkind
+        WHEN 'r' THEN 'BASE TABLE'
+        WHEN 'v' THEN 'VIEW'
+    END AS object_type,
+    col.table_name,
+    col.column_name,
+    col.data_type,
+    col.array_dimensions,
+    CASE WHEN col.is_nullable THEN 'YES' ELSE 'NO' END AS is_nullable,
+    col.column_default,
+    CASE WHEN c.relkind = 'r' THEN 'YES' ELSE 'NO' END AS table_is_insertable,
+    CASE WHEN c.relkind = 'r' THEN 'YES' ELSE 'NO' END AS column_is_updatable,
+    NULL AS character_maximum_length,
+    NULL AS numeric_precision,
+    NULL AS numeric_scale,
+
+    -- identity columns (PG13)
+    CASE WHEN col.attidentity <> '' THEN 'YES' ELSE 'NO' END AS is_identity,
+    col.attidentity::text AS identity_generation,
+
+    -- generated columns (PG13)
+    CASE WHEN col.attgenerated <> '' THEN 'ALWAYS' ELSE 'NEVER' END AS is_generated,
+    CASE 
+        WHEN col.attgenerated <> '' THEN pg_get_expr(ad.adbin, ad.adrelid)
+        ELSE NULL
+    END AS generation_expression,
+
+    con.constraint_name,
+    con.constraint_type::text,
+    rt.relname AS referenced_table,
+    ra.attname AS referenced_column,
+
+    obj_description(col.table_oid) AS table_comment,
+    col_description(col.attrelid, col.attnum) AS column_comment
+FROM cols col
+JOIN pg_class c ON c.oid = col.table_oid
+LEFT JOIN pg_attrdef ad 
+    ON ad.adrelid = col.attrelid 
+   AND ad.adnum = col.attnum
+LEFT JOIN constraints con
+    ON con.table_oid = col.table_oid
+   AND con.column_attnum = col.attnum
+LEFT JOIN pg_class rt ON rt.oid = con.referenced_table_oid
+LEFT JOIN pg_attribute ra
+    ON ra.attrelid = con.referenced_table_oid
+   AND ra.attnum = con.referenced_attnum
+
 UNION ALL
+
 SELECT
     'MATERIALIZED VIEW' as object_type,
     mat.matviewname as table_name,
@@ -73,8 +116,8 @@ SELECT
     a.attndims AS array_dimensions,
     CASE WHEN a.attnotnull THEN 'NO' ELSE 'YES' END as is_nullable,
     NULL as column_default,
-    'NO' as table_is_insertable,  
-    'NO' as column_is_updatable,   
+    'NO' as table_is_insertable,
+    'NO' as column_is_updatable,
     NULL as character_maximum_length,
     NULL as numeric_precision,
     NULL as numeric_scale,
@@ -94,7 +137,9 @@ JOIN pg_attribute a
 WHERE mat.schemaname = 'public'
   AND a.attnum > 0
   AND NOT a.attisdropped
+
 ORDER BY table_name, column_name
+
 LIMIT $1
 OFFSET $2;
     ";
