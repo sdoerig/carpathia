@@ -17,7 +17,7 @@ pub(crate) struct PostgresQuerier {}
 
 const LIMIT: i64 = 1000;
 const SCHEMA_QUERY: &str = r"
-   WITH cols AS (
+WITH cols AS (
     SELECT
         n.nspname AS table_schema,
         c.relname AS table_name,
@@ -29,7 +29,7 @@ const SCHEMA_QUERY: &str = r"
         a.attnum,
         c.oid AS table_oid,
         a.attrelid AS attrelid,
-        a.attidentity,
+        a.attidentity::text AS identity_generation,
         a.attgenerated
     FROM pg_class c
     JOIN pg_namespace n ON n.oid = c.relnamespace
@@ -43,21 +43,27 @@ const SCHEMA_QUERY: &str = r"
     WHERE n.nspname = 'public'
       AND c.relkind IN ('r','v')  -- tables + views
 ),
-constraints AS (
+
+pk_constraints AS (
     SELECT
         con.conname AS constraint_name,
-        CASE con.contype
-            WHEN 'p' THEN 'PRIMARY KEY'
-            WHEN 'f' THEN 'FOREIGN KEY'
-            WHEN 'u' THEN 'UNIQUE'
-        END AS constraint_type,
+        con.conrelid AS table_oid,
+        unnest(con.conkey) AS column_attnum
+    FROM pg_constraint con
+    WHERE con.contype = 'p'
+),
+
+fk_constraints AS (
+    SELECT
+        con.conname AS constraint_name,
         con.conrelid AS table_oid,
         con.confrelid AS referenced_table_oid,
         unnest(con.conkey) AS column_attnum,
         unnest(con.confkey) AS referenced_attnum
     FROM pg_constraint con
-    WHERE con.contype IN ('p','u','f')
+    WHERE con.contype = 'f'
 )
+
 SELECT
     CASE c.relkind
         WHEN 'r' THEN 'BASE TABLE'
@@ -75,36 +81,49 @@ SELECT
     NULL AS numeric_precision,
     NULL AS numeric_scale,
 
-    -- identity columns (PG13)
-    CASE WHEN col.attidentity <> '' THEN 'YES' ELSE 'NO' END AS is_identity,
-    col.attidentity::text AS identity_generation,
+    CASE WHEN col.identity_generation <> '' THEN 'YES' ELSE 'NO' END AS is_identity,
+    col.identity_generation,
 
-    -- generated columns (PG13)
     CASE WHEN col.attgenerated <> '' THEN 'ALWAYS' ELSE 'NEVER' END AS is_generated,
     CASE 
         WHEN col.attgenerated <> '' THEN pg_get_expr(ad.adbin, ad.adrelid)
         ELSE NULL
     END AS generation_expression,
 
-    con.constraint_name,
-    con.constraint_type::text,
+    -- unified constraint_name
+    COALESCE(pk.constraint_name, fk.constraint_name) AS constraint_name,
+
+    CASE
+        WHEN pk.constraint_name IS NOT NULL THEN 'Primary Key'
+        WHEN fk.constraint_name IS NOT NULL THEN 'Foreign Key'
+        ELSE NULL
+    END AS constraint_type,
+
     rt.relname AS referenced_table,
     ra.attname AS referenced_column,
 
     obj_description(col.table_oid) AS table_comment,
     col_description(col.attrelid, col.attnum) AS column_comment
+
 FROM cols col
 JOIN pg_class c ON c.oid = col.table_oid
+
 LEFT JOIN pg_attrdef ad 
     ON ad.adrelid = col.attrelid 
    AND ad.adnum = col.attnum
-LEFT JOIN constraints con
-    ON con.table_oid = col.table_oid
-   AND con.column_attnum = col.attnum
-LEFT JOIN pg_class rt ON rt.oid = con.referenced_table_oid
+
+LEFT JOIN pk_constraints pk
+    ON pk.table_oid = col.table_oid
+   AND pk.column_attnum = col.attnum
+
+LEFT JOIN fk_constraints fk
+    ON fk.table_oid = col.table_oid
+   AND fk.column_attnum = col.attnum
+
+LEFT JOIN pg_class rt ON rt.oid = fk.referenced_table_oid
 LEFT JOIN pg_attribute ra
-    ON ra.attrelid = con.referenced_table_oid
-   AND ra.attnum = con.referenced_attnum
+    ON ra.attrelid = fk.referenced_table_oid
+   AND ra.attnum = fk.referenced_attnum
 
 UNION ALL
 
@@ -125,10 +144,10 @@ SELECT
     NULL as identity_generation,
     'NEVER' as is_generated,
     NULL as generation_expression,
-    NULL as constraint_name,
-    NULL as constraint_type,
-    NULL as referenced_table,
-    NULL as referenced_column,
+    NULL AS constraint_name,
+    NULL AS constraint_type,
+    NULL AS referenced_table,
+    NULL AS referenced_column,
     obj_description((quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass) AS table_comment,
     col_description(a.attrelid, a.attnum) AS column_comment
 FROM pg_matviews mat
@@ -139,7 +158,6 @@ WHERE mat.schemaname = 'public'
   AND NOT a.attisdropped
 
 ORDER BY table_name, column_name
-
 LIMIT $1
 OFFSET $2;
     ";

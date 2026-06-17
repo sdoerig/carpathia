@@ -952,8 +952,8 @@
           "generation_expression": null,
           "constraint_name": "film_actor_pkey",
           "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "referenced_table": "actor",
+          "referenced_column": "actor_id",
           "comment": null
         },
         "film_id": {
@@ -971,8 +971,8 @@
           "generation_expression": null,
           "constraint_name": "film_actor_pkey",
           "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "referenced_table": "film",
+          "referenced_column": "film_id",
           "comment": null
         },
         "last_update": {
@@ -1017,8 +1017,8 @@
           "generation_expression": null,
           "constraint_name": "film_category_pkey",
           "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "referenced_table": "category",
+          "referenced_column": "category_id",
           "comment": null
         },
         "film_id": {
@@ -1036,8 +1036,8 @@
           "generation_expression": null,
           "constraint_name": "film_category_pkey",
           "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "referenced_table": "film",
+          "referenced_column": "film_id",
           "comment": null
         },
         "last_update": {
