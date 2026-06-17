@@ -2,10 +2,10 @@ name: Test
 
 on:
   push:
-    branches: 
-      - '**' 
+    branches:
+      - '**'
   pull_request:
-    branches: 
+    branches:
       - '**'
 
 env:
@@ -13,12 +13,17 @@ env:
 
 jobs:
   test:
-    name: Testing with PostgreSQL and Pagila schema
+    name: Testing with PostgreSQL ${{ matrix.pg }} and Pagila schema
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        pg: [13, 14, 15, 16, 17, 18]
 
     services:
       postgres:
-        image: postgres:15
+        image: postgres:${{ matrix.pg }}
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -35,7 +40,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Rust toolchain + caching
       - name: Rust toolchain einrichten
         uses: dtolnay/rust-toolchain@stable
 
@@ -44,14 +48,13 @@ jobs:
         with:
           cache-all-crates: true
 
-      - name: Abhängigkeiten installieren
+      - name: Installing dependencies
         run: sudo apt-get update && sudo apt-get install -y libpq-dev postgresql-client
 
-      # Pagila-Schema aus dem Repo statt wget
-      - name: Pagila-Schema bereitstellen
+      - name: Providing Pagila-Schema
         run: cp fixtures/pagila-schema.sql pagila-schema.sql
 
-      - name: Pagila-Schema in PostgreSQL importieren
+      - name: Loading Pagila-Schema in PostgreSQL
         run: |
           until pg_isready -h localhost -U postgres; do
             sleep 1
@@ -61,12 +64,10 @@ jobs:
         env:
           PGPASSWORD: postgres
 
-      # Linting
       - name: Rust Linting (clippy)
         run: cargo clippy --all-targets --all-features -- -D warnings
 
-      # Tests
-      - name: Tests ausführen
+      - name: Running Tests
         run: cargo test
         env:
           TEST_DB_URL: postgres://postgres:postgres@localhost:5432
