@@ -41,7 +41,7 @@ WITH cols AS (
         ON ad.adrelid = c.oid 
        AND ad.adnum = a.attnum
     WHERE n.nspname = 'public'
-      AND c.relkind IN ('r','v')  -- tables + views
+      AND c.relkind IN ('r','v')
 ),
 
 pk_constraints AS (
@@ -62,6 +62,30 @@ fk_constraints AS (
         unnest(con.confkey) AS referenced_attnum
     FROM pg_constraint con
     WHERE con.contype = 'f'
+),
+
+index_info AS (
+    SELECT
+        t.oid AS table_oid,
+        array_agg(pg_get_indexdef(i.indexrelid)) AS index_definitions
+    FROM pg_class t
+    JOIN pg_index i ON i.indrelid = t.oid
+    WHERE t.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+    GROUP BY t.oid
+),
+
+trigger_info AS (
+    SELECT
+        t.oid AS table_oid,
+        array_agg(
+            tg.tgname || ' ' ||
+            pg_get_triggerdef(tg.oid, true)
+        ) AS trigger_definitions
+    FROM pg_class t
+    JOIN pg_trigger tg ON tg.tgrelid = t.oid
+    WHERE tg.tgisinternal = false
+      AND t.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+    GROUP BY t.oid
 )
 
 SELECT
@@ -90,7 +114,6 @@ SELECT
         ELSE NULL
     END AS generation_expression,
 
-    -- unified constraint_name
     COALESCE(pk.constraint_name, fk.constraint_name) AS constraint_name,
 
     CASE
@@ -103,7 +126,10 @@ SELECT
     ra.attname AS referenced_column,
 
     obj_description(col.table_oid) AS table_comment,
-    col_description(col.attrelid, col.attnum) AS column_comment
+    col_description(col.attrelid, col.attnum) AS column_comment,
+
+    idx.index_definitions,
+    trg.trigger_definitions
 
 FROM cols col
 JOIN pg_class c ON c.oid = col.table_oid
@@ -125,31 +151,37 @@ LEFT JOIN pg_attribute ra
     ON ra.attrelid = fk.referenced_table_oid
    AND ra.attnum = fk.referenced_attnum
 
+LEFT JOIN index_info idx ON idx.table_oid = col.table_oid
+LEFT JOIN trigger_info trg ON trg.table_oid = col.table_oid
+
 UNION ALL
 
+-- MATERIALIZED VIEWS (keine Indizes/Trigger)
 SELECT
-    'MATERIALIZED VIEW' as object_type,
-    mat.matviewname as table_name,
-    a.attname as column_name,
-    format_type(a.atttypid, a.atttypmod) as data_type,
-    a.attndims::int4 AS array_dimensions,
-    CASE WHEN a.attnotnull THEN 'NO' ELSE 'YES' END as is_nullable,
-    NULL as column_default,
-    'NO' as table_is_insertable,
-    'NO' as column_is_updatable,
-    NULL as character_maximum_length,
-    NULL as numeric_precision,
-    NULL as numeric_scale,
-    'NO' as is_identity,
-    NULL as identity_generation,
-    'NEVER' as is_generated,
-    NULL as generation_expression,
-    NULL AS constraint_name,
-    NULL AS constraint_type,
-    NULL AS referenced_table,
-    NULL AS referenced_column,
-    obj_description((quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass) AS table_comment,
-    col_description(a.attrelid, a.attnum) AS column_comment
+    'MATERIALIZED VIEW',
+    mat.matviewname,
+    a.attname,
+    format_type(a.atttypid, a.atttypmod),
+    a.attndims::int4,
+    CASE WHEN a.attnotnull THEN 'NO' ELSE 'YES' END,
+    NULL,
+    'NO',
+    'NO',
+    NULL,
+    NULL,
+    NULL,
+    'NO',
+    NULL,
+    'NEVER',
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    obj_description((quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass),
+    col_description(a.attrelid, a.attnum),
+    NULL,
+    NULL
 FROM pg_matviews mat
 JOIN pg_attribute a 
     ON a.attrelid = (quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass
