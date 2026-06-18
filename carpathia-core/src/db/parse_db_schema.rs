@@ -4,10 +4,10 @@
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
 use crate::db::db_schema_structs::AbstractDbRepr;
+use crate::db::enrich_adr::add_user_mapping_to_adr;
 use crate::db::postgresql::PostgresQuerier;
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
-
 pub struct DbSchemaParser {
     // You can add fields here if needed, for example, to hold configuration or state
 }
@@ -15,7 +15,13 @@ pub struct DbSchemaParser {
 impl DbSchemaParser {
     pub async fn parse_schema(config: &CarpathiaConfig) -> Result<AbstractDbRepr, CarpathiaError> {
         match config.db_pool {
-            DbPool::Postgres(_) => PostgresQuerier::get_schema(config).await,
+            DbPool::Postgres(_) => match PostgresQuerier::get_schema(config).await {
+                Ok(mut schema) => {
+                    add_user_mapping_to_adr(config, &mut schema);
+                    Ok(schema)
+                }
+                Err(e) => Err(e),
+            },
             DbPool::Dummy => todo!("Dummy database pool not implemented"),
         }
     }
@@ -23,22 +29,41 @@ impl DbSchemaParser {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeMap;
+    use std::fs::File;
+    use std::io::BufReader;
+    use std::path::PathBuf;
+
     use super::*;
     use crate::configuration::carpathia_conf::CarpathiaConfigBuilder;
     use crate::configuration::conf_enums::DbType;
+    use crate::db::db_schema_structs::AbstractTableRepr;
 
     fn setup_test_config() -> CarpathiaConfig {
-        // Lade .env.test (falls vorhanden)
+        // Load .env.test (if available)
         dotenv::from_filename(".env.test").ok();
 
-        // Verwende Umgebungsvariablen mit Fallback für CI
-        let db_url = std::env::var("TEST_DB_URL")
-            .unwrap_or_else(|_| "postgres://postgres:postgres@localhost:5432/postgres".to_string());
+        let db_type = match std::env::var("TEST_DB_TYPE") {
+            Ok(s) => s.parse::<DbType>().unwrap_or(DbType::Postgres),
+            Err(_) => DbType::Postgres,
+        };
+        let db_host = std::env::var("TEST_DB_HOST").unwrap_or_else(|_| "localhost".to_string());
+        let db_port = match std::env::var("TEST_DB_PORT") {
+            Ok(s) => s.parse::<i32>().unwrap_or(5432),
+            Err(_) => 5432,
+        };
+        let db_user = std::env::var("TEST_DB_USER").unwrap_or_else(|_| "postgres".to_string());
+        let db_password =
+            std::env::var("TEST_DB_PASSWORD").unwrap_or_else(|_| "postgres".to_string());
 
-        let db_name = std::env::var("TEST_DB_NAME").unwrap_or_else(|_| "postgres".to_string());
+        let db_name = std::env::var("TEST_DB_NAME").unwrap_or_else(|_| "carpathia".to_string());
 
         CarpathiaConfigBuilder::new()
-            .db_url(&db_url)
+            .db_type(db_type)
+            .db_host(db_host)
+            .db_port(db_port)
+            .db_user(db_user)
+            .db_password(db_password)
             .db_name(&db_name)
             .db_type(DbType::Postgres)
             .cache_modus(crate::configuration::conf_enums::CacheModus::BypassCache)
@@ -51,13 +76,123 @@ mod tests {
             .expect("Config building failed...")
     }
 
+    fn load_pagila_schema() -> Result<AbstractDbRepr, Box<dyn std::error::Error>> {
+        let manifest_dir = env!("CARGO_MANIFEST_DIR");
+        let file_path = PathBuf::from(manifest_dir)
+            .parent()
+            .unwrap() // carpathia/
+            .join("fixtures/pagila_schema_no_user_type_mapping.json");
+        let file = File::open(file_path)?;
+        let reader = BufReader::new(file);
+
+        let map: AbstractDbRepr = serde_json::from_reader(reader)?;
+        Ok(map)
+    }
+
+    fn test_schema(
+        retrieved_atr: &BTreeMap<String, AbstractTableRepr>,
+        reference_atr: &BTreeMap<String, AbstractTableRepr>,
+    ) {
+        for reference_atr in reference_atr.values() {
+            if let Some(test_atr) = retrieved_atr.get(&reference_atr.table_name) {
+                assert!(
+                    test_atr.table_name == reference_atr.table_name,
+                    "DB object names do not match"
+                );
+                assert_eq!(
+                    test_atr.u_imports, reference_atr.u_imports,
+                    "DB object {} u_imports must be equal",
+                    reference_atr.table_name
+                );
+                assert_eq!(
+                    test_atr.attributes.len(),
+                    reference_atr.attributes.len(),
+                    "DB object {} attributes length must be equal",
+                    reference_atr.table_name
+                );
+                assert_eq!(
+                    test_atr.object_type, reference_atr.object_type,
+                    "DB object {} object_type must be equal",
+                    reference_atr.table_name
+                );
+                for reference_attr in reference_atr.attributes.values() {
+                    if let Some(test_attr) = test_atr.attributes.get(&reference_attr.column_name) {
+                        let attr_name = &reference_attr.column_name;
+                        assert_eq!(
+                            test_attr.u_type, reference_attr.u_type,
+                            "DB object {} attribute {} u_type must be equal",
+                            reference_atr.table_name, attr_name
+                        );
+                        assert_eq!(
+                            test_attr.data_type, reference_attr.data_type,
+                            "DB object {} attribute {} data_type must be equal",
+                            reference_atr.table_name, attr_name
+                        );
+                        assert!(
+                            test_attr.is_nullable == reference_attr.is_nullable,
+                            "DB object {} attribute {} is_nullable must be equal",
+                            reference_atr.table_name,
+                            attr_name
+                        );
+
+                        assert!(
+                            test_attr.constraint_type == reference_attr.constraint_type,
+                            "DB object {} attribute {} test_attr.constraint_type {:?} and reference_attr.constraint_type {:?} must be equal ",
+                            reference_atr.table_name,
+                            attr_name,
+                            test_attr.constraint_type,
+                            reference_attr.constraint_type
+                        );
+                        assert!(
+                            test_attr.is_generated == reference_attr.is_generated,
+                            "DB object {} attribute {} is_generated must be equal",
+                            reference_atr.table_name,
+                            attr_name
+                        );
+                        assert!(
+                            test_attr.is_identity == reference_attr.is_identity,
+                            "DB object {} attribute {} is_identity must be equal",
+                            reference_atr.table_name,
+                            attr_name
+                        );
+                        assert!(
+                            test_attr.referenced_column == reference_attr.referenced_column,
+                            "DB object {} attribute {} referenced_column must be equal",
+                            reference_atr.table_name,
+                            attr_name
+                        );
+                        assert!(
+                            test_attr.referenced_table == reference_attr.referenced_table,
+                            "DB object {} attribute {} referenced_table must be equal",
+                            reference_atr.table_name,
+                            attr_name
+                        );
+                    } else {
+                        // No exprected DB object - something is seriously wrong. Now do panic...
+                        panic!("DB object {} not found", reference_atr.table_name)
+                    }
+                }
+            }
+        }
+    }
     #[tokio::test]
     async fn test_db_schema_parser() {
-        // Lade .env.test (falls vorhanden)
+        // load .env.test if available.
         dotenv::from_filename(".env.test").ok();
 
         let config = setup_test_config();
         let schema = DbSchemaParser::parse_schema(&config).await.unwrap();
-        assert!(!schema.tables.is_empty(), "Schema should not be empty");
+        assert!(
+            !schema.tables.is_empty(),
+            "Schema tables should not be empty"
+        );
+        assert!(!schema.views.is_empty(), "Schema views should not be empty");
+
+        let test_adr_no_type_mapping = match load_pagila_schema() {
+            Ok(expected_schema) => expected_schema,
+            Err(e) => panic!("Failed to load expected schema: {}", e),
+        };
+        test_schema(&schema.tables, &test_adr_no_type_mapping.tables);
+        test_schema(&schema.views, &test_adr_no_type_mapping.views);
     }
 }

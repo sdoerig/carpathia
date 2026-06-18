@@ -9,7 +9,6 @@ use super::db_schema_structs::{
 use super::traits::DatabaseQuerier;
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
-use crate::configuration::conf_structs::TypeMapping;
 use crate::db::postgresql_structs::PgColumnInfo;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
@@ -17,88 +16,179 @@ use std::collections::{BTreeMap, BTreeSet};
 pub(crate) struct PostgresQuerier {}
 
 const LIMIT: i64 = 1000;
-const NONE_TYPE_MAPPING: &TypeMapping = &TypeMapping {
-    u_import: None,
-    u_type: String::new(),
-};
 const SCHEMA_QUERY: &str = r"
-   SELECT
-    t.table_type AS object_type,
-    c.table_name,
-    c.column_name,
-    format_type(c.udt_name::regtype, NULL) AS data_type,
-    pg_attribute.attndims AS array_dimensions,
-    c.is_nullable,
-    c.column_default,
-    t.is_insertable_into AS table_is_insertable, 
-    c.is_updatable AS column_is_updatable,        
-    c.character_maximum_length,
-    c.numeric_precision,
-    c.numeric_scale,
-    c.is_identity,
-    c.identity_generation,
-    c.is_generated,
-    c.generation_expression,
-    tc.constraint_name,
-    tc.constraint_type,
-    ccu.table_name AS referenced_table,
-    ccu.column_name AS referenced_column,
-    obj_description(pg_class.oid) AS table_comment,
-    col_description(pg_attribute.attrelid, pg_attribute.attnum) AS column_comment
-FROM information_schema.columns c
-JOIN information_schema.tables t
-    ON c.table_name = t.table_name
-    AND c.table_schema = t.table_schema
-JOIN pg_type pt
-    ON pt.typname = c.udt_name
-LEFT JOIN information_schema.key_column_usage kcu
-    ON c.table_name = kcu.table_name
-    AND c.column_name = kcu.column_name
-    AND c.table_schema = kcu.table_schema
-LEFT JOIN information_schema.table_constraints tc
-    ON kcu.constraint_name = tc.constraint_name
-    AND kcu.table_schema = tc.table_schema
-LEFT JOIN information_schema.constraint_column_usage ccu
-    ON tc.constraint_name = ccu.constraint_name
-    AND tc.table_schema = ccu.table_schema
-    AND tc.constraint_type = 'FOREIGN KEY'
-LEFT JOIN pg_class 
-    ON pg_class.relname = c.table_name 
-    AND pg_class.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = c.table_schema)
-LEFT JOIN pg_attribute 
-    ON pg_attribute.attrelid = pg_class.oid 
-    AND pg_attribute.attname = c.column_name
-WHERE c.table_schema = 'public'
-UNION ALL
+WITH cols AS (
+    SELECT
+        n.nspname AS table_schema,
+        c.relname AS table_name,
+        a.attname AS column_name,
+        format_type(a.atttypid, a.atttypmod) AS data_type,
+        a.attndims::int4 AS array_dimensions,
+        NOT a.attnotnull AS is_nullable,
+        pg_get_expr(ad.adbin, ad.adrelid) AS column_default,
+        a.attnum,
+        c.oid AS table_oid,
+        a.attrelid AS attrelid,
+        a.attidentity::text AS identity_generation,
+        a.attgenerated
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    JOIN pg_attribute a 
+        ON a.attrelid = c.oid 
+       AND a.attnum > 0 
+       AND NOT a.attisdropped
+    LEFT JOIN pg_attrdef ad 
+        ON ad.adrelid = c.oid 
+       AND ad.adnum = a.attnum
+    WHERE n.nspname = 'public'
+      AND c.relkind IN ('r','v')
+),
+
+pk_constraints AS (
+    SELECT
+        con.conname AS constraint_name,
+        con.conrelid AS table_oid,
+        unnest(con.conkey) AS column_attnum
+    FROM pg_constraint con
+    WHERE con.contype = 'p'
+),
+
+fk_constraints AS (
+    SELECT
+        con.conname AS constraint_name,
+        con.conrelid AS table_oid,
+        con.confrelid AS referenced_table_oid,
+        unnest(con.conkey) AS column_attnum,
+        unnest(con.confkey) AS referenced_attnum
+    FROM pg_constraint con
+    WHERE con.contype = 'f'
+),
+
+index_info AS (
+    SELECT
+        t.oid AS table_oid,
+        array_agg(pg_get_indexdef(i.indexrelid)) AS index_definitions
+    FROM pg_class t
+    JOIN pg_index i ON i.indrelid = t.oid
+    WHERE t.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+    GROUP BY t.oid
+),
+
+trigger_info AS (
+    SELECT
+        t.oid AS table_oid,
+        array_agg(
+            tg.tgname || ' ' ||
+            pg_get_triggerdef(tg.oid, true)
+        ) AS trigger_definitions
+    FROM pg_class t
+    JOIN pg_trigger tg ON tg.tgrelid = t.oid
+    WHERE tg.tgisinternal = false
+      AND t.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
+    GROUP BY t.oid
+)
+
 SELECT
-    'MATERIALIZED VIEW' as object_type,
-    mat.matviewname as table_name,
-    a.attname as column_name,
-    format_type(a.atttypid, a.atttypmod) as data_type,
-    a.attndims AS array_dimensions,
-    CASE WHEN a.attnotnull THEN 'NO' ELSE 'YES' END as is_nullable,
-    NULL as column_default,
-    'NO' as table_is_insertable,  
-    'NO' as column_is_updatable,   
-    NULL as character_maximum_length,
-    NULL as numeric_precision,
-    NULL as numeric_scale,
-    'NO' as is_identity,
-    NULL as identity_generation,
-    'NEVER' as is_generated,
-    NULL as generation_expression,
-    NULL as constraint_name,
-    NULL as constraint_type,
-    NULL as referenced_table,
-    NULL as referenced_column,
-    obj_description((quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass) AS table_comment,
-    col_description(a.attrelid, a.attnum) AS column_comment
+    CASE c.relkind
+        WHEN 'r' THEN 'BASE TABLE'
+        WHEN 'v' THEN 'VIEW'
+    END AS object_type,
+    col.table_name,
+    col.column_name,
+    col.data_type,
+    col.array_dimensions,
+    CASE WHEN col.is_nullable THEN 'YES' ELSE 'NO' END AS is_nullable,
+    col.column_default,
+    CASE WHEN c.relkind = 'r' THEN 'YES' ELSE 'NO' END AS table_is_insertable,
+    CASE WHEN c.relkind = 'r' THEN 'YES' ELSE 'NO' END AS column_is_updatable,
+    NULL AS character_maximum_length,
+    NULL AS numeric_precision,
+    NULL AS numeric_scale,
+
+    CASE WHEN col.identity_generation <> '' THEN 'YES' ELSE 'NO' END AS is_identity,
+    col.identity_generation,
+
+    CASE WHEN col.attgenerated <> '' THEN 'ALWAYS' ELSE 'NEVER' END AS is_generated,
+    CASE 
+        WHEN col.attgenerated <> '' THEN pg_get_expr(ad.adbin, ad.adrelid)
+        ELSE NULL
+    END AS generation_expression,
+
+    COALESCE(pk.constraint_name, fk.constraint_name) AS constraint_name,
+
+    CASE
+        WHEN pk.constraint_name IS NOT NULL THEN 'Primary Key'
+        WHEN fk.constraint_name IS NOT NULL THEN 'Foreign Key'
+        ELSE NULL
+    END AS constraint_type,
+
+    rt.relname AS referenced_table,
+    ra.attname AS referenced_column,
+
+    obj_description(col.table_oid) AS table_comment,
+    col_description(col.attrelid, col.attnum) AS column_comment,
+
+    idx.index_definitions,
+    trg.trigger_definitions
+
+FROM cols col
+JOIN pg_class c ON c.oid = col.table_oid
+
+LEFT JOIN pg_attrdef ad 
+    ON ad.adrelid = col.attrelid 
+   AND ad.adnum = col.attnum
+
+LEFT JOIN pk_constraints pk
+    ON pk.table_oid = col.table_oid
+   AND pk.column_attnum = col.attnum
+
+LEFT JOIN fk_constraints fk
+    ON fk.table_oid = col.table_oid
+   AND fk.column_attnum = col.attnum
+
+LEFT JOIN pg_class rt ON rt.oid = fk.referenced_table_oid
+LEFT JOIN pg_attribute ra
+    ON ra.attrelid = fk.referenced_table_oid
+   AND ra.attnum = fk.referenced_attnum
+
+LEFT JOIN index_info idx ON idx.table_oid = col.table_oid
+LEFT JOIN trigger_info trg ON trg.table_oid = col.table_oid
+
+UNION ALL
+
+-- MATERIALIZED VIEWS (keine Indizes/Trigger)
+SELECT
+    'MATERIALIZED VIEW',
+    mat.matviewname,
+    a.attname,
+    format_type(a.atttypid, a.atttypmod),
+    a.attndims::int4,
+    CASE WHEN a.attnotnull THEN 'NO' ELSE 'YES' END,
+    NULL,
+    'NO',
+    'NO',
+    NULL,
+    NULL,
+    NULL,
+    'NO',
+    NULL,
+    'NEVER',
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    obj_description((quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass),
+    col_description(a.attrelid, a.attnum),
+    NULL,
+    NULL
 FROM pg_matviews mat
 JOIN pg_attribute a 
     ON a.attrelid = (quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass
 WHERE mat.schemaname = 'public'
   AND a.attnum > 0
   AND NOT a.attisdropped
+
 ORDER BY table_name, column_name
 LIMIT $1
 OFFSET $2;
@@ -127,7 +217,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 });
             }
         };
-        let type_map = &config.type_map.type_mapping;
+        //// let type_map = &config.type_map.type_mapping;
         loop {
             let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
                 .bind(LIMIT)
@@ -158,15 +248,15 @@ impl DatabaseQuerier for PostgresQuerier {
                     row.data_type.clone()
                 };
                 // map the user type to the ADR
-                let u_type_map = match type_map.get(&row.data_type) {
-                    Some(t) => t,
-                    None => NONE_TYPE_MAPPING,
-                };
+                ////let u_type_map = match type_map.get(&row.data_type) {
+                ////    Some(t) => t,
+                ////    None => NONE_TYPE_MAPPING,
+                ////};
 
                 let attribute = AbstractAttribute {
                     column_name: row.column_name,
                     data_type,
-                    u_type: u_type_map.u_type.clone(),
+                    u_type: String::new(), // Placeholder, will be filled in by enrich_adr
                     is_nullable: row
                         .is_nullable
                         .parse()
@@ -212,7 +302,7 @@ impl DatabaseQuerier for PostgresQuerier {
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
-                        insert_u_import(&mut table_info_map, &row.table_name, u_type_map);
+                        //insert_u_import(&mut table_info_map, &row.table_name, u_type_map);
                     }
                     ObjectType::View | ObjectType::MaterializedView => {
                         view_info_map
@@ -226,7 +316,6 @@ impl DatabaseQuerier for PostgresQuerier {
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
-                        insert_u_import(&mut view_info_map, &row.table_name, u_type_map);
                     }
                     _ => {
                         error!(
@@ -247,19 +336,5 @@ impl DatabaseQuerier for PostgresQuerier {
             tables: table_info_map,
             views: view_info_map,
         })
-    }
-}
-
-fn insert_u_import(
-    view_info_map: &mut BTreeMap<String, AbstractTableRepr>,
-    table_name: &str,
-    u_type_map: &TypeMapping,
-) {
-    if let Some(atr) = view_info_map.get_mut(table_name)
-        && let Some(import) = u_type_map.u_import.clone()
-        && !import.is_empty()
-    {
-        debug!("insert_u_import {}", &import);
-        atr.u_imports.insert(import);
     }
 }

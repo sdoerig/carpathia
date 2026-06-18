@@ -1,37 +1,55 @@
-// This module defines the intermediate database schema representation that will be
-//used by the schema parser and the code generator. The AbstractDbRepr struct
-// represents a database table, while the AbstractAttribute struct represents a column
-// in a table.
-// The DbType enum represents the supported database types, which can be extended in the future to support more databases.
+//! This module defines the intermediate database schema representation that will be
+//! used by the schema parser and the code generator. The AbstractDbRepr (ADR) struct
+//! represents a database database in a canonical model. It will be referenced as ADR or
+//! Internal Representation (IR). It can be seen as a contract between the templates and carpathia.
+//!
 use log::debug;
 use std::{
     collections::{BTreeMap, BTreeSet},
     str::FromStr,
 };
 
-pub const ABSTRACT_DB_REPR_VERSION: &str = env!("CARGO_PKG_VERSION");
+/// The version of the ADR - it has nothing to do with the software version of carpathia -
+/// it only references to the ADR itself. Exprect for
+///
+/// - Mayor changes e.g. 0.1.0 to 1.0.0 changes that will break your templates which worked
+///   fine under 0.1.0.
+/// - Minor changes e.g. 0.1.0 to 0.2.0 will not break you themplates but allow you to enlarge them if needed.
+///   A change like this will for example add new attributes to the ADR.
+/// - Patch changes e.g. 0.1.0 to 0.1.1 will just fix bugs e.g. if the database constrant UNIQUE would have ben
+///   given back as none, fixig it to return unique would be such a change.
+pub const ABSTRACT_DB_REPR_VERSION: &str = "0.1.0";
 
-#[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+/// Wrapping structure holding the database representation.
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AbstractDbRepr {
-    // Apply the version as string, might have to deserialize it back to a struct.
-    // Furthermore as there will be differnt versions and users can
-    // print out the ADR the version might help in case of debugging.
+    /// The version of ADR
     pub version: String,
+    /// Tables found in the database - they are always in a deterministic order
     pub tables: BTreeMap<String, AbstractTableRepr>,
+    /// Views found in the database - always in a deterministic order
     pub views: BTreeMap<String, AbstractTableRepr>,
 }
 
-#[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+/// This struct represents a table-like database object. This can be a
+///
+/// - table
+/// - view
+/// - materalized view
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AbstractTableRepr {
     pub object_type: ObjectType,
+    /// Your data types mapping go into u_imports. Again the order is deterministic.
     pub u_imports: BTreeSet<String>,
+    /// The name of the database object.
     pub table_name: String,
     pub comment: Option<String>,
+    /// The attributes the database object consists of.
     pub attributes: BTreeMap<String, AbstractAttribute>,
 }
 
-// This module defines the intermediate database attribute representation.
-#[derive(serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+/// This module defines the intermediate database attribute representation.
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AbstractAttribute {
     pub column_name: String,
     pub data_type: String,
@@ -52,7 +70,7 @@ pub struct AbstractAttribute {
     pub comment: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum ObjectType {
     BaseTable,
     View,
@@ -77,7 +95,7 @@ impl FromStr for ObjectType {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum IsNullable {
     Yes,
     No,
@@ -99,7 +117,7 @@ impl FromStr for IsNullable {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum IsIdentity {
     Yes,
     No,
@@ -121,7 +139,7 @@ impl FromStr for IsIdentity {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum IsGenerated {
     Always,
     ByDefault,
@@ -147,10 +165,11 @@ impl FromStr for IsGenerated {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum ConstraintType {
     PrimaryKey,
     ForeignKey,
+    Unique,
     None,
     Unknown(String),
 }
@@ -162,7 +181,7 @@ impl FromStr for ConstraintType {
         match s.to_lowercase().as_str() {
             "primary key" => Ok(ConstraintType::PrimaryKey),
             "foreign key" => Ok(ConstraintType::ForeignKey),
-            "unique" => Ok(ConstraintType::None),
+            "unique" => Ok(ConstraintType::Unique),
             _ => {
                 debug!("Invalid constraint type: {}", s);
                 Ok(ConstraintType::Unknown(s.to_string()))

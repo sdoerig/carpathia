@@ -1,6 +1,35 @@
 ![Test Status](https://github.com/sdoerig/carpathia/actions/workflows/test.yml/badge.svg)
 
-# General
+# carpathia — Generate Rust Database Code from PostgreSQL Schemas
+
+> **Write templates. Generate code. Never write boilerplate again.**
+
+`carpathia` is a Rust-based toolkit for automatically generating type-safe database access code from PostgreSQL schemas using customizable Tera templates. It separates your schema definition from your application code — letting you evolve your database and code independently, safely and efficiently.
+
+Built as a modular system with a CLI frontend (`carpathia-cli`) and a reusable core library (`carpathia-core`), it’s ideal for teams building production-grade Rust applications with PostgreSQL.
+
+---
+
+## ✅ Why carpathia?
+
+- 🚫 **No more manual CRUD structs** — generate them from your database.
+- 🔁 **Smart caching** — only regenerate code when the schema or templates change.
+- 🧩 **Full template control** — use [Tera](https://tera.netlify.app/) to define exactly how your code looks.
+- 📦 **Reusable core** — integrate code generation into your CI, build scripts, or custom tools.
+- 🔄 **Type-safe mappings** — map `text` → `String`, `uuid` → `Uuid`, `jsonb` → `serde_json::Value`, etc.
+
+
+## 📦 Components
+
+
+| Component | Description |
+| --------- | ----------- |
+| `carpathia-cli` | Command-line tool for end-users. Run it manually or in CI to generate code. |
+| `carpathia-core` | Reusable Rust library. Use it programmatically in your build scripts, CI pipelines, or custom tools. |
+
+Both are published as separate crates and can be used independently.
+
+
 
 ## Idea of mine
 
