@@ -44,7 +44,7 @@ struct Args {
     #[arg(long, value_enum, default_value_t = CacheModusClap::UseCache)]
     cache_modus: CacheModusClap,
 
-    /// Writes basic example tera templates into the output_directory.
+    /// Writes basic example tera templates into the template_directory.
     #[arg(long, value_enum, default_value_t = InitTemplateClap::None)]
     init_template: InitTemplateClap,
     /// Output directory for the generated code   
@@ -97,6 +97,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .db_name(&args.db_name)
         .db_type(core_db_type)
         .cache_modus(core_cache_modus)
+        .template_directory(args.template_directory)
         .init_template(args.init_template.into())
         .carpathia_type_mapping(args.carpathia_type_mapping_file)
         .output_directory(&args.output_directory)
@@ -112,7 +113,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             exit(i32::from(e.error_type));
         }
     };
-
+    if config.init_template != InitTemplate::None {
+        match carpathia_core::templates::init_templates::extract_to_disk(&config) {
+            Ok(_) => {
+                info!("Successfully initialized template.");
+                exit(0);
+            }
+            Err(e) => {
+                error!("Error while initializing template: {e}");
+                exit(i32::from(e.error_type));
+            }
+        };
+    }
     let table_info_map = match DbSchemaParser::parse_schema(&config).await {
         Ok(schema) => schema,
         Err(e) => {
@@ -139,18 +151,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         exit(0);
-    }
-    if config.init_template != InitTemplate::None {
-        match carpathia_core::templates::init_templates::extract_to_disk(&config) {
-            Ok(_) => {
-                info!("Successfully initialized template.");
-                exit(0);
-            }
-            Err(e) => {
-                error!("Error while initializing template: {e}");
-                exit(i32::from(e.error_type));
-            }
-        };
     }
 
     match TemplateEngine::generate_code(&config, &table_info_map) {

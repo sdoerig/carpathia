@@ -1,18 +1,22 @@
-#![allow(unfulfilled_lint_expectations)]
 use flate2::read::GzDecoder;
-//use std::fs::File;
 use std::io::Cursor;
 use tar::Archive;
 
 use crate::{
-    configuration::carpathia_conf::CarpathiaConfig, return_values::carpathia_errors::CarpathiaError,
+    configuration::carpathia_conf::CarpathiaConfig, return_values::carpathia_errors::CarpathiaError, templates::enum_templates::InitTemplate,
 };
 
 const RUST_LIB: &[u8] = include_bytes!("../../../tera/rust_lib.tar.gz");
 
-#[expect(dead_code)]
 pub fn extract_to_disk(conf: &CarpathiaConfig) -> Result<(), CarpathiaError> {
-    let tar = GzDecoder::new(Cursor::new(RUST_LIB));
+    let tar = match conf.init_template {
+        InitTemplate::RustLib => GzDecoder::new(Cursor::new(RUST_LIB)),
+        InitTemplate::None => { 
+            // Having none - do nothing just returning.. 
+            return Ok(())
+        }
+
+    };
     let mut archive = Archive::new(tar);
     archive
         .unpack(&conf.template_directory)
@@ -26,3 +30,5 @@ pub fn extract_to_disk(conf: &CarpathiaConfig) -> Result<(), CarpathiaError> {
         })?;
     Ok(())
 }
+
+
