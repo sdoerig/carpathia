@@ -44,7 +44,7 @@ struct Args {
     #[arg(long, value_enum, default_value_t = CacheModusClap::UseCache)]
     cache_modus: CacheModusClap,
 
-    /// Forces the generator to overwrite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
+    /// Writes basic example tera templates into the output_directory.
     #[arg(long, value_enum, default_value_t = InitTemplateClap::None)]
     init_template: InitTemplateClap,
     /// Output directory for the generated code   
