@@ -1,8 +1,10 @@
 use crate::db::parse_db_schema::DbSchemaParser;
+use crate::enums::InitTemplateClap;
 use crate::generator::template_engine;
 use crate::return_values::carpathia_errors::ErrorNumber;
 use crate::template_engine::TemplateEngine;
 mod enums;
+use carpathia_core::templates::enum_templates::InitTemplate;
 use carpathia_core::*;
 use clap::Parser;
 use configuration::carpathia_conf::CarpathiaConfigBuilder;
@@ -41,6 +43,10 @@ struct Args {
     /// Forces the generator to overwrite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
     #[arg(long, value_enum, default_value_t = CacheModusClap::UseCache)]
     cache_modus: CacheModusClap,
+
+    /// Forces the generator to overwrite existing files allthough the database schema has not changed. Use this option if you want to update the generated code to the latest version of the generator.
+    #[arg(long, value_enum, default_value_t = InitTemplateClap::None)]
+    init_template: InitTemplateClap,
     /// Output directory for the generated code   
     #[arg(long, default_value = "./generated_files")]
     output_directory: String,
@@ -81,6 +87,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
     info!("Database Name: {}", &args.db_name);
     info!("Output Directory: {}", &args.output_directory);
+    //let core_init_template: InitTemplate = args.init_template.into();
 
     let config = match CarpathiaConfigBuilder::new()
         .db_host(&args.db_host)
@@ -90,6 +97,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .db_name(&args.db_name)
         .db_type(core_db_type)
         .cache_modus(core_cache_modus)
+        .init_template(args.init_template.into())
         .carpathia_type_mapping(args.carpathia_type_mapping_file)
         .output_directory(&args.output_directory)
         .cache_file(&args.cache_file)
@@ -132,6 +140,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         exit(0);
     }
+    if config.init_template != InitTemplate::None {
+        match carpathia_core::templates::init_templates::extract_to_disk(&config) {
+            Ok(_) => {
+                info!("Successfully initialized template.");
+                exit(0);
+            }
+            Err(e) => {
+                error!("Error while initializing template: {e}");
+                exit(i32::from(e.error_type));
+            }
+        };
+    }
+
     match TemplateEngine::generate_code(&config, &table_info_map) {
         Ok(_) => {
             info!(

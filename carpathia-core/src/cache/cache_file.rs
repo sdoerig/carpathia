@@ -87,6 +87,7 @@ mod tests {
         ABSTRACT_DB_REPR_VERSION, AbstractTableRepr, ConstraintType, IsGenerated, IsIdentity,
         IsNullable, ObjectType,
     };
+    use crate::templates::enum_templates::InitTemplate;
     use std::collections::{BTreeMap, BTreeSet};
     const TEMPLATES: &BTreeMap<String, PathBuf> = &BTreeMap::new();
     fn create_abstract_db_repr(
@@ -147,6 +148,7 @@ mod tests {
         CarpathiaConfig {
             db_pool: DbPool::Dummy,
             cache_modus,
+            init_template: InitTemplate::None,
             template_directory: tempfile::tempdir().unwrap().path().to_path_buf(),
             output_directory: tempfile::tempdir().unwrap().path().to_path_buf(),
             cache_file: cache_file_path,

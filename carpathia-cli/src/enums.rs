@@ -1,6 +1,7 @@
 /// This module maps CLI enums to core enums so core does not need to depend on clap
 ///
 use carpathia_core::configuration::conf_enums::{CacheModus, DbType};
+use carpathia_core::templates::enum_templates::InitTemplate;
 use clap::ValueEnum;
 #[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum CacheModusClap {
@@ -39,6 +40,21 @@ impl From<DbTypeClap> for DbType {
     }
 }
 
+#[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum InitTemplateClap {
+    RustLib,
+    None,
+}
+
+impl From<InitTemplateClap> for InitTemplate {
+    fn from(value: InitTemplateClap) -> InitTemplate {
+        match value {
+            InitTemplateClap::RustLib => InitTemplate::RustLib,
+            InitTemplateClap::None => InitTemplate::None,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -62,5 +78,12 @@ mod tests {
         let clap_value = DbTypeClap::Dummy;
         let core_value: DbType = clap_value.into();
         assert_eq!(core_value, DbType::Dummy);
+    }
+
+    #[test]
+    fn test_init_template_conversion() {
+        let clap_value = InitTemplateClap::RustLib;
+        let core_value: InitTemplate = clap_value.into();
+        assert_eq!(core_value, InitTemplate::RustLib);
     }
 }

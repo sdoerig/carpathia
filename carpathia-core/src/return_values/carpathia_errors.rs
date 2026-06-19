@@ -20,6 +20,7 @@ pub enum ErrorNumber {
     PathCanonicalizationError,
     PathEscapesOutputDir,
     TemplateWriteError,
+    ErrorWritingInitTemplate,
     Success,
 }
 
@@ -54,6 +55,7 @@ impl From<ErrorNumber> for i32 {
             ErrorNumber::PathCanonicalizationError => 13,
             ErrorNumber::PathEscapesOutputDir => 14,
             ErrorNumber::TemplateWriteError => 15,
+            ErrorNumber::ErrorWritingInitTemplate => 16,
             ErrorNumber::Success => 0,
         }
     }
