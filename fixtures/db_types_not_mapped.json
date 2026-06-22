@@ -1,0 +1,61 @@
+{
+  "version": "0.1.0",
+  "type_mapping": {
+    "boolean": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "bytea": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "character(20)": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "date": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "integer": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "mpaa_rating": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "numeric(4,2)": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "numeric(5,2)": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "smallint": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "text": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "text[][1]": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "timestamp with time zone": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "tsvector": {
+      "u_import": "",
+      "u_type": ""
+    },
+    "year": {
+      "u_import": "",
+      "u_type": ""
+    }
+  }
+}
