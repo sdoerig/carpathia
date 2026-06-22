@@ -128,41 +128,41 @@ mod tests {
                             "DB object {} attribute {} data_type must be equal",
                             reference_atr.table_name, attr_name
                         );
-                        assert!(
-                            test_attr.is_nullable == reference_attr.is_nullable,
+                        assert_eq!(
+                            test_attr.is_nullable, reference_attr.is_nullable,
                             "DB object {} attribute {} is_nullable must be equal",
                             reference_atr.table_name,
                             attr_name
                         );
 
-                        assert!(
-                            test_attr.constraint_type == reference_attr.constraint_type,
+                        assert_eq!(
+                            test_attr.constraint_type, reference_attr.constraint_type,
                             "DB object {} attribute {} test_attr.constraint_type {:?} and reference_attr.constraint_type {:?} must be equal ",
                             reference_atr.table_name,
                             attr_name,
                             test_attr.constraint_type,
                             reference_attr.constraint_type
                         );
-                        assert!(
-                            test_attr.is_generated == reference_attr.is_generated,
+                        assert_eq!(
+                            test_attr.is_generated, reference_attr.is_generated,
                             "DB object {} attribute {} is_generated must be equal",
                             reference_atr.table_name,
                             attr_name
                         );
-                        assert!(
-                            test_attr.is_identity == reference_attr.is_identity,
+                        assert_eq!(
+                            test_attr.is_identity, reference_attr.is_identity,
                             "DB object {} attribute {} is_identity must be equal",
                             reference_atr.table_name,
                             attr_name
                         );
-                        assert!(
-                            test_attr.referenced_column == reference_attr.referenced_column,
+                        assert_eq!(
+                            test_attr.referenced_column, reference_attr.referenced_column,
                             "DB object {} attribute {} referenced_column must be equal",
                             reference_atr.table_name,
                             attr_name
                         );
-                        assert!(
-                            test_attr.referenced_table == reference_attr.referenced_table,
+                        assert_eq!(
+                            test_attr.referenced_table, reference_attr.referenced_table,
                             "DB object {} attribute {} referenced_table must be equal",
                             reference_atr.table_name,
                             attr_name
@@ -195,4 +195,6 @@ mod tests {
         test_schema(&schema.tables, &test_adr_no_type_mapping.tables);
         test_schema(&schema.views, &test_adr_no_type_mapping.views);
     }
+
+
 }
