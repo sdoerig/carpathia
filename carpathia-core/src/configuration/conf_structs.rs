@@ -9,7 +9,7 @@ pub(crate) const DEFAULT_TYPE_MAPPING: &TypeMapping = &TypeMapping {
     u_type: String::new(),
 };
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct Types {
     pub version: String,
     pub type_mapping: BTreeMap<String, TypeMapping>,
@@ -30,7 +30,7 @@ impl Types {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
 pub struct TypeMapping {
     pub u_import: Option<String>,
     pub u_type: String,

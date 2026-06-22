@@ -125,7 +125,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         };
     }
-    let table_info_map = match DbSchemaParser::parse_schema(&config).await {
+    let abstr_db_repr = match DbSchemaParser::parse_schema(&config).await {
         Ok(schema) => schema,
         Err(e) => {
             error!("Error parsing database schema: {}", e);
@@ -133,11 +133,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     };
     if config.print_schema {
-        println!("{}", serde_json::to_string_pretty(&table_info_map)?);
+        println!("{}", serde_json::to_string_pretty(&abstr_db_repr)?);
         exit(0);
     }
     if config.print_db_types {
-        match template_engine::get_db_types(&config, &table_info_map) {
+        match template_engine::get_db_types(&config, &abstr_db_repr) {
             Ok(db_types) => match serde_json::to_string_pretty(&db_types) {
                 Ok(json) => println!("{json}"),
                 Err(e) => {
@@ -153,11 +153,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         exit(0);
     }
 
-    match TemplateEngine::generate_code(&config, &table_info_map) {
+    match TemplateEngine::generate_code(&config, &abstr_db_repr) {
         Ok(_) => {
             info!(
                 "Successfully parsed database schema. Found {} tables.",
-                table_info_map.tables.len()
+                abstr_db_repr.tables.len()
             );
             exit(0);
         }
