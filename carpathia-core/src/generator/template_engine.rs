@@ -24,7 +24,7 @@ impl TemplateEngine {
         debug!("tera template directory is {:?}", config.template_directory);
         debug!("output directory is {:?}", config.output_directory);
 
-        let templates = match list_files(&config.template_directory) {
+        let templates = match list_files(config, &config.template_directory) {
             Ok(templates) => {
                 info!("templates found {:?}", templates);
                 templates
@@ -209,23 +209,30 @@ impl TemplateEngine {
     }
 }
 
-fn list_files(dir: &PathBuf) -> io::Result<BTreeMap<String, PathBuf>> {
+fn list_files(config: &CarpathiaConfig, dir: &PathBuf) -> io::Result<BTreeMap<String, PathBuf>> {
     let mut files: BTreeMap<String, PathBuf> = BTreeMap::new();
 
     if let Ok(entries) = fs::read_dir(dir) {
         for entry in entries.flatten() {
             let path = entry.path();
             if path.is_dir() {
-                if let Ok(sub_files) = list_files(&path) {
+                if let Ok(sub_files) = list_files(config, &path) {
                     files.extend(sub_files);
                 } else {
                     error!("Failed to list directory: {:?}", &path);
                 }
-            } else if path.extension().map(|ext| ext == "tera").unwrap_or(false) {
-                files.insert(
-                    path.to_path_buf().to_string_lossy().to_string(),
-                    path.to_path_buf(),
-                );
+            } else if path.extension().and_then(|ext| ext.to_str()).map(|s| s == "tera").unwrap_or(false) {
+                match path.strip_prefix(&config.template_directory) {
+                    Ok(path_stripped) => {
+                        files.insert(
+                            path.to_path_buf().to_string_lossy().to_string(),
+                            path_stripped.to_path_buf(),
+                        );
+                    }
+                    Err(e) => {
+                        error!("Failed to strip prefix for {:?}: {}", path, e);
+                    }
+                }
             }
         }
     }
@@ -269,4 +276,57 @@ pub fn get_db_types(
         });
 
     Ok(types)
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::configuration::conf_enums::CacheModus;
+    use crate::configuration::conf_enums::DbPool;
+    use crate::templates::enum_templates::InitTemplate;
+    use crate::templates::init_templates::extract_to_disk;
+    use super::*;
+    
+    fn prepare_temp_file() -> CarpathiaConfig {
+        let temp_dir = tempfile::tempdir().unwrap();
+
+        let template_dir = temp_dir
+            .path()
+            .to_path_buf()
+            .join("a")
+            .join("b")
+            .join("c");
+        let cache_file_path = template_dir.clone().join("cache.json");
+        let output_dir = template_dir.clone().join("output");
+        std::fs::create_dir_all(&template_dir)
+            .map_err(|e| panic!("could not create template_dir {}", e));
+        std::fs::create_dir_all(&output_dir)
+            .map_err(|e| panic!("could not create output_dir {}", e));
+        std::fs::write(&cache_file_path, "{}")
+            .map_err(|e| panic!("could not create output_dir {}", e));
+
+        CarpathiaConfig {
+            // do not need a database - just testing filesystem
+            db_pool: DbPool::Dummy,
+            // do not need caching - could be any state
+            cache_modus: CacheModus::BypassCache,
+            init_template: InitTemplate::RustLib,
+            template_directory: template_dir,
+            output_directory: output_dir,
+            cache_file: cache_file_path,
+            type_map: Types::new(),
+            print_schema: false,
+            print_db_types: false,
+            execute_templates: false,
+        }
+    }
+
+    #[test]
+    fn test_list_file() {
+        let conf = prepare_temp_file();
+        extract_to_disk(&conf).map_err(|e| panic!("Could not extract templates {}", e));
+        match list_files(&conf, &conf.template_directory) {
+            Ok(files) => assert_eq!(files, BTreeMap::new()),
+            Err(_) => todo!(),
+        }
+    }
 }
