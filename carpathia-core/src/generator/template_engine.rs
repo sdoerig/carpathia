@@ -24,7 +24,11 @@ impl TemplateEngine {
         debug!("tera template directory is {:?}", config.template_directory);
         debug!("output directory is {:?}", config.output_directory);
 
-        let templates = match list_files(config, &config.template_directory) {
+        let templates = match list_files(
+            &config.template_directory,
+            &config.template_directory,
+            "tera",
+        ) {
             Ok(templates) => {
                 info!("templates found {:?}", templates);
                 templates
@@ -225,14 +229,18 @@ impl TemplateEngine {
     }
 }
 
-fn list_files(config: &CarpathiaConfig, dir: &PathBuf) -> io::Result<BTreeMap<PathBuf, PathBuf>> {
+fn list_files(
+    super_dir: &Path,
+    dir: &Path,
+    suffix: &str,
+) -> io::Result<BTreeMap<PathBuf, PathBuf>> {
     let mut files: BTreeMap<PathBuf, PathBuf> = BTreeMap::new();
 
     if let Ok(entries) = fs::read_dir(dir) {
         for entry in entries.flatten() {
             let path = entry.path();
             if path.is_dir() {
-                if let Ok(sub_files) = list_files(config, &path) {
+                if let Ok(sub_files) = list_files(super_dir, &path, suffix) {
                     files.extend(sub_files);
                 } else {
                     error!("Failed to list directory: {:?}", &path);
@@ -240,10 +248,10 @@ fn list_files(config: &CarpathiaConfig, dir: &PathBuf) -> io::Result<BTreeMap<Pa
             } else if path
                 .extension()
                 .and_then(|ext| ext.to_str())
-                .map(|s| s == "tera")
+                .map(|s| s == suffix)
                 .unwrap_or(false)
             {
-                match path.strip_prefix(&config.template_directory) {
+                match path.strip_prefix(super_dir) {
                     Ok(path_stripped) => {
                         files.insert(path_stripped.to_path_buf(), path.to_path_buf());
                     }
@@ -299,8 +307,10 @@ pub fn get_db_types(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::configuration::carpathia_conf::CarpathiaConfigBuilder;
     use crate::configuration::conf_enums::CacheModus;
-    use crate::configuration::conf_enums::DbPool;
+    use crate::configuration::conf_enums::DbType;
+    use crate::db::parse_db_schema::DbSchemaParser;
     use crate::templates::enum_templates::InitTemplate;
     use crate::templates::init_templates::extract_to_disk;
 
@@ -309,7 +319,7 @@ mod tests {
 
         let template_dir = temp_dir.path().to_path_buf().join("a").join("b").join("c");
         let cache_file_path = template_dir.clone().join("cache.json");
-        let output_dir = template_dir.clone().join("output");
+        let output_dir = temp_dir.path().to_path_buf().join("output");
         std::fs::create_dir_all(&template_dir)
             .map_err(|e| panic!("could not create template_dir {}", e));
         std::fs::create_dir_all(&output_dir)
@@ -317,29 +327,129 @@ mod tests {
         std::fs::write(&cache_file_path, "{}")
             .map_err(|e| panic!("could not create output_dir {}", e));
 
-        CarpathiaConfig {
-            // do not need a database - just testing filesystem
-            db_pool: DbPool::Dummy,
-            // do not need caching - could be any state
-            cache_modus: CacheModus::BypassCache,
-            init_template: InitTemplate::RustLib,
-            template_directory: template_dir,
-            output_directory: output_dir,
-            cache_file: cache_file_path,
-            type_map: Types::new(),
-            print_schema: false,
-            print_db_types: false,
-            execute_templates: false,
+        dotenv::from_filename(".env.test").ok();
+
+        let db_type = match std::env::var("TEST_DB_TYPE") {
+            Ok(s) => s.parse::<DbType>().unwrap_or(DbType::Postgres),
+            Err(_) => DbType::Postgres,
+        };
+        let db_host = std::env::var("TEST_DB_HOST").unwrap_or_else(|_| "localhost".to_string());
+        let db_port = match std::env::var("TEST_DB_PORT") {
+            Ok(s) => s.parse::<i32>().unwrap_or(5432),
+            Err(_) => 5432,
+        };
+        let db_user = std::env::var("TEST_DB_USER").unwrap_or_else(|_| "postgres".to_string());
+        let db_password =
+            std::env::var("TEST_DB_PASSWORD").unwrap_or_else(|_| "postgres".to_string());
+
+        let db_name = std::env::var("TEST_DB_NAME").unwrap_or_else(|_| "carpathia".to_string());
+
+        CarpathiaConfigBuilder::new()
+            .db_type(db_type)
+            .db_host(db_host)
+            .db_port(db_port)
+            .db_user(db_user)
+            .db_password(db_password)
+            .db_name(&db_name)
+            .db_type(DbType::Postgres)
+            .cache_modus(CacheModus::BypassCache)
+            .init_template(InitTemplate::RustLib)
+            .execute_templates(true)
+            .carpathia_type_mapping("carpathia_type_mapping.json".to_string())
+            .output_directory(output_dir.as_path().to_string_lossy().to_string())
+            .template_directory(temp_dir.path().to_string_lossy().to_string())
+            .cache_file(cache_file_path.as_path().to_string_lossy().to_string())
+            .print_schema(false)
+            .print_db_types(false)
+            .build()
+            .expect("Config building failed...")
+    }
+
+    #[tokio::test]
+    async fn test_extract_templates_to_fs() {
+        let templates = [
+            PathBuf::from("rust_lib/summary.mod.rs.tera"),
+            PathBuf::from("rust_lib/tables.rs.tera"),
+            PathBuf::from("rust_lib/views.rs.tera"),
+        ];
+        let conf = prepare_temp_file();
+
+        extract_to_disk(&conf).map_err(|e| panic!("Could not extract templates {}", e));
+
+        match list_files(&conf.template_directory, &conf.template_directory, "tera") {
+            // silly test proofes nothing - create it later
+            Ok(files) => {
+                for p in templates.as_ref() {
+                    assert!(
+                        files.contains_key(p),
+                        "{}",
+                        format!("Could not find template on fs {:?}", p)
+                    )
+                }
+            }
+            Err(_) => todo!(),
         }
     }
 
-    #[test]
-    fn test_list_file() {
+    #[tokio::test]
+    async fn test_template_generation() {
+        let generated_files = [
+            PathBuf::from("rust_lib/actor.rs"),
+            PathBuf::from("rust_lib/actor_info.rs"),
+            PathBuf::from("rust_lib/address.rs"),
+            PathBuf::from("rust_lib/category.rs"),
+            PathBuf::from("rust_lib/city.rs"),
+            PathBuf::from("rust_lib/country.rs"),
+            PathBuf::from("rust_lib/customer.rs"),
+            PathBuf::from("rust_lib/customer_list.rs"),
+            PathBuf::from("rust_lib/film.rs"),
+            PathBuf::from("rust_lib/film_actor.rs"),
+            PathBuf::from("rust_lib/film_category.rs"),
+            PathBuf::from("rust_lib/film_list.rs"),
+            PathBuf::from("rust_lib/inventory.rs"),
+            PathBuf::from("rust_lib/language.rs"),
+            PathBuf::from("rust_lib/mod.rs"),
+            PathBuf::from("rust_lib/nicer_but_slower_film_list.rs"),
+            PathBuf::from("rust_lib/payment_p2022_01.rs"),
+            PathBuf::from("rust_lib/payment_p2022_02.rs"),
+            PathBuf::from("rust_lib/payment_p2022_03.rs"),
+            PathBuf::from("rust_lib/payment_p2022_04.rs"),
+            PathBuf::from("rust_lib/payment_p2022_05.rs"),
+            PathBuf::from("rust_lib/payment_p2022_06.rs"),
+            PathBuf::from("rust_lib/payment_p2022_07.rs"),
+            PathBuf::from("rust_lib/rental.rs"),
+            PathBuf::from("rust_lib/rental_by_category.rs"),
+            PathBuf::from("rust_lib/sales_by_film_category.rs"),
+            PathBuf::from("rust_lib/sales_by_store.rs"),
+            PathBuf::from("rust_lib/staff.rs"),
+            PathBuf::from("rust_lib/staff_list.rs"),
+            PathBuf::from("rust_lib/store.rs"),
+        ];
         let conf = prepare_temp_file();
         extract_to_disk(&conf).map_err(|e| panic!("Could not extract templates {}", e));
-        match list_files(&conf, &conf.template_directory) {
-            // silly test proofes nothing - create it later
-            Ok(files) => assert_eq!(files, files),
+        let abstr_db_repr = match DbSchemaParser::parse_schema(&conf).await {
+            Ok(schema) => schema,
+            Err(_e) => todo!(),
+        };
+
+        match TemplateEngine::generate_code(&conf, &abstr_db_repr) {
+            Ok(_) => {
+                info!(
+                    "Successfully parsed database schema. Found {} tables.",
+                    abstr_db_repr.tables.len()
+                );
+            }
+            Err(_e) => todo!(),
+        };
+
+        let mut files = BTreeMap::new();
+        files.insert(PathBuf::from("a"), PathBuf::from("a/b"));
+        match list_files(&conf.output_directory, &conf.output_directory, "rs") {
+            Ok(output_files) => {
+                for gen_file in generated_files {
+                    assert!(output_files.contains_key(&gen_file))
+                }
+            }
             Err(_) => todo!(),
         }
     }
