@@ -9,6 +9,7 @@ use super::conf_enums::{DbPool, DbType};
 use super::conf_file_reader::load_type_mappings;
 use super::conf_structs::Types;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
+use crate::templates::enum_templates::InitTemplate;
 use log::info;
 use sqlx::postgres::PgPoolOptions;
 use std::path::PathBuf;
@@ -26,8 +27,7 @@ pub struct CarpathiaConfig {
     pub db_pool: DbPool,
     pub cache_modus: CacheModus,
     pub template_directory: PathBuf,
-    #[allow(unfulfilled_lint_expectations)]
-    #[allow(dead_code)]
+    pub init_template: InitTemplate,
     pub output_directory: PathBuf,
     pub cache_file: PathBuf,
     /// Database types mapped to user types
@@ -48,6 +48,7 @@ pub struct CarpathiaConfigBuilder {
     db_name: Option<String>,
     db_type: Option<DbType>,
     cache_modus: CacheModus,
+    init_template: InitTemplate,
     template_directory: PathBuf,
     output_directory: PathBuf,
     cache_file: PathBuf,
@@ -73,6 +74,7 @@ impl CarpathiaConfigBuilder {
             db_name: None,
             db_type: None,
             cache_modus: CacheModus::UseCache,
+            init_template: InitTemplate::None,
             template_directory: "tera/rust_lib".into(),
             output_directory: ".".into(),
             cache_file: "./carpathia_cache.json".into(),
@@ -113,6 +115,11 @@ impl CarpathiaConfigBuilder {
 
     pub fn cache_modus(mut self, modus: CacheModus) -> Self {
         self.cache_modus = modus;
+        self
+    }
+
+    pub fn init_template(mut self, template: InitTemplate) -> Self {
+        self.init_template = template;
         self
     }
 
@@ -216,6 +223,7 @@ impl CarpathiaConfigBuilder {
             template_directory: self.template_directory,
             output_directory: self.output_directory,
             cache_file: self.cache_file,
+            init_template: self.init_template,
             type_map,
             print_schema: self.print_schema,
             print_db_types: self.print_db_types,
@@ -238,6 +246,7 @@ mod tests {
             .db_name("test_db")
             .db_type(DbType::Dummy)
             .cache_modus(CacheModus::UseCache)
+            .init_template(InitTemplate::None)
             .output_directory("./output")
             .cache_file("./cache/carpathia_cache.json")
             .print_schema(true)

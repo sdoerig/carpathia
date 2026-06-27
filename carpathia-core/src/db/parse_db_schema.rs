@@ -37,7 +37,9 @@ mod tests {
     use super::*;
     use crate::configuration::carpathia_conf::CarpathiaConfigBuilder;
     use crate::configuration::conf_enums::DbType;
+    use crate::configuration::conf_structs::Types;
     use crate::db::db_schema_structs::AbstractTableRepr;
+    use crate::generator::template_engine::get_db_types;
 
     fn setup_test_config() -> CarpathiaConfig {
         // Load .env.test (if available)
@@ -76,16 +78,19 @@ mod tests {
             .expect("Config building failed...")
     }
 
-    fn load_pagila_schema() -> Result<AbstractDbRepr, Box<dyn std::error::Error>> {
+    fn load_fixture<T>(fixture: &str) -> Result<T, Box<dyn std::error::Error>>
+    where
+        T: serde::de::DeserializeOwned,
+    {
         let manifest_dir = env!("CARGO_MANIFEST_DIR");
         let file_path = PathBuf::from(manifest_dir)
             .parent()
             .unwrap() // carpathia/
-            .join("fixtures/pagila_schema_no_user_type_mapping.json");
+            .join(fixture);
         let file = File::open(file_path)?;
         let reader = BufReader::new(file);
 
-        let map: AbstractDbRepr = serde_json::from_reader(reader)?;
+        let map: T = serde_json::from_reader(reader)?;
         Ok(map)
     }
 
@@ -128,44 +133,40 @@ mod tests {
                             "DB object {} attribute {} data_type must be equal",
                             reference_atr.table_name, attr_name
                         );
-                        assert!(
-                            test_attr.is_nullable == reference_attr.is_nullable,
+                        assert_eq!(
+                            test_attr.is_nullable, reference_attr.is_nullable,
                             "DB object {} attribute {} is_nullable must be equal",
-                            reference_atr.table_name,
-                            attr_name
+                            reference_atr.table_name, attr_name
                         );
 
-                        assert!(
-                            test_attr.constraint_type == reference_attr.constraint_type,
+                        assert_eq!(
+                            test_attr.constraint_type,
+                            reference_attr.constraint_type,
                             "DB object {} attribute {} test_attr.constraint_type {:?} and reference_attr.constraint_type {:?} must be equal ",
                             reference_atr.table_name,
                             attr_name,
                             test_attr.constraint_type,
                             reference_attr.constraint_type
                         );
-                        assert!(
-                            test_attr.is_generated == reference_attr.is_generated,
+                        assert_eq!(
+                            test_attr.is_generated, reference_attr.is_generated,
                             "DB object {} attribute {} is_generated must be equal",
-                            reference_atr.table_name,
-                            attr_name
+                            reference_atr.table_name, attr_name
                         );
-                        assert!(
-                            test_attr.is_identity == reference_attr.is_identity,
+                        assert_eq!(
+                            test_attr.is_identity, reference_attr.is_identity,
                             "DB object {} attribute {} is_identity must be equal",
-                            reference_atr.table_name,
-                            attr_name
+                            reference_atr.table_name, attr_name
                         );
-                        assert!(
-                            test_attr.referenced_column == reference_attr.referenced_column,
+                        assert_eq!(
+                            test_attr.referenced_column, reference_attr.referenced_column,
                             "DB object {} attribute {} referenced_column must be equal",
-                            reference_atr.table_name,
-                            attr_name
+                            reference_atr.table_name, attr_name
                         );
-                        assert!(
-                            test_attr.referenced_table == reference_attr.referenced_table,
+                        assert_eq!(
+                            test_attr.referenced_table, reference_attr.referenced_table,
                             "DB object {} attribute {} referenced_table must be equal",
-                            reference_atr.table_name,
-                            attr_name
+                            reference_atr.table_name, attr_name
                         );
                     } else {
                         // No exprected DB object - something is seriously wrong. Now do panic...
@@ -175,6 +176,7 @@ mod tests {
             }
         }
     }
+
     #[tokio::test]
     async fn test_db_schema_parser() {
         // load .env.test if available.
@@ -188,11 +190,32 @@ mod tests {
         );
         assert!(!schema.views.is_empty(), "Schema views should not be empty");
 
-        let test_adr_no_type_mapping = match load_pagila_schema() {
-            Ok(expected_schema) => expected_schema,
-            Err(e) => panic!("Failed to load expected schema: {}", e),
-        };
+        let test_adr_no_type_mapping: AbstractDbRepr =
+            match load_fixture("fixtures/pagila_schema_no_user_type_mapping.json") {
+                Ok(expected_schema) => expected_schema,
+                Err(e) => panic!("Failed to load expected schema: {}", e),
+            };
         test_schema(&schema.tables, &test_adr_no_type_mapping.tables);
         test_schema(&schema.views, &test_adr_no_type_mapping.views);
+    }
+
+    #[tokio::test]
+    async fn test_db_types() {
+        dotenv::from_filename(".env.test").ok();
+
+        let mut config = setup_test_config();
+        config.print_db_types = true;
+        let abstr_db_repr = DbSchemaParser::parse_schema(&config).await.unwrap();
+        let db_types = match get_db_types(&config, &abstr_db_repr) {
+            Ok(t) => t,
+            Err(e) => panic!("Must have db types got error {}", e),
+        };
+
+        let db_types_fixtures: Types = match load_fixture("fixtures/db_types_not_mapped.json") {
+            Ok(t) => t,
+            Err(e) => panic!("Could not read {:?}", e),
+        };
+
+        assert_eq!(db_types, db_types_fixtures, "Db_types must be the same");
     }
 }

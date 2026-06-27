@@ -62,9 +62,13 @@ impl Template {
 
         let suffix = file_name_tokens[file_name_tokens.len() - 2].to_string();
         let file_name = if file_name_tokens.len() > 3 {
-            file_name_tokens[1..file_name_tokens.len() - 2].join("_")
+            file_name_tokens[1..(file_name_tokens.len() - 2)].join("_")
         } else {
-            file_name_tokens[1].to_string()
+            if file_name_tokens[1] == suffix {
+                "".to_string()
+            } else {
+                file_name_tokens[1].to_string()
+            }
         };
 
         Ok(Template {
@@ -271,6 +275,14 @@ mod tests {
                 expected_template_type: TemplateType::View,
                 expected_suffix: "html".to_string(),
                 expected_file_name: "index_chicken".to_string(),
+                error_message: "Failed to create view template with multiple name tokens"
+                    .to_string(),
+            },
+            TestCase {
+                file_path: PathBuf::from("views.html.tera"),
+                expected_template_type: TemplateType::View,
+                expected_suffix: "html".to_string(),
+                expected_file_name: "".to_string(),
                 error_message: "Failed to create view template with multiple name tokens"
                     .to_string(),
             },
