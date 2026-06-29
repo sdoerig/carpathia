@@ -234,31 +234,19 @@ fn list_files(
     dir: &Path,
     suffix: &str,
 ) -> io::Result<BTreeMap<PathBuf, PathBuf>> {
-    let mut files: BTreeMap<PathBuf, PathBuf> = BTreeMap::new();
+    let mut files = BTreeMap::new();
+    let mut stack = vec![dir.to_path_buf()];
 
-    if let Ok(entries) = fs::read_dir(dir) {
-        for entry in entries.flatten() {
+    while let Some(current_dir) = stack.pop() {
+        for entry in fs::read_dir(&current_dir)? {
+            let entry = entry?;
             let path = entry.path();
             if path.is_dir() {
-                if let Ok(sub_files) = list_files(super_dir, &path, suffix) {
-                    files.extend(sub_files);
-                } else {
-                    error!("Failed to list directory: {:?}", &path);
-                }
-            } else if path
-                .extension()
-                .and_then(|ext| ext.to_str())
-                .map(|s| s == suffix)
-                .unwrap_or(false)
+                stack.push(path);
+            } else if path.extension().and_then(|ext| ext.to_str()) == Some(suffix)
+                && let Ok(stripped) = path.strip_prefix(super_dir)
             {
-                match path.strip_prefix(super_dir) {
-                    Ok(path_stripped) => {
-                        files.insert(path_stripped.to_path_buf(), path.to_path_buf());
-                    }
-                    Err(e) => {
-                        error!("Failed to strip prefix for {:?}: {}", path, e);
-                    }
-                }
+                files.insert(stripped.to_path_buf(), path);
             }
         }
     }
