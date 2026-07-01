@@ -6,7 +6,7 @@ use log::{error, info};
 use serde::Serialize;
 use std::collections::BTreeMap;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub struct CacheSectionDiff {
     pub to_generate: Vec<String>,
@@ -51,7 +51,7 @@ impl CacheFile {
             templates: BTreeMap::new(),
         }
     }
-    pub(crate) fn from_file(path: &PathBuf) -> Result<Self, CarpathiaError> {
+    pub(crate) fn from_file(path: &Path) -> Result<Self, CarpathiaError> {
         let file_content = std::fs::read_to_string(path).map_err(|e| CarpathiaError {
             message: format!("Failed to read cache file at {path:?}: {e}"),
             error_type: ErrorNumber::CacheFileReadError,

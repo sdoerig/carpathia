@@ -19,33 +19,55 @@ use log::{error, info};
 
 use std::{collections::BTreeMap, fs, path::PathBuf};
 
-pub struct Cache {}
+pub struct Cache {
+    cache_file_old: CacheFile,
+    cache_file_new: CacheFile,
+    cache_file_path: PathBuf,
+    cache_modus: crate::configuration::conf_enums::CacheModus,
+}
 
 impl Cache {
-    pub fn get_changed_entities(
-        config: &CarpathiaConfig,
-        new_content: &AbstractDbRepr,
-        templates: &BTreeMap<String, PathBuf>,
-    ) -> Result<CacheFileDiff, CarpathiaError> {
-        let old_cache = match CacheFile::from_file(&config.cache_file) {
+    pub fn new(config: &CarpathiaConfig) -> Result<Self, CarpathiaError> {
+        let cache_file_old = match CacheFile::from_file(&config.cache_file) {
             Ok(cache) => cache,
             Err(e) => {
                 error!(
-                    "Failed to read cache file at {:?}: {}",
+                    "Failed to read cache file at {:?}: {}. Starting with an empty cache.",
                     &config.cache_file, e
                 );
                 CacheFile::new()
             }
         };
-        let new_cache = CacheFile::from_new_run(new_content, templates);
-        let cache_diff = compare_cache_files(&old_cache, &new_cache, config.cache_modus);
-        match new_cache.save_to_file(&config.cache_file) {
+        let cache_file_new = CacheFile::new();
+        Ok(Cache {
+            cache_file_old,
+            cache_file_new,
+            cache_file_path: config.cache_file.clone(),
+            cache_modus: config.cache_modus,
+        })
+    }
+
+    pub fn get_changed_entities(
+        &mut self,
+        new_content: &AbstractDbRepr,
+        templates: &BTreeMap<String, PathBuf>,
+    ) -> Result<CacheFileDiff, CarpathiaError> {
+        self.cache_file_new = CacheFile::from_new_run(new_content, templates);
+        Ok(compare_cache_files(
+            &self.cache_file_old,
+            &self.cache_file_new,
+            self.cache_modus,
+        ))
+    }
+
+    pub fn write_cache(&self) -> Result<(), CarpathiaError> {
+        match self.cache_file_new.save_to_file(&self.cache_file_path) {
             Ok(()) => {
                 info!(
                     "Cache file updated successfully at {}",
-                    &config.cache_file.display()
+                    &self.cache_file_path.display()
                 );
-                Ok(cache_diff)
+                Ok(())
             }
             Err(e) => {
                 error!("Failed to write cache file: {e}");
@@ -165,7 +187,8 @@ mod tests {
         //let cache = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
         let new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
-        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
+        let mut cache = Cache::new(&config).expect("Failed to create cache");
+        match cache.get_changed_entities(&new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -194,7 +217,7 @@ mod tests {
             }
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         };
-
+        cache.write_cache().expect("Failed to write cache file");
         Cache::remove_cache_file(&config);
     }
 
@@ -205,7 +228,8 @@ mod tests {
         //cache.remove_cache_file(); // Ensure we start with a clean slate
         let mut new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
-        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
+        let mut cache = Cache::new(&config).expect("Failed to create cache");
+        match cache.get_changed_entities(&new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -222,10 +246,10 @@ mod tests {
             }
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         };
+        cache.write_cache().expect("Failed to write cache file");
 
-        //let cache_after_first_run = Cache::new(temp_dir.path().to_path_buf(), CacheModus::UseCache);
-
-        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
+        let mut cache = Cache::new(&config).expect("Failed to create cache");
+        match cache.get_changed_entities(&new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -242,7 +266,7 @@ mod tests {
             }
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         }
-
+        cache.write_cache().expect("Failed to write cache file");
         new_content.tables.insert(
             "test_table_brand_new".to_string(),
             create_abstract_selectable(
@@ -251,8 +275,9 @@ mod tests {
                 ObjectType::BaseTable,
             ),
         );
-        //let config_third_run = get_config_with_cache_modus(CacheModus::UseCache);
-        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
+
+        let mut cache = Cache::new(&config).expect("Failed to create cache");
+        match cache.get_changed_entities(&new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -269,7 +294,7 @@ mod tests {
             }
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         }
-
+        cache.write_cache().expect("Failed to write cache file");
         Cache::remove_cache_file(&config);
     }
 
@@ -279,7 +304,8 @@ mod tests {
         let new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
 
-        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
+        let mut cache = Cache::new(&config).expect("Failed to create cache");
+        match cache.get_changed_entities(&new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -296,8 +322,11 @@ mod tests {
             }
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         };
+        cache.write_cache().expect("Failed to write cache file");
         let config_after_first_run = get_config_with_cache_modus(CacheModus::BypassCache);
-        match Cache::get_changed_entities(&config_after_first_run, &new_content, TEMPLATES) {
+        let mut cache_after_first_run =
+            Cache::new(&config_after_first_run).expect("Failed to create cache");
+        match cache_after_first_run.get_changed_entities(&new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -324,7 +353,8 @@ mod tests {
         let mut new_content: AbstractDbRepr =
             create_abstract_db_repr("test_table", "test_column", ObjectType::BaseTable);
 
-        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
+        let mut cache = Cache::new(&config).expect("Failed to create cache");
+        match cache.get_changed_entities(&new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),
@@ -341,11 +371,12 @@ mod tests {
             }
             Err(e) => panic!("Expected Ok result but got Err: {}", e),
         };
-
+        cache.write_cache().expect("Failed to write cache file");
         // Now we remove the entry from the new content and check if it is detected as removed
         new_content.tables.remove("test_table");
         //let config_third_run = get_config_with_cache_modus(CacheModus::UseCache);
-        match Cache::get_changed_entities(&config, &new_content, TEMPLATES) {
+        let mut cache = Cache::new(&config).expect("Failed to create cache");
+        match cache.get_changed_entities(&new_content, TEMPLATES) {
             Ok(result) => {
                 assert_eq!(
                     result.tables.to_generate.len(),

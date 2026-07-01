@@ -48,7 +48,11 @@ impl TemplateEngine {
             .iter()
             .map(|(k, v)| (k.to_string_lossy().to_string(), v.clone()))
             .collect();
-        let cache_diff = match Cache::get_changed_entities(config, adr, &template_keys) {
+        let mut cache = Cache::new(config).map_err(|e| CarpathiaError {
+            message: format!("Failed to create cache: {}", e),
+            error_type: ErrorNumber::CacheFileError,
+        })?;
+        let cache_diff = match cache.get_changed_entities(adr, &template_keys) {
             Ok(cache_diff) => cache_diff,
             Err(e) => {
                 error!("Error while checking for changed entities: {e}");
@@ -180,7 +184,10 @@ impl TemplateEngine {
                 }
             }
         }
-
+        cache.write_cache().map_err(|e| CarpathiaError {
+            message: format!("Failed to write cache: {}", e),
+            error_type: ErrorNumber::CacheFileError,
+        })?;
         Ok(())
     }
 
