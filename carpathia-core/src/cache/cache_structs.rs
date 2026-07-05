@@ -4,7 +4,7 @@ use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use blake3::Hasher as Blake3Hasher;
 use log::{error, info};
 use serde::Serialize;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -41,6 +41,7 @@ pub(crate) struct CacheFile {
     pub tables: BTreeMap<String, String>,
     pub views: BTreeMap<String, String>,
     pub templates: BTreeMap<String, String>,
+    pub rendered_files: BTreeSet<PathBuf>,
 }
 
 impl CacheFile {
@@ -49,6 +50,7 @@ impl CacheFile {
             tables: BTreeMap::new(),
             views: BTreeMap::new(),
             templates: BTreeMap::new(),
+            rendered_files: BTreeSet::new(),
         }
     }
     pub(crate) fn from_file(path: &Path) -> Result<Self, CarpathiaError> {

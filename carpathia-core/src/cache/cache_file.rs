@@ -47,6 +47,18 @@ impl Cache {
         })
     }
 
+    pub fn add_rendered_file(&mut self, file_path: PathBuf) {
+        self.cache_file_new.rendered_files.insert(file_path);
+    }
+
+    pub fn get_rendered_files_to_delete(&self) -> Vec<PathBuf> {
+        let old_files: std::collections::HashSet<_> =
+            self.cache_file_old.rendered_files.iter().collect();
+        let new_files: std::collections::HashSet<_> =
+            self.cache_file_new.rendered_files.iter().collect();
+        old_files.difference(&new_files).cloned().cloned().collect()
+    }
+
     pub fn get_changed_entities(
         &mut self,
         new_content: &AbstractDbRepr,
