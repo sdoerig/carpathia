@@ -113,7 +113,7 @@ impl TemplateEngine {
                         {
                             let mut ctx = Context::new();
 
-                            ctx.insert("tables", &table_repr);
+                            ctx.insert("table", &table_repr);
                             Self::render_table_or_view(
                                 &tera,
                                 template_file_name,
@@ -141,7 +141,7 @@ impl TemplateEngine {
                         {
                             let mut ctx = Context::new();
 
-                            ctx.insert("views", &view_repr);
+                            ctx.insert("view", &view_repr);
                             Self::render_table_or_view(
                                 &tera,
                                 template_file_name,
