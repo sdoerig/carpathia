@@ -111,12 +111,15 @@ impl TemplateEngine {
                                     .to_generate
                                     .contains(&template_file_name.to_string_lossy().to_string()))
                         {
+                            let mut ctx = Context::new();
+
+                            ctx.insert("tables", &table_repr);
                             Self::render_table_or_view(
                                 &tera,
                                 template_file_name,
                                 &parsed_template,
                                 table_name,
-                                table_repr,
+                                &ctx,
                             )?;
                         }
                     }
@@ -136,12 +139,15 @@ impl TemplateEngine {
                                     .to_generate
                                     .contains(&template_file_name.to_string_lossy().to_string()))
                         {
+                            let mut ctx = Context::new();
+
+                            ctx.insert("views", &view_repr);
                             Self::render_table_or_view(
                                 &tera,
                                 template_file_name,
                                 &parsed_template,
                                 view_name,
-                                view_repr,
+                                &ctx,
                             )?;
                         }
                     }
@@ -158,13 +164,14 @@ impl TemplateEngine {
                             .to_generate
                             .contains(&template_file_name.to_string_lossy().to_string())
                     {
-                        //println!("Tera VERSION = {}", tera::Tera::version());
-                        //println!("TYPE adr = {}", std::any::type_name_of_val(adr));
+                        let mut ctx = Context::new();
+                        ctx.insert("tables", &adr.tables);
+                        ctx.insert("views", &adr.views);
+
                         let rendered = Self::render_from_repr(
                             &tera,
                             &template_file_name.to_string_lossy(),
-                            &adr,
-                            vec!["tables", "views"],
+                            &ctx,
                         )
                         .map_err(|e| CarpathiaError {
                             message: e.to_string(),
@@ -194,14 +201,9 @@ impl TemplateEngine {
     fn render_from_repr(
         tera: &Tera,
         template_name: &str,
-        repr: &impl serde::Serialize,
-        tera_ctx_key: Vec<&str>,
+        ctx: &Context,
     ) -> Result<String, CarpathiaError> {
-        let mut ctx = Context::new();
-        for ctx_key in tera_ctx_key {
-            ctx.insert(ctx_key, repr);
-        }
-        match tera.render(template_name, &ctx) {
+        match tera.render(template_name, ctx) {
             Ok(r) => Ok(r),
             Err(e) => {
                 error!("TERA ERROR: {:#?} template_name {}", e, template_name);
@@ -218,18 +220,13 @@ impl TemplateEngine {
         template_file_name: &Path,
         parsed_template: &Template,
         table_name: &str,
-        table_repr: &crate::db::db_schema_structs::AbstractTableRepr,
+        ctx: &Context,
     ) -> Result<(), CarpathiaError> {
-        let rendered = Self::render_from_repr(
-            tera,
-            &template_file_name.to_string_lossy(),
-            table_repr,
-            vec!["table"],
-        )
-        .map_err(|e| CarpathiaError {
-            message: e.to_string(),
-            error_type: ErrorNumber::Other,
-        })?;
+        let rendered = Self::render_from_repr(tera, &template_file_name.to_string_lossy(), ctx)
+            .map_err(|e| CarpathiaError {
+                message: e.to_string(),
+                error_type: ErrorNumber::Other,
+            })?;
 
         parsed_template.write_rendered_template(&rendered, &table_name.to_lowercase())?;
         Ok(())
