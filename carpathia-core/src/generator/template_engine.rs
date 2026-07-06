@@ -122,6 +122,7 @@ impl TemplateEngine {
                                 ctx,
                             )?;
                         }
+                        cache.add_rendered_file(parsed_template.get_output_file_path(table_name));
                     }
                 }
 
@@ -150,6 +151,8 @@ impl TemplateEngine {
                                 ctx,
                             )?;
                         }
+                        cache.add_rendered_file(parsed_template.get_output_file_path(view_name));
+
                     }
                 }
 
@@ -174,6 +177,7 @@ impl TemplateEngine {
                             "",
                             ctx,
                         )?;
+                        cache.add_rendered_file(parsed_template.get_output_file_path(""));
                     }
                 }
 
@@ -186,6 +190,7 @@ impl TemplateEngine {
                 }
             }
         }
+        remove_outdated_files(config, &cache);
         cache.write_cache().map_err(|e| CarpathiaError {
             message: format!("Failed to write cache: {}", e),
             error_type: ErrorNumber::CacheFileError,
@@ -223,6 +228,26 @@ impl TemplateEngine {
             })?;
         parsed_template.write_rendered_template(&rendered, table_name)?;
         Ok(())
+    }
+}
+
+/// Removes outdated files from the output directory based on the cache information.
+/// A redered file is considered outdatet if
+/// - the database entity has been removed or
+/// - the template has been removed or
+/// - the template naming convention has been changec.
+///   for more information on naming conventions see documentation in generator_structs.rs.
+fn remove_outdated_files(config: &CarpathiaConfig, cache: &Cache) {
+    for files_to_delete in cache.get_rendered_files_to_delete() {
+        if let Err(e) = fs::remove_file(config.output_directory.clone().join(&files_to_delete)) {
+            error!(
+                "Failed to delete file {:?}: {}",
+                files_to_delete.to_string_lossy(),
+                e
+            );
+        } else {
+            info!("Deleted file {:?}", files_to_delete.to_string_lossy());
+        }
     }
 }
 
