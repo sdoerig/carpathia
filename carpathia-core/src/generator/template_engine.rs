@@ -114,17 +114,13 @@ impl TemplateEngine {
                             let mut ctx = Context::new();
 
                             ctx.insert("table", &table_repr);
-                            let rendered = Self::render_from_repr(
+                            Self::render_template_and_write(
                                 &tera,
-                                &template_file_name.to_string_lossy(),
-                                &ctx,
-                            )
-                            .map_err(|e| CarpathiaError {
-                                message: e.to_string(),
-                                error_type: ErrorNumber::Other,
-                            })?;
-
-                            parsed_template.write_rendered_template(&rendered, table_name)?;
+                                template_file_name,
+                                &parsed_template,
+                                table_name,
+                                ctx,
+                            )?;
                         }
                     }
                 }
@@ -146,17 +142,13 @@ impl TemplateEngine {
                             let mut ctx = Context::new();
 
                             ctx.insert("view", &view_repr);
-                            let rendered = Self::render_from_repr(
+                            Self::render_template_and_write(
                                 &tera,
-                                &template_file_name.to_string_lossy(),
-                                &ctx,
-                            )
-                            .map_err(|e| CarpathiaError {
-                                message: e.to_string(),
-                                error_type: ErrorNumber::Other,
-                            })?;
-
-                            parsed_template.write_rendered_template(&rendered, view_name)?;
+                                template_file_name,
+                                &parsed_template,
+                                view_name,
+                                ctx,
+                            )?;
                         }
                     }
                 }
@@ -175,18 +167,13 @@ impl TemplateEngine {
                         let mut ctx = Context::new();
                         ctx.insert("tables", &adr.tables);
                         ctx.insert("views", &adr.views);
-
-                        let rendered = Self::render_from_repr(
+                        Self::render_template_and_write(
                             &tera,
-                            &template_file_name.to_string_lossy(),
-                            &ctx,
-                        )
-                        .map_err(|e| CarpathiaError {
-                            message: e.to_string(),
-                            error_type: ErrorNumber::Other,
-                        })?;
-
-                        parsed_template.write_rendered_template(&rendered, "")?;
+                            template_file_name,
+                            &parsed_template,
+                            "",
+                            ctx,
+                        )?;
                     }
                 }
 
@@ -222,7 +209,21 @@ impl TemplateEngine {
             }
         }
     }
-
+    fn render_template_and_write(
+        tera: &Tera,
+        template_file_name: &Path,
+        parsed_template: &Template,
+        table_name: &str,
+        ctx: Context,
+    ) -> Result<(), CarpathiaError> {
+        let rendered = Self::render_from_repr(tera, &template_file_name.to_string_lossy(), &ctx)
+            .map_err(|e| CarpathiaError {
+                message: e.to_string(),
+                error_type: ErrorNumber::Other,
+            })?;
+        parsed_template.write_rendered_template(&rendered, table_name)?;
+        Ok(())
+    }
 }
 
 fn list_files(
