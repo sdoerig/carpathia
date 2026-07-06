@@ -152,7 +152,6 @@ impl TemplateEngine {
                             )?;
                         }
                         cache.add_rendered_file(parsed_template.get_output_file_path(view_name));
-
                     }
                 }
 
