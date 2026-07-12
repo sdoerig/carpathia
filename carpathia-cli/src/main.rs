@@ -83,10 +83,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     info!(
         "Database Type: {} User: {} Port: {} Database name: {}",
-        &core_db_type, &args.db_username, args.db_port, &args.db_name
+        core_db_type, args.db_username, args.db_port, args.db_name
     );
-    info!("Database Name: {}", &args.db_name);
-    info!("Output Directory: {}", &args.output_directory);
+    info!("Database Name: {}", args.db_name);
+    info!("Output Directory: {}", args.output_directory);
     //let core_init_template: InitTemplate = args.init_template.into();
 
     let config = match CarpathiaConfigBuilder::new()

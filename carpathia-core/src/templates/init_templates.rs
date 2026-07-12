@@ -23,7 +23,7 @@ pub fn extract_to_disk(conf: &CarpathiaConfig) -> Result<(), CarpathiaError> {
         .map_err(|e| CarpathiaError {
             message: format!(
                 "Failed to extract init template to disk at {:?}: {}",
-                &conf.template_directory, e
+                conf.template_directory, e
             ),
             error_type:
                 crate::return_values::carpathia_errors::ErrorNumber::ErrorWritingInitTemplate,

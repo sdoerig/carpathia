@@ -33,7 +33,7 @@ impl Cache {
             Err(e) => {
                 error!(
                     "Failed to read cache file at {:?}: {}. Starting with an empty cache.",
-                    &config.cache_file, e
+                    config.cache_file, e
                 );
                 CacheFile::new()
             }
@@ -77,7 +77,7 @@ impl Cache {
             Ok(()) => {
                 info!(
                     "Cache file updated successfully at {}",
-                    &self.cache_file_path.display()
+                    self.cache_file_path.display()
                 );
                 Ok(())
             }
@@ -98,12 +98,12 @@ impl Cache {
         if fs::remove_file(&config.cache_file).is_ok() {
             info!(
                 "Cache file removed successfully at {}",
-                &config.cache_file.display()
+                config.cache_file.display()
             );
         } else {
             error!(
                 "Failed to remove cache file at {}",
-                &config.cache_file.display()
+                config.cache_file.display()
             );
         }
     }

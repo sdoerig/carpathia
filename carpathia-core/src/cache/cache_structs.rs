@@ -155,7 +155,7 @@ impl CacheFile {
         })?;
         match fs::write(path, cache_content_json) {
             Ok(()) => {
-                info!("Cache file updated successfully at {}", &path.display());
+                info!("Cache file updated successfully at {}", path.display());
                 Ok(())
             }
             Err(e) => {
