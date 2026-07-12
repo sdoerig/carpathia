@@ -6,14 +6,14 @@
 {# Tables                       #}
 {# ----------------------------- #}
 
-{% for table_name, _ in tables %}
-pub mod {{ table_name }};
+{% for table in tables %}
+pub mod {{ table.table_name }};
 {% endfor %}
 
 {# ----------------------------- #}
 {# Views                        #}
 {# ----------------------------- #}
 
-{% for view_name, _ in views %}
-pub mod {{ view_name }};
+{% for view in views %}
+pub mod {{ view.table_name }};
 {% endfor %}

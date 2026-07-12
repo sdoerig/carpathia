@@ -82,8 +82,8 @@ mod tests {
         assert_eq!(i32::from(ErrorNumber::ErrorWritingInitTemplate), 16);
         assert_eq!(i32::from(ErrorNumber::InvalidConstraintType), 6);
         assert_eq!(i32::from(ErrorNumber::InvalidObjectType), 7);
-        assert_eq!(i32::from(ErrorNumber::InvalidPoolType), 8); 
-        assert_eq!(i32::from(ErrorNumber::NoDbObjectsDiscovered), 10);  
+        assert_eq!(i32::from(ErrorNumber::InvalidPoolType), 8);
+        assert_eq!(i32::from(ErrorNumber::NoDbObjectsDiscovered), 10);
         assert_eq!(i32::from(ErrorNumber::ConfigFileError), 2);
         assert_eq!(i32::from(ErrorNumber::GenerationError), 1);
         assert_eq!(i32::from(ErrorNumber::CacheFileReadError), 4);

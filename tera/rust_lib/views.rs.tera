@@ -9,7 +9,7 @@ use {{ imp }};
 
 #[derive(Debug, Clone, FromRow)]
 pub struct {{ view.table_name | capitalize }} {
-    {% for key, attr in view.attributes %}
+    {% for attr in view.attributes %}
     pub {{ attr.column_name }}: {{ attr.u_type }}{% if not loop.last %},{% endif %}
     {% endfor %}
 }
@@ -17,7 +17,7 @@ pub struct {{ view.table_name | capitalize }} {
 impl {{ view.table_name | capitalize }} {
 
     {# Forward Relations #}
-    {% for key, attr in view.attributes %}
+    {% for attr in view.attributes %}
         {% if attr.constraint_type == "ForeignKey" %}
     pub async fn {{ attr.referenced_table }}(&self, pool: &PgPool)
         -> sqlx::Result<{{ attr.referenced_table | capitalize }}>
@@ -35,7 +35,7 @@ impl {{ view.table_name | capitalize }} {
 }
 
 pub struct {{ view.table_name | capitalize }}Filter {
-    {% for key, attr in view.attributes %}
+    {% for attr in view.attributes %}
     pub {{ attr.column_name }}: Option<{{ attr.u_type }}>{% if not loop.last %},{% endif %}
     {% endfor %}
 }
@@ -44,13 +44,13 @@ impl {{ view.table_name | capitalize }}Filter {
 
     pub fn new() -> Self {
         Self {
-            {% for key, attr in view.attributes %}
+            {% for attr in view.attributes %}
             {{ attr.column_name }}: None{% if not loop.last %},{% endif %}
             {% endfor %}
         }
     }
 
-    {% for key, attr in view.attributes %}
+    {% for attr in view.attributes %}
     pub fn {{ attr.column_name }}(mut self, value: {{ attr.u_type }}) -> Self {
         self.{{ attr.column_name }} = Some(value);
         self
@@ -64,7 +64,7 @@ impl {{ view.table_name | capitalize }}Filter {
 
         let mut first = true;
 
-        {% for key, attr in view.attributes %}
+        {% for attr in view.attributes %}
         if self.{{ attr.column_name }}.is_some() {
             if first {
                 qb.push(" WHERE ");

@@ -3,6 +3,7 @@ use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_structs::{DEFAULT_TYPE_MAPPING, Types};
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::generator::generator_structs::{Template, TemplateType};
+use crate::generator::tera_conversion::AdrTemplateData;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use log::{debug, error, info};
 use std::collections::BTreeMap;
@@ -23,7 +24,7 @@ impl TemplateEngine {
         }
         debug!("tera template directory is {:?}", config.template_directory);
         debug!("output directory is {:?}", config.output_directory);
-
+        let adr_template_data = AdrTemplateData::from(adr);
         let templates = match list_files(
             &config.template_directory,
             &config.template_directory,
@@ -103,17 +104,20 @@ impl TemplateEngine {
                     // either the table itself or the template has changed.
                     // Each AbstractTableRepr is passed separately to each template.
                     // This because the user can create as may templates of this type as feeling in need of.
-                    for table_name in adr.tables.keys() {
-                        if let Some(table_repr) = adr.tables.get(table_name)
-                            && (cache_diff.tables.to_generate.contains(table_name)
-                                || cache_diff
-                                    .templates
-                                    .to_generate
-                                    .contains(&template_file_name.to_string_lossy().to_string()))
+                    for table in &adr_template_data.tables {
+                        let table_name = table.table_name;
+                        if cache_diff
+                            .tables
+                            .to_generate
+                            .contains(&table_name.to_string())
+                            || cache_diff
+                                .templates
+                                .to_generate
+                                .contains(&template_file_name.to_string_lossy().to_string())
                         {
                             let mut ctx = Context::new();
 
-                            ctx.insert("table", &table_repr);
+                            ctx.insert("table", &table);
                             Self::render_template_and_write(
                                 &tera,
                                 template_file_name,
@@ -132,17 +136,20 @@ impl TemplateEngine {
                     // either the view itself or the template has changed.
                     // Each AbstractTableRepr is passed separately to each template.
                     // This because the user can create as may templates of this type as feeling in need of.
-                    for view_name in adr.views.keys() {
-                        if let Some(view_repr) = adr.views.get(view_name)
-                            && (cache_diff.views.to_generate.contains(view_name)
-                                || cache_diff
-                                    .templates
-                                    .to_generate
-                                    .contains(&template_file_name.to_string_lossy().to_string()))
+                    for view in &adr_template_data.views {
+                        let view_name = view.table_name;
+                        if cache_diff
+                            .views
+                            .to_generate
+                            .contains(&view_name.to_string())
+                            || cache_diff
+                                .templates
+                                .to_generate
+                                .contains(&template_file_name.to_string_lossy().to_string())
                         {
                             let mut ctx = Context::new();
 
-                            ctx.insert("view", &view_repr);
+                            ctx.insert("view", &view);
                             Self::render_template_and_write(
                                 &tera,
                                 template_file_name,
@@ -167,8 +174,8 @@ impl TemplateEngine {
                             .contains(&template_file_name.to_string_lossy().to_string())
                     {
                         let mut ctx = Context::new();
-                        ctx.insert("tables", &adr.tables);
-                        ctx.insert("views", &adr.views);
+                        ctx.insert("tables", &&adr_template_data.tables);
+                        ctx.insert("views", &adr_template_data.views);
                         Self::render_template_and_write(
                             &tera,
                             template_file_name,
@@ -176,8 +183,8 @@ impl TemplateEngine {
                             "",
                             ctx,
                         )?;
-                        cache.add_rendered_file(parsed_template.get_output_file_path(""));
                     }
+                    cache.add_rendered_file(parsed_template.get_output_file_path(""));
                 }
 
                 TemplateType::Unknown => {
