@@ -133,7 +133,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     };
     if config.print_schema {
-        println!("{}", serde_json::to_string_pretty(&abstr_db_repr)?);
+        match serde_json::to_string_pretty(&abstr_db_repr) {
+            Ok(json) => println!("{json}"),
+            Err(e) => {
+                error!("Could not print schema {e}");
+                exit(i32::from(ErrorNumber::Other));
+            }
+        }
         exit(0);
     }
     if config.print_db_types {

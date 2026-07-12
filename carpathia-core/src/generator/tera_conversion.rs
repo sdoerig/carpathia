@@ -15,14 +15,14 @@ use crate::db::db_schema_structs::{
 /// should get the job done.
 ///
 use serde::Serialize;
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AdrTemplateData<'a> {
     pub version: &'a str,
     pub tables: Vec<TableTemplateData<'a>>,
     pub views: Vec<TableTemplateData<'a>>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct TableTemplateData<'a> {
     pub object_type: &'a ObjectType,
     pub table_name: &'a str,
