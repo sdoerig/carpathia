@@ -1,4 +1,4 @@
-name: Test
+name: Test & Coverage
 
 on:
   push:
@@ -10,10 +10,12 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  # Codecov Token Repository Secret: https://github.com/<org>/<repo>/settings/secrets)
+  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
 jobs:
-  test:
-    name: Testing with PostgreSQL ${{ matrix.pg }} and Pagila schema
+  test_and_coverage:
+    name: Tests & Coverage (PostgreSQL ${{ matrix.pg }})
     runs-on: ubuntu-latest
 
     strategy:
@@ -48,27 +50,41 @@ jobs:
         with:
           cache-all-crates: true
 
-      - name: Installing dependencies
+      - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y libpq-dev postgresql-client
+
+      - name: Install cargo-tarpaulin
+        run: cargo install cargo-tarpaulin
 
       - name: Providing Pagila-Schema
         run: cp fixtures/pagila-schema.sql pagila-schema.sql
 
-      - name: Loading Pagila-Schema in PostgreSQL
+      - name: Load Pagila-Schema in PostgreSQL
         run: |
           until pg_isready -h localhost -U postgres; do
             sleep 1
           done
           psql -h localhost -U postgres -d carpathia -f pagila-schema.sql
-          rm .env.test
+          rm -f .env.test
         env:
           PGPASSWORD: postgres
 
       - name: Rust Linting (clippy)
         run: cargo clippy --all-targets --all-features -- -D warnings
 
-      - name: Running Tests
-        run: cargo test
+      - name: Run Tests with Coverage (tarpaulin)
+        run: |
+          cargo tarpaulin \
+            --out Lcov \
+            --run-types Tests \
+            -- --test-threads=1
         env:
           TEST_DB_URL: postgres://postgres:postgres@localhost:5432
           TEST_DB_NAME: carpathia
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./lcov.info
+          token: ${{ env.CODECOV_TOKEN }}
+          fail_ci_if_error: false  # Workflow läuft weiter, falls Codecov fehlt
