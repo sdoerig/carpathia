@@ -4,9 +4,9 @@ use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use blake3::Hasher as Blake3Hasher;
 use log::{error, info};
 use serde::Serialize;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub struct CacheSectionDiff {
     pub to_generate: Vec<String>,
@@ -41,6 +41,7 @@ pub(crate) struct CacheFile {
     pub tables: BTreeMap<String, String>,
     pub views: BTreeMap<String, String>,
     pub templates: BTreeMap<String, String>,
+    pub rendered_files: BTreeSet<PathBuf>,
 }
 
 impl CacheFile {
@@ -49,9 +50,10 @@ impl CacheFile {
             tables: BTreeMap::new(),
             views: BTreeMap::new(),
             templates: BTreeMap::new(),
+            rendered_files: BTreeSet::new(),
         }
     }
-    pub(crate) fn from_file(path: &PathBuf) -> Result<Self, CarpathiaError> {
+    pub(crate) fn from_file(path: &Path) -> Result<Self, CarpathiaError> {
         let file_content = std::fs::read_to_string(path).map_err(|e| CarpathiaError {
             message: format!("Failed to read cache file at {path:?}: {e}"),
             error_type: ErrorNumber::CacheFileReadError,
@@ -153,7 +155,7 @@ impl CacheFile {
         })?;
         match fs::write(path, cache_content_json) {
             Ok(()) => {
-                info!("Cache file updated successfully at {}", &path.display());
+                info!("Cache file updated successfully at {}", path.display());
                 Ok(())
             }
             Err(e) => {

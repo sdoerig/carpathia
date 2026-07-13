@@ -33,7 +33,7 @@ fn add_to_atr(
         if let Some(import) = u_type_map.u_import.clone()
             && !import.is_empty()
         {
-            debug!("insert_u_import {}", &import);
+            debug!("insert_u_import {}", import);
             atr.u_imports.insert(import);
         }
     }

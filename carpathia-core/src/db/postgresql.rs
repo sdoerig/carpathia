@@ -234,13 +234,10 @@ impl DatabaseQuerier for PostgresQuerier {
             let num_rows = rows.len();
             debug!("Fetched {num_rows} rows from schema query with offset {offset}");
             for row in rows {
-                debug!(
-                    "Processing column: {}.{}",
-                    &row.table_name, &row.column_name
-                );
+                debug!("Processing column: {}.{}", row.table_name, row.column_name);
                 let data_type = if let Some(dimensions) = row.array_dimensions {
                     if dimensions != 0 {
-                        format!("{}[{}]", &row.data_type, dimensions)
+                        format!("{}[{}]", row.data_type, dimensions)
                     } else {
                         row.data_type.clone()
                     }

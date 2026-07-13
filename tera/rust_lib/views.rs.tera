@@ -3,21 +3,21 @@
    ================================================================ #}
 
 use sqlx::{FromRow, PgPool, Postgres, QueryBuilder};
-{% for imp in table.u_imports %}
+{% for imp in view.u_imports %}
 use {{ imp }};
 {% endfor %}
 
 #[derive(Debug, Clone, FromRow)]
-pub struct {{ table.table_name | capitalize }} {
-    {% for key, attr in table.attributes %}
+pub struct {{ view.table_name | capitalize }} {
+    {% for attr in view.attributes %}
     pub {{ attr.column_name }}: {{ attr.u_type }}{% if not loop.last %},{% endif %}
     {% endfor %}
 }
 
-impl {{ table.table_name | capitalize }} {
+impl {{ view.table_name | capitalize }} {
 
     {# Forward Relations #}
-    {% for key, attr in table.attributes %}
+    {% for attr in view.attributes %}
         {% if attr.constraint_type == "ForeignKey" %}
     pub async fn {{ attr.referenced_table }}(&self, pool: &PgPool)
         -> sqlx::Result<{{ attr.referenced_table | capitalize }}>
@@ -34,23 +34,23 @@ impl {{ table.table_name | capitalize }} {
     {% endfor %}
 }
 
-pub struct {{ table.table_name | capitalize }}Filter {
-    {% for key, attr in table.attributes %}
+pub struct {{ view.table_name | capitalize }}Filter {
+    {% for attr in view.attributes %}
     pub {{ attr.column_name }}: Option<{{ attr.u_type }}>{% if not loop.last %},{% endif %}
     {% endfor %}
 }
 
-impl {{ table.table_name | capitalize }}Filter {
+impl {{ view.table_name | capitalize }}Filter {
 
     pub fn new() -> Self {
         Self {
-            {% for key, attr in table.attributes %}
+            {% for attr in view.attributes %}
             {{ attr.column_name }}: None{% if not loop.last %},{% endif %}
             {% endfor %}
         }
     }
 
-    {% for key, attr in table.attributes %}
+    {% for attr in view.attributes %}
     pub fn {{ attr.column_name }}(mut self, value: {{ attr.u_type }}) -> Self {
         self.{{ attr.column_name }} = Some(value);
         self
@@ -58,13 +58,13 @@ impl {{ table.table_name | capitalize }}Filter {
     {% endfor %}
 
     pub async fn fetch_all(&self, pool: &PgPool)
-        -> sqlx::Result<Vec<{{ table.table_name | capitalize }}}>
+        -> sqlx::Result<Vec<{{ view.table_name | capitalize }}}>
     {
-        let mut qb = QueryBuilder::<Postgres>::new("SELECT * FROM {{ table.table_name }}");
+        let mut qb = QueryBuilder::<Postgres>::new("SELECT * FROM {{ view.table_name }}");
 
         let mut first = true;
 
-        {% for key, attr in table.attributes %}
+        {% for attr in view.attributes %}
         if self.{{ attr.column_name }}.is_some() {
             if first {
                 qb.push(" WHERE ");
@@ -77,7 +77,7 @@ impl {{ table.table_name | capitalize }}Filter {
         }
         {% endfor %}
 
-        let query = qb.build_query_as::<{{ table.table_name | capitalize }}>>();
+        let query = qb.build_query_as::<{{ view.table_name | capitalize }}>>();
         query.fetch_all(pool).await
     }
 }

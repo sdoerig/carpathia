@@ -3,6 +3,7 @@ use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_structs::{DEFAULT_TYPE_MAPPING, Types};
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::generator::generator_structs::{Template, TemplateType};
+use crate::generator::tera_conversion::AdrTemplateData;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use log::{debug, error, info};
 use std::collections::BTreeMap;
@@ -23,7 +24,7 @@ impl TemplateEngine {
         }
         debug!("tera template directory is {:?}", config.template_directory);
         debug!("output directory is {:?}", config.output_directory);
-
+        let adr_template_data = AdrTemplateData::from(adr);
         let templates = match list_files(
             &config.template_directory,
             &config.template_directory,
@@ -48,7 +49,11 @@ impl TemplateEngine {
             .iter()
             .map(|(k, v)| (k.to_string_lossy().to_string(), v.clone()))
             .collect();
-        let cache_diff = match Cache::get_changed_entities(config, adr, &template_keys) {
+        let mut cache = Cache::new(config).map_err(|e| CarpathiaError {
+            message: format!("Failed to create cache: {}", e),
+            error_type: ErrorNumber::CacheFileError,
+        })?;
+        let cache_diff = match cache.get_changed_entities(adr, &template_keys) {
             Ok(cache_diff) => cache_diff,
             Err(e) => {
                 error!("Error while checking for changed entities: {e}");
@@ -99,22 +104,29 @@ impl TemplateEngine {
                     // either the table itself or the template has changed.
                     // Each AbstractTableRepr is passed separately to each template.
                     // This because the user can create as may templates of this type as feeling in need of.
-                    for table_name in adr.tables.keys() {
-                        if let Some(table_repr) = adr.tables.get(table_name)
-                            && (cache_diff.tables.to_generate.contains(table_name)
-                                || cache_diff
-                                    .templates
-                                    .to_generate
-                                    .contains(&template_file_name.to_string_lossy().to_string()))
+                    for table in &adr_template_data.tables {
+                        let table_name = table.table_name;
+                        if cache_diff
+                            .tables
+                            .to_generate
+                            .contains(&table_name.to_string())
+                            || cache_diff
+                                .templates
+                                .to_generate
+                                .contains(&template_file_name.to_string_lossy().to_string())
                         {
-                            Self::render_table_or_view(
+                            let mut ctx = Context::new();
+
+                            ctx.insert("table", &table);
+                            Self::render_template_and_write(
                                 &tera,
                                 template_file_name,
                                 &parsed_template,
                                 table_name,
-                                table_repr,
+                                ctx,
                             )?;
                         }
+                        cache.add_rendered_file(parsed_template.get_output_file_path(table_name));
                     }
                 }
 
@@ -124,22 +136,29 @@ impl TemplateEngine {
                     // either the view itself or the template has changed.
                     // Each AbstractTableRepr is passed separately to each template.
                     // This because the user can create as may templates of this type as feeling in need of.
-                    for view_name in adr.views.keys() {
-                        if let Some(view_repr) = adr.views.get(view_name)
-                            && (cache_diff.views.to_generate.contains(view_name)
-                                || cache_diff
-                                    .templates
-                                    .to_generate
-                                    .contains(&template_file_name.to_string_lossy().to_string()))
+                    for view in &adr_template_data.views {
+                        let view_name = view.table_name;
+                        if cache_diff
+                            .views
+                            .to_generate
+                            .contains(&view_name.to_string())
+                            || cache_diff
+                                .templates
+                                .to_generate
+                                .contains(&template_file_name.to_string_lossy().to_string())
                         {
-                            Self::render_table_or_view(
+                            let mut ctx = Context::new();
+
+                            ctx.insert("view", &view);
+                            Self::render_template_and_write(
                                 &tera,
                                 template_file_name,
                                 &parsed_template,
                                 view_name,
-                                view_repr,
+                                ctx,
                             )?;
                         }
+                        cache.add_rendered_file(parsed_template.get_output_file_path(view_name));
                     }
                 }
 
@@ -154,21 +173,18 @@ impl TemplateEngine {
                             .to_generate
                             .contains(&template_file_name.to_string_lossy().to_string())
                     {
-                        //println!("Tera VERSION = {}", tera::Tera::version());
-                        //println!("TYPE adr = {}", std::any::type_name_of_val(adr));
-                        let rendered = Self::render_from_repr(
+                        let mut ctx = Context::new();
+                        ctx.insert("tables", &&adr_template_data.tables);
+                        ctx.insert("views", &adr_template_data.views);
+                        Self::render_template_and_write(
                             &tera,
-                            &template_file_name.to_string_lossy(),
-                            &adr,
-                            vec!["tables", "views"],
-                        )
-                        .map_err(|e| CarpathiaError {
-                            message: e.to_string(),
-                            error_type: ErrorNumber::Other,
-                        })?;
-
-                        parsed_template.write_rendered_template(&rendered, "")?;
+                            template_file_name,
+                            &parsed_template,
+                            "",
+                            ctx,
+                        )?;
                     }
+                    cache.add_rendered_file(parsed_template.get_output_file_path(""));
                 }
 
                 TemplateType::Unknown => {
@@ -180,21 +196,20 @@ impl TemplateEngine {
                 }
             }
         }
-
+        remove_outdated_files(config, &cache);
+        cache.write_cache().map_err(|e| CarpathiaError {
+            message: format!("Failed to write cache: {}", e),
+            error_type: ErrorNumber::CacheFileError,
+        })?;
         Ok(())
     }
 
     fn render_from_repr(
         tera: &Tera,
         template_name: &str,
-        repr: &impl serde::Serialize,
-        tera_ctx_key: Vec<&str>,
+        ctx: &Context,
     ) -> Result<String, CarpathiaError> {
-        let mut ctx = Context::new();
-        for ctx_key in tera_ctx_key {
-            ctx.insert(ctx_key, repr);
-        }
-        match tera.render(template_name, &ctx) {
+        match tera.render(template_name, ctx) {
             Ok(r) => Ok(r),
             Err(e) => {
                 error!("TERA ERROR: {:#?} template_name {}", e, template_name);
@@ -205,27 +220,40 @@ impl TemplateEngine {
             }
         }
     }
-
-    fn render_table_or_view(
+    fn render_template_and_write(
         tera: &Tera,
         template_file_name: &Path,
         parsed_template: &Template,
         table_name: &str,
-        table_repr: &crate::db::db_schema_structs::AbstractTableRepr,
+        ctx: Context,
     ) -> Result<(), CarpathiaError> {
-        let rendered = Self::render_from_repr(
-            tera,
-            &template_file_name.to_string_lossy(),
-            table_repr,
-            vec!["table"],
-        )
-        .map_err(|e| CarpathiaError {
-            message: e.to_string(),
-            error_type: ErrorNumber::Other,
-        })?;
-
-        parsed_template.write_rendered_template(&rendered, &table_name.to_lowercase())?;
+        let rendered = Self::render_from_repr(tera, &template_file_name.to_string_lossy(), &ctx)
+            .map_err(|e| CarpathiaError {
+                message: e.to_string(),
+                error_type: ErrorNumber::Other,
+            })?;
+        parsed_template.write_rendered_template(&rendered, table_name)?;
         Ok(())
+    }
+}
+
+/// Removes outdated files from the output directory based on the cache information.
+/// A redered file is considered outdatet if
+/// - the database entity has been removed or
+/// - the template has been removed or
+/// - the template naming convention has been changec.
+///   for more information on naming conventions see documentation in generator_structs.rs.
+fn remove_outdated_files(config: &CarpathiaConfig, cache: &Cache) {
+    for files_to_delete in cache.get_rendered_files_to_delete() {
+        if let Err(e) = fs::remove_file(config.output_directory.clone().join(&files_to_delete)) {
+            error!(
+                "Failed to delete file {:?}: {}",
+                files_to_delete.to_string_lossy(),
+                e
+            );
+        } else {
+            info!("Deleted file {:?}", files_to_delete.to_string_lossy());
+        }
     }
 }
 
@@ -234,31 +262,19 @@ fn list_files(
     dir: &Path,
     suffix: &str,
 ) -> io::Result<BTreeMap<PathBuf, PathBuf>> {
-    let mut files: BTreeMap<PathBuf, PathBuf> = BTreeMap::new();
+    let mut files = BTreeMap::new();
+    let mut stack = vec![dir.to_path_buf()];
 
-    if let Ok(entries) = fs::read_dir(dir) {
-        for entry in entries.flatten() {
+    while let Some(current_dir) = stack.pop() {
+        for entry in fs::read_dir(&current_dir)? {
+            let entry = entry?;
             let path = entry.path();
             if path.is_dir() {
-                if let Ok(sub_files) = list_files(super_dir, &path, suffix) {
-                    files.extend(sub_files);
-                } else {
-                    error!("Failed to list directory: {:?}", &path);
-                }
-            } else if path
-                .extension()
-                .and_then(|ext| ext.to_str())
-                .map(|s| s == suffix)
-                .unwrap_or(false)
+                stack.push(path);
+            } else if path.extension().and_then(|ext| ext.to_str()) == Some(suffix)
+                && let Ok(stripped) = path.strip_prefix(super_dir)
             {
-                match path.strip_prefix(super_dir) {
-                    Ok(path_stripped) => {
-                        files.insert(path_stripped.to_path_buf(), path.to_path_buf());
-                    }
-                    Err(e) => {
-                        error!("Failed to strip prefix for {:?}: {}", path, e);
-                    }
-                }
+                files.insert(stripped.to_path_buf(), path);
             }
         }
     }

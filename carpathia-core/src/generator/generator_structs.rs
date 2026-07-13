@@ -28,6 +28,7 @@ use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 pub(crate) struct Template {
     pub template_type: TemplateType,
     pub file_path: PathBuf,
+    pub template_path: PathBuf,
     pub file_name: String,
     pub suffix: String,
 }
@@ -70,14 +71,23 @@ impl Template {
                 file_name_tokens[1].to_string()
             }
         };
-
         Ok(Template {
             template_type,
             file_path: canonical_target,
+            template_path: template_path.clone(),
             file_name,
             suffix,
         })
     }
+
+    pub(crate) fn get_output_file_path(&self, db_object_name: &str) -> PathBuf {
+        let parent_dir = self.template_path.parent().unwrap_or_else(|| Path::new(""));
+        parent_dir.join(format!(
+            "{}{}.{}",
+            db_object_name, self.file_name, self.suffix
+        ))
+    }
+
     /// Writes the rendered template content to the file system at the location specified by the template's file path.
     /// The file name is constructed using the template's file name and suffix, and is placed
     /// in the same directory as the template file. The method ensures that the parent directory exists and
@@ -330,6 +340,7 @@ mod tests {
         let template = Template {
             template_type: TemplateType::View,
             file_path: output_path.join("views.index.html.tera"),
+            template_path: output_path.join("views.index.html.tera"),
             file_name: "index".to_string(),
             suffix: "html".to_string(),
         };

@@ -83,10 +83,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     info!(
         "Database Type: {} User: {} Port: {} Database name: {}",
-        &core_db_type, &args.db_username, args.db_port, &args.db_name
+        core_db_type, args.db_username, args.db_port, args.db_name
     );
-    info!("Database Name: {}", &args.db_name);
-    info!("Output Directory: {}", &args.output_directory);
+    info!("Database Name: {}", args.db_name);
+    info!("Output Directory: {}", args.output_directory);
     //let core_init_template: InitTemplate = args.init_template.into();
 
     let config = match CarpathiaConfigBuilder::new()
@@ -133,7 +133,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     };
     if config.print_schema {
-        println!("{}", serde_json::to_string_pretty(&abstr_db_repr)?);
+        match serde_json::to_string_pretty(&abstr_db_repr) {
+            Ok(json) => println!("{json}"),
+            Err(e) => {
+                error!("Could not print schema {e}");
+                exit(i32::from(ErrorNumber::Other));
+            }
+        }
         exit(0);
     }
     if config.print_db_types {
