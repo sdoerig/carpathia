@@ -1,5 +1,5 @@
 ![Test Status](https://github.com/sdoerig/carpathia/actions/workflows/test.yml/badge.svg)
-[![Coverage](https://codecov.io/gl/StefanDoerig/carpathia/branch/main/graph/badge.svg)](https://codecov.io/gl/StefanDoerig/carpathia)
+[![codecov](https://codecov.io/github/sdoerig/carpathia/graph/badge.svg?token=1OY5DTEXYB)](https://codecov.io/github/sdoerig/carpathia)
 
 # carpathia — Generate Code from PostgreSQL Schemas
 
