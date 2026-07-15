@@ -206,7 +206,6 @@ mod tests {
         test_schema(&schema.views, &test_adr_no_type_mapping.views);
     }
 
-
     #[tokio::test]
     async fn test_db_schema_parser_with_type_mapping() {
         // load .env.test if available.
