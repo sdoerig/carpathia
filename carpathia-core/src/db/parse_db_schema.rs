@@ -41,7 +41,7 @@ mod tests {
     use crate::db::db_schema_structs::AbstractTableRepr;
     use crate::generator::template_engine::get_db_types;
 
-    fn setup_test_config() -> CarpathiaConfig {
+    fn setup_test_config(with_type_mapping: bool) -> CarpathiaConfig {
         // Load .env.test (if available)
         dotenv::from_filename(".env.test").ok();
 
@@ -59,7 +59,14 @@ mod tests {
             std::env::var("TEST_DB_PASSWORD").unwrap_or_else(|_| "postgres".to_string());
 
         let db_name = std::env::var("TEST_DB_NAME").unwrap_or_else(|_| "carpathia".to_string());
-
+        let db_type_mapping = if with_type_mapping {
+            PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .join("fixtures/carpathia_type_mapping.json")
+        } else {
+            PathBuf::from("I-do-not-exist.json")
+        };
         CarpathiaConfigBuilder::new()
             .db_type(db_type)
             .db_host(db_host)
@@ -69,7 +76,7 @@ mod tests {
             .db_name(&db_name)
             .db_type(DbType::Postgres)
             .cache_modus(crate::configuration::conf_enums::CacheModus::BypassCache)
-            .carpathia_type_mapping("carpathia_type_mapping.json".to_string())
+            .carpathia_type_mapping(db_type_mapping)
             .output_directory("./output".to_string())
             .cache_file("./cache/carpathia_cache.json".to_string())
             .print_schema(false)
@@ -178,11 +185,11 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_db_schema_parser() {
+    async fn test_db_schema_parser_no_type_mapping() {
         // load .env.test if available.
         dotenv::from_filename(".env.test").ok();
 
-        let config = setup_test_config();
+        let config = setup_test_config(false);
         let schema = DbSchemaParser::parse_schema(&config).await.unwrap();
         assert!(
             !schema.tables.is_empty(),
@@ -199,11 +206,34 @@ mod tests {
         test_schema(&schema.views, &test_adr_no_type_mapping.views);
     }
 
+
+    #[tokio::test]
+    async fn test_db_schema_parser_with_type_mapping() {
+        // load .env.test if available.
+        dotenv::from_filename(".env.test").ok();
+
+        let config = setup_test_config(true);
+        let schema = DbSchemaParser::parse_schema(&config).await.unwrap();
+        assert!(
+            !schema.tables.is_empty(),
+            "Schema tables should not be empty"
+        );
+        assert!(!schema.views.is_empty(), "Schema views should not be empty");
+
+        let test_adr_with_type_mapping: AbstractDbRepr =
+            match load_fixture("fixtures/pagila_schema_user_type_mapping.json") {
+                Ok(expected_schema) => expected_schema,
+                Err(e) => panic!("Failed to load expected schema: {}", e),
+            };
+        test_schema(&schema.tables, &test_adr_with_type_mapping.tables);
+        test_schema(&schema.views, &test_adr_with_type_mapping.views);
+    }
+
     #[tokio::test]
     async fn test_db_types() {
         dotenv::from_filename(".env.test").ok();
 
-        let mut config = setup_test_config();
+        let mut config = setup_test_config(false);
         config.print_db_types = true;
         let abstr_db_repr = DbSchemaParser::parse_schema(&config).await.unwrap();
         let db_types = match get_db_types(&config, &abstr_db_repr) {
