@@ -73,6 +73,7 @@ pub struct AbstractAttribute {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum ObjectType {
     BaseTable,
+    PartitionedTable,
     View,
     MaterializedView,
     Other,
@@ -85,6 +86,7 @@ impl FromStr for ObjectType {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "base table" => Ok(ObjectType::BaseTable),
+            "partitioned table" => Ok(ObjectType::PartitionedTable),
             "view" => Ok(ObjectType::View),
             "materialized view" => Ok(ObjectType::MaterializedView),
             _ => {

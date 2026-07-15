@@ -41,7 +41,7 @@ WITH cols AS (
         ON ad.adrelid = c.oid 
        AND ad.adnum = a.attnum
     WHERE n.nspname = 'public'
-      AND c.relkind IN ('r','v')
+      AND c.relkind IN ('r','v', 'p')
 ),
 
 pk_constraints AS (
@@ -92,6 +92,8 @@ SELECT
     CASE c.relkind
         WHEN 'r' THEN 'BASE TABLE'
         WHEN 'v' THEN 'VIEW'
+        WHEN 'p' THEN 'PARTITIONED TABLE'
+        ELSE 'OTHER'
     END AS object_type,
     col.table_name,
     col.column_name,
@@ -244,12 +246,6 @@ impl DatabaseQuerier for PostgresQuerier {
                 } else {
                     row.data_type.clone()
                 };
-                // map the user type to the ADR
-                ////let u_type_map = match type_map.get(&row.data_type) {
-                ////    Some(t) => t,
-                ////    None => NONE_TYPE_MAPPING,
-                ////};
-
                 let attribute = AbstractAttribute {
                     column_name: row.column_name,
                     data_type,
@@ -287,7 +283,7 @@ impl DatabaseQuerier for PostgresQuerier {
                     ObjectType::Other
                 });
                 match object_type {
-                    ObjectType::BaseTable => {
+                    ObjectType::BaseTable | ObjectType::PartitionedTable => {
                         table_info_map
                             .entry(row.table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
