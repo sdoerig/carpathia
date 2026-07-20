@@ -52,17 +52,31 @@ pk_constraints AS (
     FROM pg_constraint con
     WHERE con.contype = 'p'
 ),
-
 fk_constraints AS (
     SELECT
+        con.oid AS constraint_oid,
         con.conname AS constraint_name,
         con.conrelid AS table_oid,
         con.confrelid AS referenced_table_oid,
-        unnest(con.conkey) AS column_attnum,
-        unnest(con.confkey) AS referenced_attnum
+        src.attnum AS column_attnum,
+        src.attname AS column_name,
+        trg.attnum AS referenced_attnum,
+        trg.attname AS referenced_column,
+        rt.relname AS referenced_table,
+        pos.n AS key_position,
+        pg_get_constraintdef(con.oid, true) AS fk_definition
     FROM pg_constraint con
+    CROSS JOIN LATERAL generate_subscripts(con.conkey, 1) pos(n)
+    JOIN pg_attribute src
+        ON src.attrelid = con.conrelid
+        AND src.attnum = con.conkey[pos.n]
+    JOIN pg_attribute trg
+        ON trg.attrelid = con.confrelid
+        AND trg.attnum = con.confkey[pos.n]
+    JOIN pg_class rt
+        ON rt.oid = con.confrelid
     WHERE con.contype = 'f'
-),
+    ),
 
 index_info AS (
     SELECT
@@ -123,9 +137,11 @@ SELECT
         WHEN fk.constraint_name IS NOT NULL THEN 'Foreign Key'
         ELSE NULL
     END AS constraint_type,
-
-    rt.relname AS referenced_table,
-    ra.attname AS referenced_column,
+    fk.referenced_table AS referenced_table,
+    fk.referenced_column AS referenced_column,
+        
+    --rt.relname AS referenced_table,
+    --ra.attname AS referenced_column,
 
     obj_description(col.table_oid) AS table_comment,
     col_description(col.attrelid, col.attnum) AS column_comment,
@@ -143,16 +159,9 @@ LEFT JOIN pg_attrdef ad
 LEFT JOIN pk_constraints pk
     ON pk.table_oid = col.table_oid
    AND pk.column_attnum = col.attnum
-
 LEFT JOIN fk_constraints fk
     ON fk.table_oid = col.table_oid
-   AND fk.column_attnum = col.attnum
-
-LEFT JOIN pg_class rt ON rt.oid = fk.referenced_table_oid
-LEFT JOIN pg_attribute ra
-    ON ra.attrelid = fk.referenced_table_oid
-   AND ra.attnum = fk.referenced_attnum
-
+    AND fk.column_attnum = col.attnum
 LEFT JOIN index_info idx ON idx.table_oid = col.table_oid
 LEFT JOIN trigger_info trg ON trg.table_oid = col.table_oid
 
