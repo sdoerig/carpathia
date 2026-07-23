@@ -24,3 +24,24 @@ pub(crate) struct PgColumnInfo {
     pub table_comment: Option<String>,
     pub column_comment: Option<String>,
 }
+
+#[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+
+pub(crate) struct PgConstraintInfo {
+    pub constraint_oid: i64,
+    pub constraint_name: String,
+    pub schema_name: String,
+    pub table_schema: String,
+    pub table_name: String,
+    pub table_kind: String,
+    pub table_oid: i64,
+    pub constraint_type: String,
+    pub referenced_table_oid: Option<i64>,
+    pub referenced_table: Option<String>,
+    pub column_attnum: i32,
+    pub column_name: String,
+    pub referenced_attnum: Option<i32>,
+    pub referenced_column: Option<String>,
+    pub key_position: i32,
+    pub constraint_definition: String,
+}

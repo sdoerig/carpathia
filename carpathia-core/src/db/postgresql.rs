@@ -9,13 +9,46 @@ use super::db_schema_structs::{
 use super::traits::DatabaseQuerier;
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
-use crate::db::postgresql_structs::PgColumnInfo;
+use crate::db::postgresql_structs::{PgColumnInfo, PgConstraintInfo};
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
 use std::collections::{BTreeMap, BTreeSet};
-pub(crate) struct PostgresQuerier {}
+pub(crate) struct PostgresQuerier;
 
 const LIMIT: i64 = 1000;
+#[allow(dead_code)]
+const CONSTRAINT_QUERY: &str = r"
+SELECT
+    con.oid::bigint AS constraint_oid,
+    con.conname AS constraint_name,
+    con.connamespace::TEXT AS schema_name,
+    cl.relnamespace::TEXT AS table_schema,
+    cl.relname AS table_name,
+    cl.relkind::TEXT AS table_kind,
+    con.conrelid::bigint AS table_oid,
+    con.contype::TEXT AS constraint_type,
+    con.confrelid::bigint AS referenced_table_oid,
+    rt.relname AS referenced_table,
+    src.attnum::int4 AS column_attnum,
+    src.attname AS column_name,
+    trg.attnum::int4 AS referenced_attnum,
+    trg.attname AS referenced_column,
+    pos.n AS key_position,
+    pg_get_constraintdef(con.oid, true) AS constraint_definition
+FROM pg_constraint con
+JOIN pg_class cl ON cl.oid = con.conrelid
+CROSS JOIN LATERAL generate_subscripts(con.conkey, 1) pos(n)
+LEFT JOIN pg_attribute src
+    ON src.attrelid = con.conrelid
+    AND src.attnum = con.conkey[pos.n]
+LEFT JOIN pg_attribute trg
+    ON trg.attrelid = con.confrelid
+    AND con.confrelid IS NOT NULL
+    AND trg.attnum = con.confkey[pos.n]
+LEFT JOIN pg_class rt
+    ON rt.oid = con.confrelid
+ORDER BY schema_name, table_name, con.oid, pos.n;";
+
 const SCHEMA_QUERY: &str = r"
 WITH cols AS (
     SELECT
@@ -205,7 +238,35 @@ LIMIT $1
 OFFSET $2;
     ";
 
-impl PostgresQuerier {}
+impl PostgresQuerier {
+    async fn get_constraints(
+        config: &CarpathiaConfig,
+    ) -> Result<Vec<PgConstraintInfo>, CarpathiaError> {
+        let pool = match &config.db_pool {
+            DbPool::Postgres(pool) => pool,
+            _ => {
+                return Err(CarpathiaError {
+                    message: "Invalid database pool type for PostgreSQL querier".to_string(),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::InvalidPoolType,
+                });
+            }
+        };
+        let rows: Vec<PgConstraintInfo> = sqlx::query_as::<_, PgConstraintInfo>(CONSTRAINT_QUERY)
+            .fetch_all(pool)
+            .await
+            .map_err(|e| {
+                debug!("Error executing constraint query: {e}");
+                CarpathiaError {
+                    message: format!("Failed to execute constraint query: {e}"),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::DatabaseConnectionError,
+                }
+            })?;
+
+        Ok(rows)
+    }
+}
 
 impl DatabaseQuerier for PostgresQuerier {
     async fn get_schema(config: &CarpathiaConfig) -> Result<AbstractDbRepr, CarpathiaError> {
@@ -228,6 +289,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 });
             }
         };
+        let _constrantiss = Self::get_constraints(config).await?;
         //// let type_map = &config.type_map.type_mapping;
         loop {
             let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
