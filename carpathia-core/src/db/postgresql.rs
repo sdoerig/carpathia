@@ -3,13 +3,12 @@
 /// - Views
 /// - Materialized Views
 use super::db_schema_structs::{
-    ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ConstraintType,
-    IsGenerated, IsIdentity, IsNullable, ObjectType,
+    ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType,
 };
 use super::traits::DatabaseQuerier;
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
-use crate::db::postgresql_structs::{PgColumnInfo, PgConstraintInfo};
+use crate::db::postgresql_structs::{PgColumnInfo, PgConstraintInfo, PgConstraintMap};
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
 use std::collections::{BTreeMap, BTreeSet};
@@ -239,9 +238,7 @@ OFFSET $2;
     ";
 
 impl PostgresQuerier {
-    async fn get_constraints(
-        config: &CarpathiaConfig,
-    ) -> Result<Vec<PgConstraintInfo>, CarpathiaError> {
+    async fn get_constraints(config: &CarpathiaConfig) -> Result<PgConstraintMap, CarpathiaError> {
         let pool = match &config.db_pool {
             DbPool::Postgres(pool) => pool,
             _ => {
@@ -264,7 +261,7 @@ impl PostgresQuerier {
                 }
             })?;
 
-        Ok(rows)
+        Ok(PgConstraintMap::new(rows))
     }
 }
 
@@ -308,60 +305,21 @@ impl DatabaseQuerier for PostgresQuerier {
             debug!("Fetched {num_rows} rows from schema query with offset {offset}");
             for row in rows {
                 debug!("Processing column: {}.{}", row.table_name, row.column_name);
-                let data_type = if let Some(dimensions) = row.array_dimensions {
-                    if dimensions != 0 {
-                        format!("{}[{}]", row.data_type, dimensions)
-                    } else {
-                        row.data_type.clone()
-                    }
-                } else {
-                    row.data_type.clone()
-                };
-                let attribute = AbstractAttribute {
-                    column_name: row.column_name,
-                    data_type,
-                    u_type: String::new(), // Placeholder, will be filled in by enrich_adr
-                    is_nullable: row
-                        .is_nullable
-                        .parse()
-                        .unwrap_or(IsNullable::Unknown(row.is_nullable)),
-                    column_default: row.column_default,
-                    character_maximum_length: row.character_maximum_length,
-                    numeric_precision: row.numeric_precision,
-                    numeric_scale: row.numeric_scale,
-                    is_identity: row
-                        .is_identity
-                        .parse()
-                        .unwrap_or(IsIdentity::Unknown(row.is_identity)),
-                    identity_generation: row.identity_generation,
-                    is_generated: row
-                        .is_generated
-                        .parse()
-                        .unwrap_or(IsGenerated::Unknown(row.is_generated)),
-                    generation_expression: row.generation_expression,
-                    constraint_name: row.constraint_name,
-                    constraint_type: row
-                        .constraint_type
-                        .as_ref()
-                        .and_then(|s| s.parse().ok())
-                        .unwrap_or(ConstraintType::None),
-                    referenced_table: row.referenced_table,
-                    referenced_column: row.referenced_column,
-                    comment: row.column_comment,
-                };
+                let table_name = row.table_name.clone();
                 let object_type = row.object_type.parse().unwrap_or_else(|_| {
                     debug!("Unknown object type: {}", row.object_type);
                     ObjectType::Other
                 });
+                let attribute = AbstractAttribute::from(row.clone());
                 match object_type {
                     ObjectType::BaseTable | ObjectType::PartitionedTable => {
                         table_info_map
-                            .entry(row.table_name.clone())
+                            .entry(table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
                                 table_name: row.table_name.clone(),
                                 u_imports: BTreeSet::new(),
                                 object_type,
-                                comment: row.table_comment,
+                                comment: row.table_comment.clone(),
                                 attributes: BTreeMap::new(),
                             })
                             .attributes
@@ -370,12 +328,12 @@ impl DatabaseQuerier for PostgresQuerier {
                     }
                     ObjectType::View | ObjectType::MaterializedView => {
                         view_info_map
-                            .entry(row.table_name.clone())
+                            .entry(table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
                                 table_name: row.table_name.clone(),
                                 u_imports: BTreeSet::new(),
                                 object_type,
-                                comment: row.table_comment,
+                                comment: row.table_comment.clone(),
                                 attributes: BTreeMap::new(),
                             })
                             .attributes
@@ -383,8 +341,8 @@ impl DatabaseQuerier for PostgresQuerier {
                     }
                     _ => {
                         error!(
-                            "Skipping unsupported object type: {} for table {}",
-                            row.object_type, row.table_name
+                            "Skipping unsupported object type: {:?} for table {}",
+                            object_type, table_name
                         );
                     }
                 }
