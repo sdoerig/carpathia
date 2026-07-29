@@ -286,7 +286,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 });
             }
         };
-        let _constrantiss = Self::get_constraints(config).await?;
+        let constraint_map = Self::get_constraints(config).await?;
         //// let type_map = &config.type_map.type_mapping;
         loop {
             let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
@@ -303,7 +303,8 @@ impl DatabaseQuerier for PostgresQuerier {
                 })?;
             let num_rows = rows.len();
             debug!("Fetched {num_rows} rows from schema query with offset {offset}");
-            for row in rows {
+            for mut row in rows {
+                row = row.constraint_map(&constraint_map);
                 debug!("Processing column: {}.{}", row.table_name, row.column_name);
                 let table_name = row.table_name.clone();
                 let object_type = row.object_type.parse().unwrap_or_else(|_| {

@@ -31,6 +31,24 @@ pub(crate) struct PgColumnInfo {
     pub column_comment: Option<String>,
 }
 
+impl PgColumnInfo {
+    pub(crate) fn constraint_map(mut self, constraint_map: &PgConstraintMap) -> Self {
+        if let Some(constraint_name) = &self.constraint_name {
+            let key = format!(
+                "{}::{}::{}",
+                self.table_name, self.column_name, constraint_name
+            );
+            if let Some(constraint_info) = constraint_map.pg_constraint_info.get(&key) {
+                self.constraint_name = Some(constraint_info.constraint_name.clone());
+                self.constraint_type = Some(constraint_info.constraint_type.clone());
+                self.referenced_table = constraint_info.referenced_table.clone();
+                self.referenced_column = constraint_info.referenced_column.clone();
+            }
+        }
+        self
+    }
+}
+
 impl From<PgColumnInfo> for AbstractAttribute {
     fn from(pg_column_info: PgColumnInfo) -> Self {
         let data_type = if let Some(dimensions) = pg_column_info.array_dimensions {
@@ -77,7 +95,6 @@ impl From<PgColumnInfo> for AbstractAttribute {
     }
 }
 
-#[expect(dead_code)]
 pub(crate) struct PgConstraintMap {
     pg_constraint_info: BTreeMap<String, PgConstraintInfo>,
 }
