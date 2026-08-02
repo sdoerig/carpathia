@@ -8,6 +8,7 @@ use crate::db::db_schema_structs::{
 
 pub(crate) struct PgColumnInfo {
     pub object_type: String,
+    pub table_schema: String,
     pub table_name: String,
     pub column_name: String,
     pub data_type: String,
@@ -33,18 +34,19 @@ pub(crate) struct PgColumnInfo {
 
 impl PgColumnInfo {
     pub(crate) fn constraint_map(mut self, constraint_map: &PgConstraintMap) -> Self {
-        if let Some(constraint_name) = &self.constraint_name {
-            let key = format!(
-                "{}::{}::{}",
-                self.table_name, self.column_name, constraint_name
-            );
-            if let Some(constraint_info) = constraint_map.pg_constraint_info.get(&key) {
-                self.constraint_name = Some(constraint_info.constraint_name.clone());
-                self.constraint_type = Some(constraint_info.constraint_type.clone());
-                self.referenced_table = constraint_info.referenced_table.clone();
-                self.referenced_column = constraint_info.referenced_column.clone();
-            }
+        let key = (
+            self.table_schema.clone(),
+            self.table_name.clone(),
+            self.column_name.clone(),
+        );
+
+        if let Some(constraint_info) = constraint_map.pg_constraint_info.get(&key) {
+            self.constraint_name = Some(constraint_info.constraint_name.clone());
+            self.constraint_type = Some(constraint_info.constraint_type.clone());
+            self.referenced_table = constraint_info.referenced_table.clone();
+            self.referenced_column = constraint_info.referenced_column.clone();
         }
+
         self
     }
 }
@@ -96,20 +98,21 @@ impl From<PgColumnInfo> for AbstractAttribute {
 }
 
 pub(crate) struct PgConstraintMap {
-    pg_constraint_info: BTreeMap<String, PgConstraintInfo>,
+    pg_constraint_info: BTreeMap<(String, String, String), PgConstraintInfo>,
 }
 
 impl PgConstraintMap {
     pub(crate) fn new(constraint_infos: Vec<PgConstraintInfo>) -> Self {
         let mut pg_constraint_info = BTreeMap::new();
         for constraint_info in constraint_infos {
-            let constraint_name = format!(
-                "{}::{}::{}",
-                constraint_info.schema_name,
-                constraint_info.table_name,
-                constraint_info.column_name
+            pg_constraint_info.insert(
+                (
+                    constraint_info.schema_name.clone(),
+                    constraint_info.table_name.clone(),
+                    constraint_info.column_name.clone(),
+                ),
+                constraint_info,
             );
-            pg_constraint_info.insert(constraint_name, constraint_info);
         }
         PgConstraintMap { pg_constraint_info }
     }

@@ -141,6 +141,7 @@ SELECT
         WHEN 'p' THEN 'PARTITIONED TABLE'
         ELSE 'OTHER'
     END AS object_type,
+    col.table_schema,
     col.table_name,
     col.column_name,
     col.data_type,
@@ -202,6 +203,7 @@ UNION ALL
 -- MATERIALIZED VIEWS (keine Indizes/Trigger)
 SELECT
     'MATERIALIZED VIEW',
+    mat.schemaname,
     mat.matviewname,
     a.attname,
     format_type(a.atttypid, a.atttypmod),
