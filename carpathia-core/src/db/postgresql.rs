@@ -15,13 +15,13 @@ use std::collections::{BTreeMap, BTreeSet};
 pub(crate) struct PostgresQuerier;
 
 const LIMIT: i64 = 1000;
-#[allow(dead_code)]
+
 const CONSTRAINT_QUERY: &str = r"
 SELECT
     con.oid::bigint AS constraint_oid,
     con.conname AS constraint_name,
-    con.connamespace::TEXT AS schema_name,
-    cl.relnamespace::TEXT AS table_schema,
+    ns.nspname AS schema_name,
+    tns.nspname AS table_schema,
     cl.relname AS table_name,
     cl.relkind::TEXT AS table_kind,
     con.conrelid::bigint AS table_oid,
@@ -36,6 +36,8 @@ SELECT
     pg_get_constraintdef(con.oid, true) AS constraint_definition
 FROM pg_constraint con
 JOIN pg_class cl ON cl.oid = con.conrelid
+JOIN pg_namespace ns ON ns.oid = con.connamespace
+JOIN pg_namespace tns ON tns.oid = cl.relnamespace
 CROSS JOIN LATERAL generate_subscripts(con.conkey, 1) pos(n)
 LEFT JOIN pg_attribute src
     ON src.attrelid = con.conrelid
@@ -84,31 +86,6 @@ pk_constraints AS (
     FROM pg_constraint con
     WHERE con.contype = 'p'
 ),
-fk_constraints AS (
-    SELECT
-        con.oid AS constraint_oid,
-        con.conname AS constraint_name,
-        con.conrelid AS table_oid,
-        con.confrelid AS referenced_table_oid,
-        src.attnum AS column_attnum,
-        src.attname AS column_name,
-        trg.attnum AS referenced_attnum,
-        trg.attname AS referenced_column,
-        rt.relname AS referenced_table,
-        pos.n AS key_position,
-        pg_get_constraintdef(con.oid, true) AS fk_definition
-    FROM pg_constraint con
-    CROSS JOIN LATERAL generate_subscripts(con.conkey, 1) pos(n)
-    JOIN pg_attribute src
-        ON src.attrelid = con.conrelid
-        AND src.attnum = con.conkey[pos.n]
-    JOIN pg_attribute trg
-        ON trg.attrelid = con.confrelid
-        AND trg.attnum = con.confkey[pos.n]
-    JOIN pg_class rt
-        ON rt.oid = con.confrelid
-    WHERE con.contype = 'f'
-    ),
 
 index_info AS (
     SELECT
@@ -163,15 +140,11 @@ SELECT
         ELSE NULL
     END AS generation_expression,
 
-    COALESCE(pk.constraint_name, fk.constraint_name) AS constraint_name,
+    '' AS constraint_name,
 
-    CASE
-        WHEN pk.constraint_name IS NOT NULL THEN 'Primary Key'
-        WHEN fk.constraint_name IS NOT NULL THEN 'Foreign Key'
-        ELSE NULL
-    END AS constraint_type,
-    fk.referenced_table AS referenced_table,
-    fk.referenced_column AS referenced_column,
+    '' AS constraint_type,
+    '' AS referenced_table,
+    '' AS referenced_column,
         
     --rt.relname AS referenced_table,
     --ra.attname AS referenced_column,
@@ -192,9 +165,6 @@ LEFT JOIN pg_attrdef ad
 LEFT JOIN pk_constraints pk
     ON pk.table_oid = col.table_oid
    AND pk.column_attnum = col.attnum
-LEFT JOIN fk_constraints fk
-    ON fk.table_oid = col.table_oid
-    AND fk.column_attnum = col.attnum
 LEFT JOIN index_info idx ON idx.table_oid = col.table_oid
 LEFT JOIN trigger_info trg ON trg.table_oid = col.table_oid
 
@@ -289,7 +259,8 @@ impl DatabaseQuerier for PostgresQuerier {
             }
         };
         let constraint_map = Self::get_constraints(config).await?;
-        //// let type_map = &config.type_map.type_mapping;
+        debug!("Constraint map {:?}", constraint_map);
+        // let type_map = &config.type_map.type_mapping;
         loop {
             let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
                 .bind(LIMIT)

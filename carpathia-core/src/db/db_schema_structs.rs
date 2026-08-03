@@ -181,9 +181,10 @@ impl FromStr for ConstraintType {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
-            "primary key" => Ok(ConstraintType::PrimaryKey),
-            "foreign key" => Ok(ConstraintType::ForeignKey),
-            "unique" => Ok(ConstraintType::Unique),
+            "p" | "primary key" => Ok(ConstraintType::PrimaryKey),
+            "u" | "unique" => Ok(ConstraintType::Unique),
+            "f" | "foreign key" => Ok(ConstraintType::ForeignKey),
+            "" | "none" => Ok(ConstraintType::None),
             _ => {
                 debug!("Invalid constraint type: {}", s);
                 Ok(ConstraintType::Unknown(s.to_string()))

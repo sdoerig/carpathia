@@ -1,5 +1,7 @@
 use std::collections::BTreeMap;
 
+use log::debug;
+
 use crate::db::db_schema_structs::{
     AbstractAttribute, ConstraintType, IsGenerated, IsIdentity, IsNullable,
 };
@@ -39,12 +41,39 @@ impl PgColumnInfo {
             self.table_name.clone(),
             self.column_name.clone(),
         );
-
+        debug!("Looking up constraint info for key: {:?}", key);
         if let Some(constraint_info) = constraint_map.pg_constraint_info.get(&key) {
-            self.constraint_name = Some(constraint_info.constraint_name.clone());
-            self.constraint_type = Some(constraint_info.constraint_type.clone());
-            self.referenced_table = constraint_info.referenced_table.clone();
-            self.referenced_column = constraint_info.referenced_column.clone();
+            self.constraint_name = if !constraint_info.constraint_name.is_empty() {
+                Some(constraint_info.constraint_name.clone())
+            } else {
+                None
+            };
+            self.constraint_type = if !constraint_info.constraint_type.is_empty() {
+                Some(constraint_info.constraint_type.clone())
+            } else {
+                None
+            };
+            self.referenced_table = match &constraint_info.referenced_table {
+                Some(table) => if !table.is_empty() {
+                    Some(table.clone())
+                } else {
+                    None
+                },
+                _ => None,
+            };
+            self.referenced_column = match &constraint_info.referenced_column {
+                Some(column) => if !column.is_empty() {
+                    Some(column.clone())
+                } else {
+                    None
+                },
+                _ => None,
+            };
+        } else {
+            self.constraint_name = None;
+            self.constraint_type = None;
+            self.referenced_table = None;
+            self.referenced_column = None;
         }
 
         self
@@ -97,6 +126,7 @@ impl From<PgColumnInfo> for AbstractAttribute {
     }
 }
 
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct PgConstraintMap {
     pg_constraint_info: BTreeMap<(String, String, String), PgConstraintInfo>,
 }
@@ -118,7 +148,7 @@ impl PgConstraintMap {
     }
 }
 
-#[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(sqlx::FromRow, serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct PgConstraintInfo {
     pub constraint_oid: i64,
     pub constraint_name: String,
