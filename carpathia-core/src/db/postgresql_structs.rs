@@ -43,32 +43,41 @@ impl PgColumnInfo {
         );
         debug!("Looking up constraint info for key: {:?}", key);
         if let Some(constraint_info) = constraint_map.pg_constraint_info.get(&key) {
-            self.constraint_name = if !constraint_info.constraint_name.is_empty() {
-                Some(constraint_info.constraint_name.clone())
-            } else {
-                None
-            };
-            self.constraint_type = if !constraint_info.constraint_type.is_empty() {
-                Some(constraint_info.constraint_type.clone())
-            } else {
-                None
-            };
-            self.referenced_table = match &constraint_info.referenced_table {
-                Some(table) => if !table.is_empty() {
-                    Some(table.clone())
-                } else {
-                    None
-                },
-                _ => None,
-            };
-            self.referenced_column = match &constraint_info.referenced_column {
-                Some(column) => if !column.is_empty() {
-                    Some(column.clone())
-                } else {
-                    None
-                },
-                _ => None,
-            };
+            match constraint_info.get(&ConstraintType::ForeignKey) {
+                Some(fk_constraint) => {
+                    self.constraint_name = if !fk_constraint.constraint_name.is_empty() {
+                        Some(fk_constraint.constraint_name.clone())
+                    } else {
+                        None
+                    };
+                    self.constraint_type = if !fk_constraint.constraint_type.is_empty() {
+                        Some(fk_constraint.constraint_type.clone())
+                    } else {
+                        None
+                    };
+                    self.referenced_table = match &fk_constraint.foreign_relation_name {
+                        Some(table) => {
+                            if !table.is_empty() {
+                                Some(table.clone())
+                            } else {
+                                None
+                            }
+                        }
+                        _ => None,
+                    };
+                    self.referenced_column = match &fk_constraint.foreign_attribute_name {
+                        Some(column) => {
+                            if !column.is_empty() {
+                                Some(column.clone())
+                            } else {
+                                None
+                            }
+                        }
+                        _ => None,
+                    };
+                }
+                None => {}
+            }
         } else {
             self.constraint_name = None;
             self.constraint_type = None;
@@ -126,44 +135,69 @@ impl From<PgColumnInfo> for AbstractAttribute {
     }
 }
 
-#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
+)]
 pub(crate) struct PgConstraintMap {
-    pg_constraint_info: BTreeMap<(String, String, String), PgConstraintInfo>,
+    pg_constraint_info:
+        BTreeMap<(String, String, String), BTreeMap<ConstraintType, PgConstraintInfo>>,
 }
 
 impl PgConstraintMap {
     pub(crate) fn new(constraint_infos: Vec<PgConstraintInfo>) -> Self {
         let mut pg_constraint_info = BTreeMap::new();
         for constraint_info in constraint_infos {
-            pg_constraint_info.insert(
-                (
-                    constraint_info.schema_name.clone(),
-                    constraint_info.table_name.clone(),
-                    constraint_info.column_name.clone(),
-                ),
-                constraint_info,
+            let key = (
+                constraint_info.schema_name.clone(),
+                constraint_info.relation_name.clone(),
+                constraint_info.attribute_name.clone(),
             );
+            if pg_constraint_info.contains_key(&key) {
+                let existing_map: &mut BTreeMap<ConstraintType, PgConstraintInfo> =
+                    pg_constraint_info.get_mut(&key).unwrap();
+                existing_map.insert(
+                    constraint_info
+                        .constraint_type
+                        .parse()
+                        .unwrap_or(ConstraintType::None),
+                    constraint_info.clone(),
+                );
+            } else {
+                let mut new_map = BTreeMap::new();
+                new_map.insert(
+                    constraint_info
+                        .constraint_type
+                        .parse()
+                        .unwrap_or(ConstraintType::None),
+                    constraint_info.clone(),
+                );
+                pg_constraint_info.insert(key, new_map);
+            }
         }
         PgConstraintMap { pg_constraint_info }
     }
 }
 
-#[derive(sqlx::FromRow, serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(
+    sqlx::FromRow,
+    serde::Serialize,
+    serde::Deserialize,
+    Clone,
+    Debug,
+    PartialEq,
+    Eq,
+    Hash,
+    Ord,
+    PartialOrd,
+)]
 pub(crate) struct PgConstraintInfo {
-    pub constraint_oid: i64,
-    pub constraint_name: String,
     pub schema_name: String,
-    pub table_schema: String,
-    pub table_name: String,
-    pub table_kind: String,
-    pub table_oid: i64,
+    pub relation_name: String,
+    pub attribute_name: String,
     pub constraint_type: String,
-    pub referenced_table_oid: Option<i64>,
-    pub referenced_table: Option<String>,
-    pub column_attnum: i32,
-    pub column_name: String,
-    pub referenced_attnum: Option<i32>,
-    pub referenced_column: Option<String>,
-    pub key_position: i32,
-    pub constraint_definition: String,
+    pub constraint_name: String,
+    pub constraint_value: String,
+    pub foreign_schema_name: Option<String>,
+    pub foreign_relation_name: Option<String>,
+    pub foreign_attribute_name: Option<String>,
 }

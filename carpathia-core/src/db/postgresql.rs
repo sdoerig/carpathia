@@ -17,38 +17,83 @@ pub(crate) struct PostgresQuerier;
 const LIMIT: i64 = 1000;
 
 const CONSTRAINT_QUERY: &str = r"
-SELECT
-    con.oid::bigint AS constraint_oid,
-    con.conname AS constraint_name,
-    ns.nspname AS schema_name,
-    tns.nspname AS table_schema,
-    cl.relname AS table_name,
-    cl.relkind::TEXT AS table_kind,
-    con.conrelid::bigint AS table_oid,
-    con.contype::TEXT AS constraint_type,
-    con.confrelid::bigint AS referenced_table_oid,
-    rt.relname AS referenced_table,
-    src.attnum::int4 AS column_attnum,
-    src.attname AS column_name,
-    trg.attnum::int4 AS referenced_attnum,
-    trg.attname AS referenced_column,
-    pos.n AS key_position,
-    pg_get_constraintdef(con.oid, true) AS constraint_definition
-FROM pg_constraint con
-JOIN pg_class cl ON cl.oid = con.conrelid
-JOIN pg_namespace ns ON ns.oid = con.connamespace
-JOIN pg_namespace tns ON tns.oid = cl.relnamespace
-CROSS JOIN LATERAL generate_subscripts(con.conkey, 1) pos(n)
-LEFT JOIN pg_attribute src
-    ON src.attrelid = con.conrelid
-    AND src.attnum = con.conkey[pos.n]
-LEFT JOIN pg_attribute trg
-    ON trg.attrelid = con.confrelid
-    AND con.confrelid IS NOT NULL
-    AND trg.attnum = con.confkey[pos.n]
-LEFT JOIN pg_class rt
-    ON rt.oid = con.confrelid
-ORDER BY schema_name, table_name, con.oid, pos.n;";
+(
+    SELECT
+        ns.nspname AS schema_name,
+        tbl.relname AS relation_name,
+        att.attname AS attribute_name,
+        CASE con.contype
+            WHEN 'p' THEN 'PRIMARY KEY'
+            WHEN 'f' THEN 'FOREIGN KEY'
+            WHEN 'u' THEN 'UNIQUE'
+            WHEN 'c' THEN 'CHECK'
+            WHEN 'x' THEN 'EXCLUSION'
+            WHEN 'n' THEN 'NOT NULL'
+            WHEN 't' THEN 'CONSTRAINT TRIGGER'
+            ELSE con.contype::text
+            END 
+        AS constraint_type,
+        con.conname AS constraint_name,
+        pg_get_constraintdef(con.oid, TRUE) AS constraint_value,
+        -- Additional columns for referenced tables/attributes (only relevant for FK)
+        f_ns.nspname AS foreign_schema_name,
+        f_tbl.relname AS foreign_relation_name,
+        f_att.attname AS foreign_attribute_name
+    FROM 
+        pg_constraint con
+    JOIN pg_class tbl
+        ON tbl.oid = con.conrelid
+    JOIN pg_namespace ns
+        ON ns.oid = tbl.relnamespace
+    LEFT JOIN LATERAL unnest(con.conkey) AS k(attnum)
+        ON TRUE
+    LEFT JOIN pg_attribute att
+        ON att.attrelid = tbl.oid
+        AND att.attnum = k.attnum
+    -- Joins for foreign key references
+    LEFT JOIN pg_class f_tbl 
+        ON f_tbl.oid = con.confrelid
+    LEFT JOIN pg_namespace f_ns 
+        ON f_ns.oid = f_tbl.relnamespace
+    -- confkey is an Array, so we use a lateral join to map the corresponding attribute
+    LEFT JOIN LATERAL unnest(con.confkey) WITH ORDINALITY AS fk(attnum, ord)
+        ON TRUE
+    LEFT JOIN LATERAL unnest(con.conkey) WITH ORDINALITY AS ck(attnum, ord)
+        ON ck.ord = fk.ord
+    LEFT JOIN pg_attribute f_att 
+        ON f_att.attrelid = con.confrelid 
+        AND f_att.attnum = fk.attnum
+    WHERE 
+        ck.attnum = att.attnum OR ck.attnum IS NULL
+    ORDER BY
+        ns.nspname,
+    tbl.relname,
+    att.attname,
+    con.conname
+)
+UNION ALL
+(
+    SELECT
+        ns.nspname,
+        tbl.relname,
+        att.attname,
+        'NOT NULL' AS constraint_type,
+        att.attname || '_not_null' AS constraint_name,
+        'NOT NULL' AS constraint_value,
+        NULL AS foreign_schema_name,
+        NULL AS foreign_relation_name,
+        NULL AS foreign_attribute_name
+    FROM 
+        pg_attribute att
+    JOIN pg_class tbl
+        ON tbl.oid = att.attrelid
+    JOIN pg_namespace ns
+        ON ns.oid = tbl.relnamespace
+    WHERE 
+        att.attnotnull
+        AND att.attnum > 0
+        AND NOT att.attisdropped
+);";
 
 const SCHEMA_QUERY: &str = r"
 WITH cols AS (

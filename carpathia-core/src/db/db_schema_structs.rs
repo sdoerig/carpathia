@@ -70,7 +70,9 @@ pub struct AbstractAttribute {
     pub comment: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
+)]
 pub enum ObjectType {
     BaseTable,
     PartitionedTable,
@@ -167,11 +169,17 @@ impl FromStr for IsGenerated {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
+)]
 pub enum ConstraintType {
     PrimaryKey,
     ForeignKey,
     Unique,
+    Check,
+    Exclusion,
+    NotNull,
+    ConstraintTrigger,
     None,
     Unknown(String),
 }
@@ -184,6 +192,10 @@ impl FromStr for ConstraintType {
             "p" | "primary key" => Ok(ConstraintType::PrimaryKey),
             "u" | "unique" => Ok(ConstraintType::Unique),
             "f" | "foreign key" => Ok(ConstraintType::ForeignKey),
+            "c" | "check" => Ok(ConstraintType::Check),
+            "x" | "exclusion" => Ok(ConstraintType::Exclusion),
+            "n" | "not null" => Ok(ConstraintType::NotNull),
+            "t" | "constraint trigger" => Ok(ConstraintType::ConstraintTrigger),
             "" | "none" => Ok(ConstraintType::None),
             _ => {
                 debug!("Invalid constraint type: {}", s);
