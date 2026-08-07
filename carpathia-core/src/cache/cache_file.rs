@@ -160,10 +160,7 @@ mod tests {
                 identity_generation: None,
                 is_generated: "NO".parse().unwrap_or(IsGenerated::Always),
                 generation_expression: None,
-                constraint_name: Some("users_pkey".to_string()),
-                constraint_type: "PRIMARY KEY".parse().unwrap_or(ConstraintType::None),
-                referenced_table: None,
-                referenced_column: None,
+                constraints: BTreeMap::new(),
                 comment: Some("Primary key for users table".to_string()),
             },
         );

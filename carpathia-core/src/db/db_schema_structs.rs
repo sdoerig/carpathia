@@ -63,12 +63,26 @@ pub struct AbstractAttribute {
     pub identity_generation: Option<String>,
     pub is_generated: IsGenerated,
     pub generation_expression: Option<String>,
-    pub constraint_name: Option<String>,
+    pub constraints: BTreeMap<ConstraintType, AbstractConstraint>,
+    /*pub constraint_name: Option<String>,
     pub constraint_type: ConstraintType,
     pub referenced_table: Option<String>,
     pub referenced_column: Option<String>,
+    */
     pub comment: Option<String>,
 }
+
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
+)]
+pub struct AbstractConstraint {
+    pub constraint_name: String,
+    pub constraint_value: String,
+    pub referenced_schema_name: Option<String>,
+    pub referenced_table: Option<String>,
+    pub referenced_column: Option<String>,
+}
+
 
 #[derive(
     Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
@@ -223,10 +237,20 @@ mod tests {
             identity_generation: None,
             is_generated: "NO".parse().unwrap_or(IsGenerated::Always),
             generation_expression: None,
-            constraint_name: Some("users_pkey".to_string()),
-            constraint_type: "PRIMARY KEY".parse().unwrap_or(ConstraintType::None),
-            referenced_table: None,
-            referenced_column: None,
+            constraints: {
+                let mut constraints = BTreeMap::new();
+                constraints.insert(
+                    ConstraintType::PrimaryKey,
+                    AbstractConstraint {
+                        constraint_name: "users_pkey".to_string(),
+                        constraint_value: "".to_string(),
+                        referenced_schema_name: None,
+                        referenced_table: None,
+                        referenced_column: None,
+                    },
+                );
+                constraints
+            },
             comment: Some("Primary key for users table".to_string()),
         }
     }

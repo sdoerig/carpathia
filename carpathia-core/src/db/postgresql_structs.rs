@@ -3,11 +3,10 @@ use std::collections::BTreeMap;
 use log::debug;
 
 use crate::db::db_schema_structs::{
-    AbstractAttribute, ConstraintType, IsGenerated, IsIdentity, IsNullable,
+    AbstractAttribute, AbstractConstraint, ConstraintType, IsGenerated, IsIdentity, IsNullable,
 };
 
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
-
 pub(crate) struct PgColumnInfo {
     pub object_type: String,
     pub table_schema: String,
@@ -26,10 +25,8 @@ pub(crate) struct PgColumnInfo {
     pub identity_generation: Option<String>,
     pub is_generated: String,
     pub generation_expression: Option<String>,
-    pub constraint_name: Option<String>,
-    pub constraint_type: Option<String>,
-    pub referenced_table: Option<String>,
-    pub referenced_column: Option<String>,
+    #[sqlx(skip)] 
+    pub constraints: BTreeMap<ConstraintType, AbstractConstraint>,
     pub table_comment: Option<String>,
     pub column_comment: Option<String>,
 }
@@ -42,47 +39,24 @@ impl PgColumnInfo {
             self.column_name.clone(),
         );
         debug!("Looking up constraint info for key: {:?}", key);
-        if let Some(constraint_info) = constraint_map.pg_constraint_info.get(&key) {
-            match constraint_info.get(&ConstraintType::ForeignKey) {
-                Some(fk_constraint) => {
-                    self.constraint_name = if !fk_constraint.constraint_name.is_empty() {
-                        Some(fk_constraint.constraint_name.clone())
-                    } else {
-                        None
-                    };
-                    self.constraint_type = if !fk_constraint.constraint_type.is_empty() {
-                        Some(fk_constraint.constraint_type.clone())
-                    } else {
-                        None
-                    };
-                    self.referenced_table = match &fk_constraint.foreign_relation_name {
-                        Some(table) => {
-                            if !table.is_empty() {
-                                Some(table.clone())
-                            } else {
-                                None
-                            }
-                        }
-                        _ => None,
-                    };
-                    self.referenced_column = match &fk_constraint.foreign_attribute_name {
-                        Some(column) => {
-                            if !column.is_empty() {
-                                Some(column.clone())
-                            } else {
-                                None
-                            }
-                        }
-                        _ => None,
-                    };
-                }
-                None => {}
-            }
+        if let Some(constraint_info_map) = constraint_map.pg_constraint_info.get(&key) {
+            self.constraints = constraint_info_map
+                .iter()
+                .map(|(constraint_type, constraint_info)| {
+                    (
+                        constraint_type.clone(),
+                        AbstractConstraint {
+                            constraint_name: constraint_info.constraint_name.clone(),
+                            constraint_value: constraint_info.constraint_value.clone(),
+                            referenced_schema_name: constraint_info.foreign_schema_name.clone(),
+                            referenced_table: constraint_info.foreign_relation_name.clone(),
+                            referenced_column: constraint_info.foreign_attribute_name.clone(),
+                        },
+                    )
+                })
+                .collect();
         } else {
-            self.constraint_name = None;
-            self.constraint_type = None;
-            self.referenced_table = None;
-            self.referenced_column = None;
+            debug!("No constraint info found for key: {:?}", key);
         }
 
         self
@@ -122,14 +96,7 @@ impl From<PgColumnInfo> for AbstractAttribute {
                 .parse()
                 .unwrap_or(IsGenerated::Unknown(pg_column_info.is_generated)),
             generation_expression: pg_column_info.generation_expression,
-            constraint_name: pg_column_info.constraint_name,
-            constraint_type: pg_column_info
-                .constraint_type
-                .as_ref()
-                .and_then(|s| s.parse().ok())
-                .unwrap_or(ConstraintType::None),
-            referenced_table: pg_column_info.referenced_table,
-            referenced_column: pg_column_info.referenced_column,
+            constraints: pg_column_info.constraints, 
             comment: pg_column_info.column_comment,
         }
     }
@@ -142,6 +109,7 @@ pub(crate) struct PgConstraintMap {
     pg_constraint_info:
         BTreeMap<(String, String, String), BTreeMap<ConstraintType, PgConstraintInfo>>,
 }
+
 
 impl PgConstraintMap {
     pub(crate) fn new(constraint_infos: Vec<PgConstraintInfo>) -> Self {
