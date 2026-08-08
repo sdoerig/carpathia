@@ -83,7 +83,6 @@ pub struct AbstractConstraint {
     pub referenced_column: Option<String>,
 }
 
-
 #[derive(
     Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
 )]

@@ -25,7 +25,10 @@ pub(crate) struct PgColumnInfo {
     pub identity_generation: Option<String>,
     pub is_generated: String,
     pub generation_expression: Option<String>,
-    #[sqlx(skip)] 
+    // This field is filled in by the constraint_map method and/the results of SQL_QUERY_CONSTRAINTS.
+    // Also keep in mind, one attribute can have multiple constraints. Keeping all in
+    // one query would make the query very clupsy and hard to maintain.
+    #[sqlx(skip)]
     pub constraints: BTreeMap<ConstraintType, AbstractConstraint>,
     pub table_comment: Option<String>,
     pub column_comment: Option<String>,
@@ -96,7 +99,7 @@ impl From<PgColumnInfo> for AbstractAttribute {
                 .parse()
                 .unwrap_or(IsGenerated::Unknown(pg_column_info.is_generated)),
             generation_expression: pg_column_info.generation_expression,
-            constraints: pg_column_info.constraints, 
+            constraints: pg_column_info.constraints,
             comment: pg_column_info.column_comment,
         }
     }
@@ -109,7 +112,6 @@ pub(crate) struct PgConstraintMap {
     pg_constraint_info:
         BTreeMap<(String, String, String), BTreeMap<ConstraintType, PgConstraintInfo>>,
 }
-
 
 impl PgConstraintMap {
     pub(crate) fn new(constraint_infos: Vec<PgConstraintInfo>) -> Self {
