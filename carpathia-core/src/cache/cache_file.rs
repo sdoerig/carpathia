@@ -118,8 +118,7 @@ mod tests {
     use crate::db::db_schema_structs::AbstractAttribute;
     use crate::db::db_schema_structs::AbstractDbRepr;
     use crate::db::db_schema_structs::{
-        ABSTRACT_DB_REPR_VERSION, AbstractTableRepr, ConstraintType, IsGenerated, IsIdentity,
-        IsNullable, ObjectType,
+        ABSTRACT_DB_REPR_VERSION, AbstractTableRepr, IsNullable, ObjectType,
     };
     use crate::templates::enum_templates::InitTemplate;
     use std::collections::{BTreeMap, BTreeSet};
@@ -153,13 +152,6 @@ mod tests {
                 u_type: "whatever".to_string(),
                 is_nullable: "NO".parse().unwrap_or(IsNullable::No),
                 column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
-                character_maximum_length: None,
-                numeric_precision: Some(32),
-                numeric_scale: Some(0),
-                is_identity: "NO".parse().unwrap_or(IsIdentity::No),
-                identity_generation: None,
-                is_generated: "NO".parse().unwrap_or(IsGenerated::Always),
-                generation_expression: None,
                 constraints: BTreeMap::new(),
                 comment: Some("Primary key for users table".to_string()),
             },

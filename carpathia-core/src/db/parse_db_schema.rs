@@ -155,16 +155,7 @@ mod tests {
                             test_attr.constraint_type,
                             reference_attr.constraint_type
                         );*/
-                        assert_eq!(
-                            test_attr.is_generated, reference_attr.is_generated,
-                            "DB object {} attribute {} is_generated must be equal",
-                            reference_atr.table_name, attr_name
-                        );
-                        assert_eq!(
-                            test_attr.is_identity, reference_attr.is_identity,
-                            "DB object {} attribute {} is_identity must be equal",
-                            reference_atr.table_name, attr_name
-                        );
+
                         /*assert_eq!(
                             test_attr.referenced_column, reference_attr.referenced_column,
                             "DB object {} attribute {} referenced_column must be equal",

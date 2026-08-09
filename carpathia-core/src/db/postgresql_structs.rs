@@ -3,7 +3,7 @@ use std::collections::BTreeMap;
 use log::debug;
 
 use crate::db::db_schema_structs::{
-    AbstractAttribute, AbstractConstraint, ConstraintType, IsGenerated, IsIdentity, IsNullable,
+    AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable,
 };
 
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
@@ -86,19 +86,7 @@ impl From<PgColumnInfo> for AbstractAttribute {
                 .parse()
                 .unwrap_or(IsNullable::Unknown(pg_column_info.is_nullable)),
             column_default: pg_column_info.column_default,
-            character_maximum_length: pg_column_info.character_maximum_length,
-            numeric_precision: pg_column_info.numeric_precision,
-            numeric_scale: pg_column_info.numeric_scale,
-            is_identity: pg_column_info
-                .is_identity
-                .parse()
-                .unwrap_or(IsIdentity::Unknown(pg_column_info.is_identity)),
-            identity_generation: pg_column_info.identity_generation,
-            is_generated: pg_column_info
-                .is_generated
-                .parse()
-                .unwrap_or(IsGenerated::Unknown(pg_column_info.is_generated)),
-            generation_expression: pg_column_info.generation_expression,
+
             constraints: pg_column_info.constraints,
             comment: pg_column_info.column_comment,
         }
@@ -122,27 +110,16 @@ impl PgConstraintMap {
                 constraint_info.relation_name.clone(),
                 constraint_info.attribute_name.clone(),
             );
-            if pg_constraint_info.contains_key(&key) {
-                let existing_map: &mut BTreeMap<ConstraintType, PgConstraintInfo> =
-                    pg_constraint_info.get_mut(&key).unwrap();
-                existing_map.insert(
+            pg_constraint_info
+                .entry(key.clone())
+                .or_insert_with(BTreeMap::new)
+                .insert(
                     constraint_info
                         .constraint_type
                         .parse()
                         .unwrap_or(ConstraintType::None),
                     constraint_info.clone(),
                 );
-            } else {
-                let mut new_map = BTreeMap::new();
-                new_map.insert(
-                    constraint_info
-                        .constraint_type
-                        .parse()
-                        .unwrap_or(ConstraintType::None),
-                    constraint_info.clone(),
-                );
-                pg_constraint_info.insert(key, new_map);
-            }
         }
         PgConstraintMap { pg_constraint_info }
     }

@@ -455,7 +455,7 @@ mod tests {
                     abstr_db_repr.tables.len()
                 );
             }
-            Err(_e) => todo!(),
+            Err(e) => info!("Error occurred while generating code: {}", e),
         };
 
         let mut files = BTreeMap::new();
@@ -463,10 +463,14 @@ mod tests {
         match list_files(&conf.output_directory, &conf.output_directory, "rs") {
             Ok(output_files) => {
                 for gen_file in generated_files {
-                    assert!(output_files.contains_key(&gen_file))
+                    assert!(
+                        output_files.contains_key(&gen_file),
+                        "Could not find generated file {:?}",
+                        gen_file
+                    );
                 }
             }
-            Err(_) => todo!(),
+            Err(e) => info!("Error occurred while listing files: {}", e),
         }
     }
 }

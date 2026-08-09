@@ -15,17 +15,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('actor_actor_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "actor_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "actor_pkey",
+              "constraint_value": "PRIMARY KEY (actor_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "actor_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "first_name": {
@@ -34,17 +39,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "first_name_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_name": {
@@ -53,17 +56,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_name_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -72,17 +73,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -101,17 +100,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "address_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "address2": {
@@ -120,17 +117,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "address_id": {
@@ -139,17 +126,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('address_address_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "address_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "address_pkey",
+              "constraint_value": "PRIMARY KEY (address_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "address_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "city_id": {
@@ -158,17 +150,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "address_city_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "city",
-          "referenced_column": "city_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "address_city_id_fkey",
+              "constraint_value": "FOREIGN KEY (city_id) REFERENCES city(city_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "city",
+              "referenced_column": "city_id"
+            },
+            "NotNull": {
+              "constraint_name": "city_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "district": {
@@ -177,17 +174,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "district_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -196,17 +191,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "phone": {
@@ -215,17 +208,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "phone_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "postal_code": {
@@ -234,17 +225,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         }
       }
@@ -263,17 +244,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('category_category_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "category_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "category_pkey",
+              "constraint_value": "PRIMARY KEY (category_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "category_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -282,17 +268,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "name": {
@@ -301,17 +285,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "name_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -330,17 +312,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "city_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "city_id": {
@@ -349,17 +329,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('city_city_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "city_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "city_pkey",
+              "constraint_value": "PRIMARY KEY (city_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "city_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "country_id": {
@@ -368,17 +353,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "city_country_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "country",
-          "referenced_column": "country_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "city_country_id_fkey",
+              "constraint_value": "FOREIGN KEY (country_id) REFERENCES country(country_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "country",
+              "referenced_column": "country_id"
+            },
+            "NotNull": {
+              "constraint_name": "country_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -387,17 +377,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -416,17 +404,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "country_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "country_id": {
@@ -435,17 +421,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('country_country_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "country_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "country_pkey",
+              "constraint_value": "PRIMARY KEY (country_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "country_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -454,17 +445,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -484,17 +473,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "activebool": {
@@ -503,17 +482,15 @@
           "u_type": "bool",
           "is_nullable": "No",
           "column_default": "true",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "activebool_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "address_id": {
@@ -522,17 +499,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "customer_address_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "address",
-          "referenced_column": "address_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "customer_address_id_fkey",
+              "constraint_value": "FOREIGN KEY (address_id) REFERENCES address(address_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "address",
+              "referenced_column": "address_id"
+            },
+            "NotNull": {
+              "constraint_name": "address_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "create_date": {
@@ -541,17 +523,15 @@
           "u_type": "NaiveDate",
           "is_nullable": "No",
           "column_default": "CURRENT_DATE",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "create_date_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "customer_id": {
@@ -560,17 +540,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('customer_customer_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "customer_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "customer_pkey",
+              "constraint_value": "PRIMARY KEY (customer_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "customer_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "email": {
@@ -579,17 +564,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "first_name": {
@@ -598,17 +573,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "first_name_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_name": {
@@ -617,17 +590,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_name_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -636,17 +607,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "Yes",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "store_id": {
@@ -655,17 +616,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "customer_store_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "store",
-          "referenced_column": "store_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "customer_store_id_fkey",
+              "constraint_value": "FOREIGN KEY (store_id) REFERENCES store(store_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "store",
+              "referenced_column": "store_id"
+            },
+            "NotNull": {
+              "constraint_name": "store_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -685,17 +651,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "film_id": {
@@ -704,17 +660,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('film_film_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "film_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "film_pkey",
+              "constraint_value": "PRIMARY KEY (film_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "film_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "fulltext": {
@@ -723,17 +684,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "fulltext_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "language_id": {
@@ -742,17 +701,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "film_language_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "language",
-          "referenced_column": "language_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "film_language_id_fkey",
+              "constraint_value": "FOREIGN KEY (language_id) REFERENCES language(language_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "language",
+              "referenced_column": "language_id"
+            },
+            "NotNull": {
+              "constraint_name": "language_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -761,17 +725,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "length": {
@@ -780,17 +742,7 @@
           "u_type": "i16",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "original_language_id": {
@@ -799,17 +751,15 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "film_original_language_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "language",
-          "referenced_column": "language_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "film_original_language_id_fkey",
+              "constraint_value": "FOREIGN KEY (original_language_id) REFERENCES language(language_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "language",
+              "referenced_column": "language_id"
+            }
+          },
           "comment": null
         },
         "rating": {
@@ -818,17 +768,7 @@
           "u_type": "MpaaRating",
           "is_nullable": "Yes",
           "column_default": "'G'::mpaa_rating",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "release_year": {
@@ -837,17 +777,7 @@
           "u_type": "year",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "rental_duration": {
@@ -856,17 +786,15 @@
           "u_type": "i16",
           "is_nullable": "No",
           "column_default": "3",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "rental_duration_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "rental_rate": {
@@ -875,17 +803,15 @@
           "u_type": "numeric(4,2)",
           "is_nullable": "No",
           "column_default": "4.99",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "rental_rate_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "replacement_cost": {
@@ -894,17 +820,15 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": "19.99",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "replacement_cost_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "special_features": {
@@ -913,17 +837,7 @@
           "u_type": "Vec<Vec<String>>",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "title": {
@@ -932,17 +846,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "title_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -961,17 +873,29 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "film_actor_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": "actor",
-          "referenced_column": "actor_id",
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "film_actor_pkey",
+              "constraint_value": "PRIMARY KEY (actor_id, film_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "ForeignKey": {
+              "constraint_name": "film_actor_actor_id_fkey",
+              "constraint_value": "FOREIGN KEY (actor_id) REFERENCES actor(actor_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "actor",
+              "referenced_column": "actor_id"
+            },
+            "NotNull": {
+              "constraint_name": "actor_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "film_id": {
@@ -980,17 +904,29 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "film_actor_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": "film",
-          "referenced_column": "film_id",
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "film_actor_pkey",
+              "constraint_value": "PRIMARY KEY (actor_id, film_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "ForeignKey": {
+              "constraint_name": "film_actor_film_id_fkey",
+              "constraint_value": "FOREIGN KEY (film_id) REFERENCES film(film_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "film",
+              "referenced_column": "film_id"
+            },
+            "NotNull": {
+              "constraint_name": "film_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -999,17 +935,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -1028,17 +962,29 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "film_category_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": "category",
-          "referenced_column": "category_id",
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "film_category_pkey",
+              "constraint_value": "PRIMARY KEY (film_id, category_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "ForeignKey": {
+              "constraint_name": "film_category_category_id_fkey",
+              "constraint_value": "FOREIGN KEY (category_id) REFERENCES category(category_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "category",
+              "referenced_column": "category_id"
+            },
+            "NotNull": {
+              "constraint_name": "category_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "film_id": {
@@ -1047,17 +993,29 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "film_category_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": "film",
-          "referenced_column": "film_id",
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "film_category_pkey",
+              "constraint_value": "PRIMARY KEY (film_id, category_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "ForeignKey": {
+              "constraint_name": "film_category_film_id_fkey",
+              "constraint_value": "FOREIGN KEY (film_id) REFERENCES film(film_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "film",
+              "referenced_column": "film_id"
+            },
+            "NotNull": {
+              "constraint_name": "film_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -1066,17 +1024,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -1095,17 +1051,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "inventory_film_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "film",
-          "referenced_column": "film_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "inventory_film_id_fkey",
+              "constraint_value": "FOREIGN KEY (film_id) REFERENCES film(film_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "film",
+              "referenced_column": "film_id"
+            },
+            "NotNull": {
+              "constraint_name": "film_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "inventory_id": {
@@ -1114,17 +1075,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('inventory_inventory_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "inventory_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "inventory_pkey",
+              "constraint_value": "PRIMARY KEY (inventory_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "inventory_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -1133,17 +1099,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "store_id": {
@@ -1152,17 +1116,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "inventory_store_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "store",
-          "referenced_column": "store_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "inventory_store_id_fkey",
+              "constraint_value": "FOREIGN KEY (store_id) REFERENCES store(store_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "store",
+              "referenced_column": "store_id"
+            },
+            "NotNull": {
+              "constraint_name": "store_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -1181,17 +1150,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('language_language_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "language_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "language_pkey",
+              "constraint_value": "PRIMARY KEY (language_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "language_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -1200,17 +1174,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "name": {
@@ -1219,17 +1191,15 @@
           "u_type": "character(20)",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "name_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -1248,17 +1218,15 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "amount_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "customer_id": {
@@ -1267,17 +1235,15 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "customer_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_date": {
@@ -1286,17 +1252,22 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_date_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_id": {
@@ -1305,17 +1276,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "rental_id": {
@@ -1324,17 +1300,15 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "rental_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "staff_id": {
@@ -1343,17 +1317,15 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "staff_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -1372,17 +1344,15 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "amount_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "customer_id": {
@@ -1391,17 +1361,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_01_customer_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "customer",
-          "referenced_column": "customer_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_01_customer_id_fkey",
+              "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "customer",
+              "referenced_column": "customer_id"
+            },
+            "NotNull": {
+              "constraint_name": "customer_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_date": {
@@ -1410,17 +1385,22 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_01_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_01_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_date_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_id": {
@@ -1429,17 +1409,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_01_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_01_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "rental_id": {
@@ -1448,17 +1433,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_01_rental_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "rental",
-          "referenced_column": "rental_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_01_rental_id_fkey",
+              "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "rental",
+              "referenced_column": "rental_id"
+            },
+            "NotNull": {
+              "constraint_name": "rental_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "staff_id": {
@@ -1467,17 +1457,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_01_staff_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "staff",
-          "referenced_column": "staff_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_01_staff_id_fkey",
+              "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "staff",
+              "referenced_column": "staff_id"
+            },
+            "NotNull": {
+              "constraint_name": "staff_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -1496,17 +1491,15 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "amount_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "customer_id": {
@@ -1515,17 +1508,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_02_customer_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "customer",
-          "referenced_column": "customer_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_02_customer_id_fkey",
+              "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "customer",
+              "referenced_column": "customer_id"
+            },
+            "NotNull": {
+              "constraint_name": "customer_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_date": {
@@ -1534,17 +1532,22 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_02_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_02_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_date_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_id": {
@@ -1553,17 +1556,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_02_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_02_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "rental_id": {
@@ -1572,17 +1580,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_02_rental_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "rental",
-          "referenced_column": "rental_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_02_rental_id_fkey",
+              "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "rental",
+              "referenced_column": "rental_id"
+            },
+            "NotNull": {
+              "constraint_name": "rental_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "staff_id": {
@@ -1591,17 +1604,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_02_staff_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "staff",
-          "referenced_column": "staff_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_02_staff_id_fkey",
+              "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "staff",
+              "referenced_column": "staff_id"
+            },
+            "NotNull": {
+              "constraint_name": "staff_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -1620,17 +1638,15 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "amount_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "customer_id": {
@@ -1639,17 +1655,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_03_customer_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "customer",
-          "referenced_column": "customer_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_03_customer_id_fkey",
+              "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "customer",
+              "referenced_column": "customer_id"
+            },
+            "NotNull": {
+              "constraint_name": "customer_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_date": {
@@ -1658,17 +1679,22 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_03_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_03_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_date_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_id": {
@@ -1677,17 +1703,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_03_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_03_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "rental_id": {
@@ -1696,17 +1727,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_03_rental_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "rental",
-          "referenced_column": "rental_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_03_rental_id_fkey",
+              "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "rental",
+              "referenced_column": "rental_id"
+            },
+            "NotNull": {
+              "constraint_name": "rental_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "staff_id": {
@@ -1715,17 +1751,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_03_staff_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "staff",
-          "referenced_column": "staff_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_03_staff_id_fkey",
+              "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "staff",
+              "referenced_column": "staff_id"
+            },
+            "NotNull": {
+              "constraint_name": "staff_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -1744,17 +1785,15 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "amount_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "customer_id": {
@@ -1763,17 +1802,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_04_customer_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "customer",
-          "referenced_column": "customer_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_04_customer_id_fkey",
+              "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "customer",
+              "referenced_column": "customer_id"
+            },
+            "NotNull": {
+              "constraint_name": "customer_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_date": {
@@ -1782,17 +1826,22 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_04_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_04_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_date_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_id": {
@@ -1801,17 +1850,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_04_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_04_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "rental_id": {
@@ -1820,17 +1874,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_04_rental_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "rental",
-          "referenced_column": "rental_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_04_rental_id_fkey",
+              "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "rental",
+              "referenced_column": "rental_id"
+            },
+            "NotNull": {
+              "constraint_name": "rental_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "staff_id": {
@@ -1839,17 +1898,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_04_staff_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "staff",
-          "referenced_column": "staff_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_04_staff_id_fkey",
+              "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "staff",
+              "referenced_column": "staff_id"
+            },
+            "NotNull": {
+              "constraint_name": "staff_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -1868,17 +1932,15 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "amount_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "customer_id": {
@@ -1887,17 +1949,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_05_customer_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "customer",
-          "referenced_column": "customer_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_05_customer_id_fkey",
+              "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "customer",
+              "referenced_column": "customer_id"
+            },
+            "NotNull": {
+              "constraint_name": "customer_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_date": {
@@ -1906,17 +1973,22 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_05_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_05_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_date_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_id": {
@@ -1925,17 +1997,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_05_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_05_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "rental_id": {
@@ -1944,17 +2021,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_05_rental_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "rental",
-          "referenced_column": "rental_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_05_rental_id_fkey",
+              "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "rental",
+              "referenced_column": "rental_id"
+            },
+            "NotNull": {
+              "constraint_name": "rental_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "staff_id": {
@@ -1963,17 +2045,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_05_staff_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "staff",
-          "referenced_column": "staff_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_05_staff_id_fkey",
+              "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "staff",
+              "referenced_column": "staff_id"
+            },
+            "NotNull": {
+              "constraint_name": "staff_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -1992,17 +2079,15 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "amount_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "customer_id": {
@@ -2011,17 +2096,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_06_customer_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "customer",
-          "referenced_column": "customer_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_06_customer_id_fkey",
+              "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "customer",
+              "referenced_column": "customer_id"
+            },
+            "NotNull": {
+              "constraint_name": "customer_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_date": {
@@ -2030,17 +2120,22 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_06_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_06_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_date_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_id": {
@@ -2049,17 +2144,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_06_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_06_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "rental_id": {
@@ -2068,17 +2168,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_06_rental_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "rental",
-          "referenced_column": "rental_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_06_rental_id_fkey",
+              "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "rental",
+              "referenced_column": "rental_id"
+            },
+            "NotNull": {
+              "constraint_name": "rental_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "staff_id": {
@@ -2087,17 +2192,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_06_staff_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "staff",
-          "referenced_column": "staff_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "payment_p2022_06_staff_id_fkey",
+              "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "staff",
+              "referenced_column": "staff_id"
+            },
+            "NotNull": {
+              "constraint_name": "staff_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -2116,17 +2226,15 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "amount_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "customer_id": {
@@ -2135,17 +2243,15 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "customer_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_date": {
@@ -2154,17 +2260,22 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_07_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_07_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_date_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "payment_id": {
@@ -2173,17 +2284,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "payment_p2022_07_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "payment_p2022_07_pkey",
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "payment_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "rental_id": {
@@ -2192,17 +2308,15 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "rental_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "staff_id": {
@@ -2211,17 +2325,15 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "staff_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -2240,17 +2352,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "rental_customer_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "customer",
-          "referenced_column": "customer_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "rental_customer_id_fkey",
+              "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "customer",
+              "referenced_column": "customer_id"
+            },
+            "NotNull": {
+              "constraint_name": "customer_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "inventory_id": {
@@ -2259,17 +2376,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "rental_inventory_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "inventory",
-          "referenced_column": "inventory_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "rental_inventory_id_fkey",
+              "constraint_value": "FOREIGN KEY (inventory_id) REFERENCES inventory(inventory_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "inventory",
+              "referenced_column": "inventory_id"
+            },
+            "NotNull": {
+              "constraint_name": "inventory_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -2278,17 +2400,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "rental_date": {
@@ -2297,17 +2417,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "rental_date_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "rental_id": {
@@ -2316,17 +2434,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('rental_rental_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "rental_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "rental_pkey",
+              "constraint_value": "PRIMARY KEY (rental_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "rental_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "return_date": {
@@ -2335,17 +2458,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "staff_id": {
@@ -2354,17 +2467,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "rental_staff_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "staff",
-          "referenced_column": "staff_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "rental_staff_id_fkey",
+              "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "staff",
+              "referenced_column": "staff_id"
+            },
+            "NotNull": {
+              "constraint_name": "staff_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -2383,17 +2501,15 @@
           "u_type": "bool",
           "is_nullable": "No",
           "column_default": "true",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "active_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "address_id": {
@@ -2402,17 +2518,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "staff_address_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "address",
-          "referenced_column": "address_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "staff_address_id_fkey",
+              "constraint_value": "FOREIGN KEY (address_id) REFERENCES address(address_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "address",
+              "referenced_column": "address_id"
+            },
+            "NotNull": {
+              "constraint_name": "address_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "email": {
@@ -2421,17 +2542,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "first_name": {
@@ -2440,17 +2551,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "first_name_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_name": {
@@ -2459,17 +2568,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_name_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -2478,17 +2585,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "password": {
@@ -2497,17 +2602,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "picture": {
@@ -2516,17 +2611,7 @@
           "u_type": "Vec<u8>",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "staff_id": {
@@ -2535,17 +2620,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('staff_staff_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "staff_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "staff_pkey",
+              "constraint_value": "PRIMARY KEY (staff_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "staff_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "store_id": {
@@ -2554,17 +2644,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "staff_store_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "store",
-          "referenced_column": "store_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "staff_store_id_fkey",
+              "constraint_value": "FOREIGN KEY (store_id) REFERENCES store(store_id)",
+              "referenced_schema_name": "public",
+              "referenced_table": "store",
+              "referenced_column": "store_id"
+            },
+            "NotNull": {
+              "constraint_name": "store_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "username": {
@@ -2573,17 +2668,15 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "username_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -2602,17 +2695,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "store_address_id_fkey",
-          "constraint_type": "ForeignKey",
-          "referenced_table": "address",
-          "referenced_column": "address_id",
+          "constraints": {
+            "ForeignKey": {
+              "constraint_name": "store_address_id_fkey",
+              "constraint_value": "FOREIGN KEY (address_id) REFERENCES address(address_id) ON UPDATE CASCADE ON DELETE RESTRICT",
+              "referenced_schema_name": "public",
+              "referenced_table": "address",
+              "referenced_column": "address_id"
+            },
+            "NotNull": {
+              "constraint_name": "address_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "last_update": {
@@ -2621,17 +2719,15 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "last_update_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "manager_staff_id": {
@@ -2640,17 +2736,15 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "NotNull": {
+              "constraint_name": "manager_staff_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         },
         "store_id": {
@@ -2659,17 +2753,22 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('store_store_id_seq'::regclass)",
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": "store_pkey",
-          "constraint_type": "PrimaryKey",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {
+            "PrimaryKey": {
+              "constraint_name": "store_pkey",
+              "constraint_value": "PRIMARY KEY (store_id)",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            },
+            "NotNull": {
+              "constraint_name": "store_id_not_null",
+              "constraint_value": "NOT NULL",
+              "referenced_schema_name": null,
+              "referenced_table": null,
+              "referenced_column": null
+            }
+          },
           "comment": null
         }
       }
@@ -2688,17 +2787,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "film_info": {
@@ -2707,17 +2796,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "first_name": {
@@ -2726,17 +2805,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "last_name": {
@@ -2745,17 +2814,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         }
       }
@@ -2772,17 +2831,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "city": {
@@ -2791,17 +2840,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "country": {
@@ -2810,17 +2849,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "id": {
@@ -2829,17 +2858,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "name": {
@@ -2848,17 +2867,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "notes": {
@@ -2867,17 +2876,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "phone": {
@@ -2886,17 +2885,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "sid": {
@@ -2905,17 +2894,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "zip code": {
@@ -2924,17 +2903,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         }
       }
@@ -2953,17 +2922,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "category": {
@@ -2972,17 +2931,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "description": {
@@ -2991,17 +2940,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "fid": {
@@ -3010,17 +2949,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "length": {
@@ -3029,17 +2958,7 @@
           "u_type": "i16",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "price": {
@@ -3048,17 +2967,7 @@
           "u_type": "numeric(4,2)",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "rating": {
@@ -3067,17 +2976,7 @@
           "u_type": "MpaaRating",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "title": {
@@ -3086,17 +2985,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         }
       }
@@ -3115,17 +3004,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "category": {
@@ -3134,17 +3013,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "description": {
@@ -3153,17 +3022,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "fid": {
@@ -3172,17 +3031,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "length": {
@@ -3191,17 +3040,7 @@
           "u_type": "i16",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "price": {
@@ -3210,17 +3049,7 @@
           "u_type": "numeric(4,2)",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "rating": {
@@ -3229,17 +3058,7 @@
           "u_type": "MpaaRating",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "title": {
@@ -3248,17 +3067,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         }
       }
@@ -3277,17 +3086,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": null,
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "total_sales": {
@@ -3296,17 +3095,7 @@
           "u_type": "Decimal",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": null,
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         }
       }
@@ -3325,17 +3114,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "total_sales": {
@@ -3344,17 +3123,7 @@
           "u_type": "Decimal",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         }
       }
@@ -3373,17 +3142,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "store": {
@@ -3392,17 +3151,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "total_sales": {
@@ -3411,17 +3160,7 @@
           "u_type": "Decimal",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         }
       }
@@ -3438,17 +3177,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "city": {
@@ -3457,17 +3186,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "country": {
@@ -3476,17 +3195,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "id": {
@@ -3495,17 +3204,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "name": {
@@ -3514,17 +3213,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "phone": {
@@ -3533,17 +3222,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "sid": {
@@ -3552,17 +3231,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         },
         "zip code": {
@@ -3571,17 +3240,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
-          "character_maximum_length": null,
-          "numeric_precision": null,
-          "numeric_scale": null,
-          "is_identity": "No",
-          "identity_generation": "",
-          "is_generated": "Never",
-          "generation_expression": null,
-          "constraint_name": null,
-          "constraint_type": "None",
-          "referenced_table": null,
-          "referenced_column": null,
+          "constraints": {},
           "comment": null
         }
       }
