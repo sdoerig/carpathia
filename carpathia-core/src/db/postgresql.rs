@@ -3,19 +3,98 @@
 /// - Views
 /// - Materialized Views
 use super::db_schema_structs::{
-    ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ConstraintType,
-    IsGenerated, IsIdentity, IsNullable, ObjectType,
+    ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType,
 };
 use super::traits::DatabaseQuerier;
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
-use crate::db::postgresql_structs::PgColumnInfo;
+use crate::db::postgresql_structs::{PgColumnInfo, PgConstraintInfo, PgConstraintMap};
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
 use std::collections::{BTreeMap, BTreeSet};
-pub(crate) struct PostgresQuerier {}
+pub(crate) struct PostgresQuerier;
 
 const LIMIT: i64 = 1000;
+
+const CONSTRAINT_QUERY: &str = r"
+(
+    SELECT
+        ns.nspname AS schema_name,
+        tbl.relname AS relation_name,
+        att.attname AS attribute_name,
+        CASE con.contype
+            WHEN 'p' THEN 'PRIMARY KEY'
+            WHEN 'f' THEN 'FOREIGN KEY'
+            WHEN 'u' THEN 'UNIQUE'
+            WHEN 'c' THEN 'CHECK'
+            WHEN 'x' THEN 'EXCLUSION'
+            WHEN 'n' THEN 'NOT NULL'
+            WHEN 't' THEN 'CONSTRAINT TRIGGER'
+            ELSE con.contype::text
+            END 
+        AS constraint_type,
+        con.conname AS constraint_name,
+        pg_get_constraintdef(con.oid, TRUE) AS constraint_value,
+        -- Additional columns for referenced tables/attributes (only relevant for FK)
+        f_ns.nspname AS foreign_schema_name,
+        f_tbl.relname AS foreign_relation_name,
+        f_att.attname AS foreign_attribute_name
+    FROM 
+        pg_constraint con
+    JOIN pg_class tbl
+        ON tbl.oid = con.conrelid
+    JOIN pg_namespace ns
+        ON ns.oid = tbl.relnamespace
+    LEFT JOIN LATERAL unnest(con.conkey) AS k(attnum)
+        ON TRUE
+    LEFT JOIN pg_attribute att
+        ON att.attrelid = tbl.oid
+        AND att.attnum = k.attnum
+    -- Joins for foreign key references
+    LEFT JOIN pg_class f_tbl 
+        ON f_tbl.oid = con.confrelid
+    LEFT JOIN pg_namespace f_ns 
+        ON f_ns.oid = f_tbl.relnamespace
+    -- confkey is an Array, so we use a lateral join to map the corresponding attribute
+    LEFT JOIN LATERAL unnest(con.confkey) WITH ORDINALITY AS fk(attnum, ord)
+        ON TRUE
+    LEFT JOIN LATERAL unnest(con.conkey) WITH ORDINALITY AS ck(attnum, ord)
+        ON ck.ord = fk.ord
+    LEFT JOIN pg_attribute f_att 
+        ON f_att.attrelid = con.confrelid 
+        AND f_att.attnum = fk.attnum
+    WHERE 
+        ck.attnum = att.attnum OR ck.attnum IS NULL
+    ORDER BY
+        ns.nspname,
+    tbl.relname,
+    att.attname,
+    con.conname
+)
+UNION ALL
+(
+    SELECT
+        ns.nspname,
+        tbl.relname,
+        att.attname,
+        'NOT NULL' AS constraint_type,
+        att.attname || '_not_null' AS constraint_name,
+        'NOT NULL' AS constraint_value,
+        NULL AS foreign_schema_name,
+        NULL AS foreign_relation_name,
+        NULL AS foreign_attribute_name
+    FROM 
+        pg_attribute att
+    JOIN pg_class tbl
+        ON tbl.oid = att.attrelid
+    JOIN pg_namespace ns
+        ON ns.oid = tbl.relnamespace
+    WHERE 
+        att.attnotnull
+        AND att.attnum > 0
+        AND NOT att.attisdropped
+);";
+
 const SCHEMA_QUERY: &str = r"
 WITH cols AS (
     SELECT
@@ -41,7 +120,7 @@ WITH cols AS (
         ON ad.adrelid = c.oid 
        AND ad.adnum = a.attnum
     WHERE n.nspname = 'public'
-      AND c.relkind IN ('r','v')
+      AND c.relkind IN ('r','v', 'p')
 ),
 
 pk_constraints AS (
@@ -51,17 +130,6 @@ pk_constraints AS (
         unnest(con.conkey) AS column_attnum
     FROM pg_constraint con
     WHERE con.contype = 'p'
-),
-
-fk_constraints AS (
-    SELECT
-        con.conname AS constraint_name,
-        con.conrelid AS table_oid,
-        con.confrelid AS referenced_table_oid,
-        unnest(con.conkey) AS column_attnum,
-        unnest(con.confkey) AS referenced_attnum
-    FROM pg_constraint con
-    WHERE con.contype = 'f'
 ),
 
 index_info AS (
@@ -92,7 +160,10 @@ SELECT
     CASE c.relkind
         WHEN 'r' THEN 'BASE TABLE'
         WHEN 'v' THEN 'VIEW'
+        WHEN 'p' THEN 'PARTITIONED TABLE'
+        ELSE 'OTHER'
     END AS object_type,
+    col.table_schema,
     col.table_name,
     col.column_name,
     col.data_type,
@@ -114,16 +185,14 @@ SELECT
         ELSE NULL
     END AS generation_expression,
 
-    COALESCE(pk.constraint_name, fk.constraint_name) AS constraint_name,
+    '' AS constraint_name,
 
-    CASE
-        WHEN pk.constraint_name IS NOT NULL THEN 'Primary Key'
-        WHEN fk.constraint_name IS NOT NULL THEN 'Foreign Key'
-        ELSE NULL
-    END AS constraint_type,
-
-    rt.relname AS referenced_table,
-    ra.attname AS referenced_column,
+    '' AS constraint_type,
+    '' AS referenced_table,
+    '' AS referenced_column,
+        
+    --rt.relname AS referenced_table,
+    --ra.attname AS referenced_column,
 
     obj_description(col.table_oid) AS table_comment,
     col_description(col.attrelid, col.attnum) AS column_comment,
@@ -141,16 +210,6 @@ LEFT JOIN pg_attrdef ad
 LEFT JOIN pk_constraints pk
     ON pk.table_oid = col.table_oid
    AND pk.column_attnum = col.attnum
-
-LEFT JOIN fk_constraints fk
-    ON fk.table_oid = col.table_oid
-   AND fk.column_attnum = col.attnum
-
-LEFT JOIN pg_class rt ON rt.oid = fk.referenced_table_oid
-LEFT JOIN pg_attribute ra
-    ON ra.attrelid = fk.referenced_table_oid
-   AND ra.attnum = fk.referenced_attnum
-
 LEFT JOIN index_info idx ON idx.table_oid = col.table_oid
 LEFT JOIN trigger_info trg ON trg.table_oid = col.table_oid
 
@@ -159,6 +218,7 @@ UNION ALL
 -- MATERIALIZED VIEWS (keine Indizes/Trigger)
 SELECT
     'MATERIALIZED VIEW',
+    mat.schemaname,
     mat.matviewname,
     a.attname,
     format_type(a.atttypid, a.atttypmod),
@@ -194,7 +254,33 @@ LIMIT $1
 OFFSET $2;
     ";
 
-impl PostgresQuerier {}
+impl PostgresQuerier {
+    async fn get_constraints(config: &CarpathiaConfig) -> Result<PgConstraintMap, CarpathiaError> {
+        let pool = match &config.db_pool {
+            DbPool::Postgres(pool) => pool,
+            _ => {
+                return Err(CarpathiaError {
+                    message: "Invalid database pool type for PostgreSQL querier".to_string(),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::InvalidPoolType,
+                });
+            }
+        };
+        let rows: Vec<PgConstraintInfo> = sqlx::query_as::<_, PgConstraintInfo>(CONSTRAINT_QUERY)
+            .fetch_all(pool)
+            .await
+            .map_err(|e| {
+                debug!("Error executing constraint query: {e}");
+                CarpathiaError {
+                    message: format!("Failed to execute constraint query: {e}"),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::DatabaseConnectionError,
+                }
+            })?;
+
+        Ok(PgConstraintMap::new(rows))
+    }
+}
 
 impl DatabaseQuerier for PostgresQuerier {
     async fn get_schema(config: &CarpathiaConfig) -> Result<AbstractDbRepr, CarpathiaError> {
@@ -217,7 +303,9 @@ impl DatabaseQuerier for PostgresQuerier {
                 });
             }
         };
-        //// let type_map = &config.type_map.type_mapping;
+        let constraint_map = Self::get_constraints(config).await?;
+        debug!("Constraint map {:?}", constraint_map);
+        // let type_map = &config.type_map.type_mapping;
         loop {
             let rows: Vec<PgColumnInfo> = sqlx::query_as::<_, PgColumnInfo>(SCHEMA_QUERY)
                 .bind(LIMIT)
@@ -233,68 +321,24 @@ impl DatabaseQuerier for PostgresQuerier {
                 })?;
             let num_rows = rows.len();
             debug!("Fetched {num_rows} rows from schema query with offset {offset}");
-            for row in rows {
+            for mut row in rows {
+                row = row.constraint_map(&constraint_map);
                 debug!("Processing column: {}.{}", row.table_name, row.column_name);
-                let data_type = if let Some(dimensions) = row.array_dimensions {
-                    if dimensions != 0 {
-                        format!("{}[{}]", row.data_type, dimensions)
-                    } else {
-                        row.data_type.clone()
-                    }
-                } else {
-                    row.data_type.clone()
-                };
-                // map the user type to the ADR
-                ////let u_type_map = match type_map.get(&row.data_type) {
-                ////    Some(t) => t,
-                ////    None => NONE_TYPE_MAPPING,
-                ////};
-
-                let attribute = AbstractAttribute {
-                    column_name: row.column_name,
-                    data_type,
-                    u_type: String::new(), // Placeholder, will be filled in by enrich_adr
-                    is_nullable: row
-                        .is_nullable
-                        .parse()
-                        .unwrap_or(IsNullable::Unknown(row.is_nullable)),
-                    column_default: row.column_default,
-                    character_maximum_length: row.character_maximum_length,
-                    numeric_precision: row.numeric_precision,
-                    numeric_scale: row.numeric_scale,
-                    is_identity: row
-                        .is_identity
-                        .parse()
-                        .unwrap_or(IsIdentity::Unknown(row.is_identity)),
-                    identity_generation: row.identity_generation,
-                    is_generated: row
-                        .is_generated
-                        .parse()
-                        .unwrap_or(IsGenerated::Unknown(row.is_generated)),
-                    generation_expression: row.generation_expression,
-                    constraint_name: row.constraint_name,
-                    constraint_type: row
-                        .constraint_type
-                        .as_ref()
-                        .and_then(|s| s.parse().ok())
-                        .unwrap_or(ConstraintType::None),
-                    referenced_table: row.referenced_table,
-                    referenced_column: row.referenced_column,
-                    comment: row.column_comment,
-                };
+                let table_name = row.table_name.clone();
                 let object_type = row.object_type.parse().unwrap_or_else(|_| {
                     debug!("Unknown object type: {}", row.object_type);
                     ObjectType::Other
                 });
+                let attribute = AbstractAttribute::from(row.clone());
                 match object_type {
-                    ObjectType::BaseTable => {
+                    ObjectType::BaseTable | ObjectType::PartitionedTable => {
                         table_info_map
-                            .entry(row.table_name.clone())
+                            .entry(table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
                                 table_name: row.table_name.clone(),
                                 u_imports: BTreeSet::new(),
                                 object_type,
-                                comment: row.table_comment,
+                                comment: row.table_comment.clone(),
                                 attributes: BTreeMap::new(),
                             })
                             .attributes
@@ -303,12 +347,12 @@ impl DatabaseQuerier for PostgresQuerier {
                     }
                     ObjectType::View | ObjectType::MaterializedView => {
                         view_info_map
-                            .entry(row.table_name.clone())
+                            .entry(table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
                                 table_name: row.table_name.clone(),
                                 u_imports: BTreeSet::new(),
                                 object_type,
-                                comment: row.table_comment,
+                                comment: row.table_comment.clone(),
                                 attributes: BTreeMap::new(),
                             })
                             .attributes
@@ -316,8 +360,8 @@ impl DatabaseQuerier for PostgresQuerier {
                     }
                     _ => {
                         error!(
-                            "Skipping unsupported object type: {} for table {}",
-                            row.object_type, row.table_name
+                            "Skipping unsupported object type: {:?} for table {}",
+                            object_type, table_name
                         );
                     }
                 }

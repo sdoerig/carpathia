@@ -18,13 +18,13 @@ impl {{ view.table_name | capitalize }} {
 
     {# Forward Relations #}
     {% for attr in view.attributes %}
-        {% if attr.constraint_type == "ForeignKey" %}
-    pub async fn {{ attr.referenced_table }}(&self, pool: &PgPool)
-        -> sqlx::Result<{{ attr.referenced_table | capitalize }}>
+        {% if "ForeignKey" in attr.constraints %}
+    pub async fn {{ attr.constraints.ForeignKey.referenced_table }}(&self, pool: &PgPool)
+        -> sqlx::Result<{{ attr.constraints.ForeignKey.referenced_table | capitalize }}>
     {
         sqlx::query_as!(
-            {{ attr.referenced_table | capitalize }},
-            "SELECT * FROM {{ attr.referenced_table }} WHERE {{ attr.referenced_column }} = $1",
+            {{ attr.constraints.ForeignKey.referenced_table | capitalize }},
+            "SELECT * FROM {{ attr.constraints.ForeignKey.referenced_table }} WHERE {{ attr.constraints.ForeignKey.referenced_column }} = $1",
             self.{{ attr.column_name }}
         )
         .fetch_one(pool)

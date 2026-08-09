@@ -56,23 +56,39 @@ pub struct AbstractAttribute {
     pub u_type: String,
     pub is_nullable: IsNullable,
     pub column_default: Option<String>,
-    pub character_maximum_length: Option<i32>,
-    pub numeric_precision: Option<i32>,
-    pub numeric_scale: Option<i32>,
-    pub is_identity: IsIdentity,
-    pub identity_generation: Option<String>,
-    pub is_generated: IsGenerated,
-    pub generation_expression: Option<String>,
-    pub constraint_name: Option<String>,
+    //pub character_maximum_length: Option<i32>,
+    //pub numeric_precision: Option<i32>,
+    //pub numeric_scale: Option<i32>,
+    //pub is_identity: IsIdentity,
+    //pub identity_generation: Option<String>,
+    //pub is_generated: IsGenerated,
+    //pub generation_expression: Option<String>,
+    pub constraints: BTreeMap<ConstraintType, AbstractConstraint>,
+    /*pub constraint_name: Option<String>,
     pub constraint_type: ConstraintType,
     pub referenced_table: Option<String>,
     pub referenced_column: Option<String>,
+    */
     pub comment: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
+)]
+pub struct AbstractConstraint {
+    pub constraint_name: String,
+    pub constraint_value: String,
+    pub referenced_schema_name: Option<String>,
+    pub referenced_table: Option<String>,
+    pub referenced_column: Option<String>,
+}
+
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
+)]
 pub enum ObjectType {
     BaseTable,
+    PartitionedTable,
     View,
     MaterializedView,
     Other,
@@ -85,6 +101,7 @@ impl FromStr for ObjectType {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "base table" => Ok(ObjectType::BaseTable),
+            "partitioned table" => Ok(ObjectType::PartitionedTable),
             "view" => Ok(ObjectType::View),
             "materialized view" => Ok(ObjectType::MaterializedView),
             _ => {
@@ -165,11 +182,17 @@ impl FromStr for IsGenerated {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
+)]
 pub enum ConstraintType {
     PrimaryKey,
     ForeignKey,
     Unique,
+    Check,
+    Exclusion,
+    NotNull,
+    ConstraintTrigger,
     None,
     Unknown(String),
 }
@@ -179,9 +202,14 @@ impl FromStr for ConstraintType {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
-            "primary key" => Ok(ConstraintType::PrimaryKey),
-            "foreign key" => Ok(ConstraintType::ForeignKey),
-            "unique" => Ok(ConstraintType::Unique),
+            "p" | "primary key" => Ok(ConstraintType::PrimaryKey),
+            "u" | "unique" => Ok(ConstraintType::Unique),
+            "f" | "foreign key" => Ok(ConstraintType::ForeignKey),
+            "c" | "check" => Ok(ConstraintType::Check),
+            "x" | "exclusion" => Ok(ConstraintType::Exclusion),
+            "n" | "not null" => Ok(ConstraintType::NotNull),
+            "t" | "constraint trigger" => Ok(ConstraintType::ConstraintTrigger),
+            "" | "none" => Ok(ConstraintType::None),
             _ => {
                 debug!("Invalid constraint type: {}", s);
                 Ok(ConstraintType::Unknown(s.to_string()))
@@ -201,17 +229,20 @@ mod tests {
             u_type: "whatever".to_string(),
             is_nullable: "NO".parse().unwrap_or(IsNullable::No),
             column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
-            character_maximum_length: None,
-            numeric_precision: Some(32),
-            numeric_scale: Some(0),
-            is_identity: "NO".parse().unwrap_or(IsIdentity::No),
-            identity_generation: None,
-            is_generated: "NO".parse().unwrap_or(IsGenerated::Always),
-            generation_expression: None,
-            constraint_name: Some("users_pkey".to_string()),
-            constraint_type: "PRIMARY KEY".parse().unwrap_or(ConstraintType::None),
-            referenced_table: None,
-            referenced_column: None,
+            constraints: {
+                let mut constraints = BTreeMap::new();
+                constraints.insert(
+                    ConstraintType::PrimaryKey,
+                    AbstractConstraint {
+                        constraint_name: "users_pkey".to_string(),
+                        constraint_value: "".to_string(),
+                        referenced_schema_name: None,
+                        referenced_table: None,
+                        referenced_column: None,
+                    },
+                );
+                constraints
+            },
             comment: Some("Primary key for users table".to_string()),
         }
     }
