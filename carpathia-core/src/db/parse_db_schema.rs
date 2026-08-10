@@ -175,6 +175,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "postgres")]
     #[tokio::test]
     async fn test_db_schema_parser_no_type_mapping() {
         // load .env.test if available.
@@ -197,6 +198,7 @@ mod tests {
         test_schema(&schema.views, &test_adr_no_type_mapping.views);
     }
 
+    #[cfg(feature = "postgres")]
     #[tokio::test]
     async fn test_db_schema_parser_with_type_mapping() {
         // load .env.test if available.
@@ -219,6 +221,7 @@ mod tests {
         test_schema(&schema.views, &test_adr_with_type_mapping.views);
     }
 
+    #[cfg(feature = "postgres")]
     #[tokio::test]
     async fn test_db_types() {
         dotenv::from_filename(".env.test").ok();
