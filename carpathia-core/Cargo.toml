@@ -25,3 +25,6 @@ tar = "0.4"
 [dev-dependencies]
 dotenv = "0.15"
 tempfile = "3.8"
+
+[features]
+postgres = []
