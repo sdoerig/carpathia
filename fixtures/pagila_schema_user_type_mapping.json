@@ -3,16 +3,16 @@
   "tables": {
     "actor": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "actor",
+      "u_table_name": "actor",
       "comment": null,
       "attributes": {
         "actor_id": {
           "column_name": "actor_id",
+          "u_column_name": "actor_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('actor_actor_id_seq'::regclass)",
           "constraints": {
@@ -35,8 +35,9 @@
         },
         "first_name": {
           "column_name": "first_name",
+          "u_column_name": "first_name",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -52,8 +53,9 @@
         },
         "last_name": {
           "column_name": "last_name",
+          "u_column_name": "last_name",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -69,8 +71,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -88,16 +91,16 @@
     },
     "address": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "address",
+      "u_table_name": "address",
       "comment": null,
       "attributes": {
         "address": {
           "column_name": "address",
+          "u_column_name": "address",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -113,8 +116,9 @@
         },
         "address2": {
           "column_name": "address2",
+          "u_column_name": "address2",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -122,8 +126,9 @@
         },
         "address_id": {
           "column_name": "address_id",
+          "u_column_name": "address_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('address_address_id_seq'::regclass)",
           "constraints": {
@@ -146,8 +151,9 @@
         },
         "city_id": {
           "column_name": "city_id",
+          "u_column_name": "city_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -170,8 +176,9 @@
         },
         "district": {
           "column_name": "district",
+          "u_column_name": "district",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -187,8 +194,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -204,8 +212,9 @@
         },
         "phone": {
           "column_name": "phone",
+          "u_column_name": "phone",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -221,8 +230,9 @@
         },
         "postal_code": {
           "column_name": "postal_code",
+          "u_column_name": "postal_code",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -232,16 +242,16 @@
     },
     "category": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "category",
+      "u_table_name": "category",
       "comment": null,
       "attributes": {
         "category_id": {
           "column_name": "category_id",
+          "u_column_name": "category_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('category_category_id_seq'::regclass)",
           "constraints": {
@@ -264,8 +274,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -281,8 +292,9 @@
         },
         "name": {
           "column_name": "name",
+          "u_column_name": "name",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -300,16 +312,16 @@
     },
     "city": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "city",
+      "u_table_name": "city",
       "comment": null,
       "attributes": {
         "city": {
           "column_name": "city",
+          "u_column_name": "city",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -325,8 +337,9 @@
         },
         "city_id": {
           "column_name": "city_id",
+          "u_column_name": "city_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('city_city_id_seq'::regclass)",
           "constraints": {
@@ -349,8 +362,9 @@
         },
         "country_id": {
           "column_name": "country_id",
+          "u_column_name": "country_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -373,8 +387,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -392,16 +407,16 @@
     },
     "country": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "country",
+      "u_table_name": "country",
       "comment": null,
       "attributes": {
         "country": {
           "column_name": "country",
+          "u_column_name": "country",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -417,8 +432,9 @@
         },
         "country_id": {
           "column_name": "country_id",
+          "u_column_name": "country_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('country_country_id_seq'::regclass)",
           "constraints": {
@@ -441,8 +457,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -460,17 +477,16 @@
     },
     "customer": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::NaiveDate",
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "customer",
+      "u_table_name": "customer",
       "comment": null,
       "attributes": {
         "active": {
           "column_name": "active",
+          "u_column_name": "active",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -478,8 +494,9 @@
         },
         "activebool": {
           "column_name": "activebool",
+          "u_column_name": "activebool",
           "data_type": "boolean",
-          "u_type": "bool",
+          "u_type": "boolean",
           "is_nullable": "No",
           "column_default": "true",
           "constraints": {
@@ -495,8 +512,9 @@
         },
         "address_id": {
           "column_name": "address_id",
+          "u_column_name": "address_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -519,8 +537,9 @@
         },
         "create_date": {
           "column_name": "create_date",
+          "u_column_name": "create_date",
           "data_type": "date",
-          "u_type": "NaiveDate",
+          "u_type": "date",
           "is_nullable": "No",
           "column_default": "CURRENT_DATE",
           "constraints": {
@@ -536,8 +555,9 @@
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('customer_customer_id_seq'::regclass)",
           "constraints": {
@@ -560,8 +580,9 @@
         },
         "email": {
           "column_name": "email",
+          "u_column_name": "email",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -569,8 +590,9 @@
         },
         "first_name": {
           "column_name": "first_name",
+          "u_column_name": "first_name",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -586,8 +608,9 @@
         },
         "last_name": {
           "column_name": "last_name",
+          "u_column_name": "last_name",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -603,8 +626,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "Yes",
           "column_default": "now()",
           "constraints": {},
@@ -612,8 +636,9 @@
         },
         "store_id": {
           "column_name": "store_id",
+          "u_column_name": "store_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -638,17 +663,16 @@
     },
     "film": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}",
-        "sqlx::Type"
-      ],
+      "u_imports": [],
       "table_name": "film",
+      "u_table_name": "film",
       "comment": null,
       "attributes": {
         "description": {
           "column_name": "description",
+          "u_column_name": "description",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -656,8 +680,9 @@
         },
         "film_id": {
           "column_name": "film_id",
+          "u_column_name": "film_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('film_film_id_seq'::regclass)",
           "constraints": {
@@ -680,8 +705,9 @@
         },
         "fulltext": {
           "column_name": "fulltext",
+          "u_column_name": "fulltext",
           "data_type": "tsvector",
-          "u_type": "String",
+          "u_type": "tsvector",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -697,8 +723,9 @@
         },
         "language_id": {
           "column_name": "language_id",
+          "u_column_name": "language_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -721,8 +748,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -738,8 +766,9 @@
         },
         "length": {
           "column_name": "length",
+          "u_column_name": "length",
           "data_type": "smallint",
-          "u_type": "i16",
+          "u_type": "smallint",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -747,8 +776,9 @@
         },
         "original_language_id": {
           "column_name": "original_language_id",
+          "u_column_name": "original_language_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {
@@ -764,8 +794,9 @@
         },
         "rating": {
           "column_name": "rating",
+          "u_column_name": "rating",
           "data_type": "mpaa_rating",
-          "u_type": "MpaaRating",
+          "u_type": "mpaa_rating",
           "is_nullable": "Yes",
           "column_default": "'G'::mpaa_rating",
           "constraints": {},
@@ -773,6 +804,7 @@
         },
         "release_year": {
           "column_name": "release_year",
+          "u_column_name": "release_year",
           "data_type": "year",
           "u_type": "year",
           "is_nullable": "Yes",
@@ -782,8 +814,9 @@
         },
         "rental_duration": {
           "column_name": "rental_duration",
+          "u_column_name": "rental_duration",
           "data_type": "smallint",
-          "u_type": "i16",
+          "u_type": "smallint",
           "is_nullable": "No",
           "column_default": "3",
           "constraints": {
@@ -799,6 +832,7 @@
         },
         "rental_rate": {
           "column_name": "rental_rate",
+          "u_column_name": "rental_rate",
           "data_type": "numeric(4,2)",
           "u_type": "numeric(4,2)",
           "is_nullable": "No",
@@ -816,6 +850,7 @@
         },
         "replacement_cost": {
           "column_name": "replacement_cost",
+          "u_column_name": "replacement_cost",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -833,8 +868,9 @@
         },
         "special_features": {
           "column_name": "special_features",
+          "u_column_name": "special_features",
           "data_type": "text[][1]",
-          "u_type": "Vec<Vec<String>>",
+          "u_type": "text[][1]",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -842,8 +878,9 @@
         },
         "title": {
           "column_name": "title",
+          "u_column_name": "title",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -861,16 +898,16 @@
     },
     "film_actor": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "film_actor",
+      "u_table_name": "film_actor",
       "comment": null,
       "attributes": {
         "actor_id": {
           "column_name": "actor_id",
+          "u_column_name": "actor_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -900,8 +937,9 @@
         },
         "film_id": {
           "column_name": "film_id",
+          "u_column_name": "film_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -931,8 +969,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -950,16 +989,16 @@
     },
     "film_category": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "film_category",
+      "u_table_name": "film_category",
       "comment": null,
       "attributes": {
         "category_id": {
           "column_name": "category_id",
+          "u_column_name": "category_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -989,8 +1028,9 @@
         },
         "film_id": {
           "column_name": "film_id",
+          "u_column_name": "film_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1020,8 +1060,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -1039,16 +1080,16 @@
     },
     "inventory": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "inventory",
+      "u_table_name": "inventory",
       "comment": null,
       "attributes": {
         "film_id": {
           "column_name": "film_id",
+          "u_column_name": "film_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1071,8 +1112,9 @@
         },
         "inventory_id": {
           "column_name": "inventory_id",
+          "u_column_name": "inventory_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('inventory_inventory_id_seq'::regclass)",
           "constraints": {
@@ -1095,8 +1137,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -1112,8 +1155,9 @@
         },
         "store_id": {
           "column_name": "store_id",
+          "u_column_name": "store_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1138,16 +1182,16 @@
     },
     "language": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "language",
+      "u_table_name": "language",
       "comment": null,
       "attributes": {
         "language_id": {
           "column_name": "language_id",
+          "u_column_name": "language_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('language_language_id_seq'::regclass)",
           "constraints": {
@@ -1170,8 +1214,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -1187,6 +1232,7 @@
         },
         "name": {
           "column_name": "name",
+          "u_column_name": "name",
           "data_type": "character(20)",
           "u_type": "character(20)",
           "is_nullable": "No",
@@ -1206,14 +1252,14 @@
     },
     "payment": {
       "object_type": "PartitionedTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "payment",
+      "u_table_name": "payment",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1231,8 +1277,9 @@
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1248,8 +1295,9 @@
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1272,8 +1320,9 @@
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
           "constraints": {
@@ -1296,8 +1345,9 @@
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1313,8 +1363,9 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1332,14 +1383,14 @@
     },
     "payment_p2022_01": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "payment_p2022_01",
+      "u_table_name": "payment_p2022_01",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1357,8 +1408,9 @@
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1381,8 +1433,9 @@
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1405,8 +1458,9 @@
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
           "constraints": {
@@ -1429,8 +1483,9 @@
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1453,8 +1508,9 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1479,14 +1535,14 @@
     },
     "payment_p2022_02": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "payment_p2022_02",
+      "u_table_name": "payment_p2022_02",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1504,8 +1560,9 @@
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1528,8 +1585,9 @@
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1552,8 +1610,9 @@
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
           "constraints": {
@@ -1576,8 +1635,9 @@
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1600,8 +1660,9 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1626,14 +1687,14 @@
     },
     "payment_p2022_03": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "payment_p2022_03",
+      "u_table_name": "payment_p2022_03",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1651,8 +1712,9 @@
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1675,8 +1737,9 @@
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1699,8 +1762,9 @@
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
           "constraints": {
@@ -1723,8 +1787,9 @@
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1747,8 +1812,9 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1773,14 +1839,14 @@
     },
     "payment_p2022_04": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "payment_p2022_04",
+      "u_table_name": "payment_p2022_04",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1798,8 +1864,9 @@
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1822,8 +1889,9 @@
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1846,8 +1914,9 @@
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
           "constraints": {
@@ -1870,8 +1939,9 @@
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1894,8 +1964,9 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1920,14 +1991,14 @@
     },
     "payment_p2022_05": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "payment_p2022_05",
+      "u_table_name": "payment_p2022_05",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1945,8 +2016,9 @@
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1969,8 +2041,9 @@
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -1993,8 +2066,9 @@
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
           "constraints": {
@@ -2017,8 +2091,9 @@
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2041,8 +2116,9 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2067,14 +2143,14 @@
     },
     "payment_p2022_06": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "payment_p2022_06",
+      "u_table_name": "payment_p2022_06",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -2092,8 +2168,9 @@
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2116,8 +2193,9 @@
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2140,8 +2218,9 @@
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
           "constraints": {
@@ -2164,8 +2243,9 @@
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2188,8 +2268,9 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2214,14 +2295,14 @@
     },
     "payment_p2022_07": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "payment_p2022_07",
+      "u_table_name": "payment_p2022_07",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -2239,8 +2320,9 @@
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2256,8 +2338,9 @@
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2280,8 +2363,9 @@
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
           "constraints": {
@@ -2304,8 +2388,9 @@
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2321,8 +2406,9 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2340,16 +2426,16 @@
     },
     "rental": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "rental",
+      "u_table_name": "rental",
       "comment": null,
       "attributes": {
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2372,8 +2458,9 @@
         },
         "inventory_id": {
           "column_name": "inventory_id",
+          "u_column_name": "inventory_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2396,8 +2483,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -2413,8 +2501,9 @@
         },
         "rental_date": {
           "column_name": "rental_date",
+          "u_column_name": "rental_date",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2430,8 +2519,9 @@
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('rental_rental_id_seq'::regclass)",
           "constraints": {
@@ -2454,8 +2544,9 @@
         },
         "return_date": {
           "column_name": "return_date",
+          "u_column_name": "return_date",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2463,8 +2554,9 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2489,16 +2581,16 @@
     },
     "staff": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "staff",
+      "u_table_name": "staff",
       "comment": null,
       "attributes": {
         "active": {
           "column_name": "active",
+          "u_column_name": "active",
           "data_type": "boolean",
-          "u_type": "bool",
+          "u_type": "boolean",
           "is_nullable": "No",
           "column_default": "true",
           "constraints": {
@@ -2514,8 +2606,9 @@
         },
         "address_id": {
           "column_name": "address_id",
+          "u_column_name": "address_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2538,8 +2631,9 @@
         },
         "email": {
           "column_name": "email",
+          "u_column_name": "email",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2547,8 +2641,9 @@
         },
         "first_name": {
           "column_name": "first_name",
+          "u_column_name": "first_name",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2564,8 +2659,9 @@
         },
         "last_name": {
           "column_name": "last_name",
+          "u_column_name": "last_name",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2581,8 +2677,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -2598,8 +2695,9 @@
         },
         "password": {
           "column_name": "password",
+          "u_column_name": "password",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2607,8 +2705,9 @@
         },
         "picture": {
           "column_name": "picture",
+          "u_column_name": "picture",
           "data_type": "bytea",
-          "u_type": "Vec<u8>",
+          "u_type": "bytea",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2616,8 +2715,9 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('staff_staff_id_seq'::regclass)",
           "constraints": {
@@ -2640,8 +2740,9 @@
         },
         "store_id": {
           "column_name": "store_id",
+          "u_column_name": "store_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2664,8 +2765,9 @@
         },
         "username": {
           "column_name": "username",
+          "u_column_name": "username",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2683,16 +2785,16 @@
     },
     "store": {
       "object_type": "BaseTable",
-      "u_imports": [
-        "chrono::{DateTime, Utc}"
-      ],
+      "u_imports": [],
       "table_name": "store",
+      "u_table_name": "store",
       "comment": null,
       "attributes": {
         "address_id": {
           "column_name": "address_id",
+          "u_column_name": "address_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2715,8 +2817,9 @@
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
-          "u_type": "DateTime<Utc>",
+          "u_type": "timestamp with time zone",
           "is_nullable": "No",
           "column_default": "now()",
           "constraints": {
@@ -2732,8 +2835,9 @@
         },
         "manager_staff_id": {
           "column_name": "manager_staff_id",
+          "u_column_name": "manager_staff_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": null,
           "constraints": {
@@ -2749,8 +2853,9 @@
         },
         "store_id": {
           "column_name": "store_id",
+          "u_column_name": "store_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "No",
           "column_default": "nextval('store_store_id_seq'::regclass)",
           "constraints": {
@@ -2779,12 +2884,14 @@
       "object_type": "View",
       "u_imports": [],
       "table_name": "actor_info",
+      "u_table_name": "actor_info",
       "comment": null,
       "attributes": {
         "actor_id": {
           "column_name": "actor_id",
+          "u_column_name": "actor_id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2792,8 +2899,9 @@
         },
         "film_info": {
           "column_name": "film_info",
+          "u_column_name": "film_info",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2801,8 +2909,9 @@
         },
         "first_name": {
           "column_name": "first_name",
+          "u_column_name": "first_name",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2810,8 +2919,9 @@
         },
         "last_name": {
           "column_name": "last_name",
+          "u_column_name": "last_name",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2823,12 +2933,14 @@
       "object_type": "View",
       "u_imports": [],
       "table_name": "customer_list",
+      "u_table_name": "customer_list",
       "comment": null,
       "attributes": {
         "address": {
           "column_name": "address",
+          "u_column_name": "address",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2836,8 +2948,9 @@
         },
         "city": {
           "column_name": "city",
+          "u_column_name": "city",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2845,8 +2958,9 @@
         },
         "country": {
           "column_name": "country",
+          "u_column_name": "country",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2854,8 +2968,9 @@
         },
         "id": {
           "column_name": "id",
+          "u_column_name": "id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2863,8 +2978,9 @@
         },
         "name": {
           "column_name": "name",
+          "u_column_name": "name",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2872,8 +2988,9 @@
         },
         "notes": {
           "column_name": "notes",
+          "u_column_name": "notes",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2881,8 +2998,9 @@
         },
         "phone": {
           "column_name": "phone",
+          "u_column_name": "phone",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2890,8 +3008,9 @@
         },
         "sid": {
           "column_name": "sid",
+          "u_column_name": "sid",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2899,8 +3018,9 @@
         },
         "zip code": {
           "column_name": "zip code",
+          "u_column_name": "zip code",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2910,16 +3030,16 @@
     },
     "film_list": {
       "object_type": "View",
-      "u_imports": [
-        "sqlx::Type"
-      ],
+      "u_imports": [],
       "table_name": "film_list",
+      "u_table_name": "film_list",
       "comment": null,
       "attributes": {
         "actors": {
           "column_name": "actors",
+          "u_column_name": "actors",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2927,8 +3047,9 @@
         },
         "category": {
           "column_name": "category",
+          "u_column_name": "category",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2936,8 +3057,9 @@
         },
         "description": {
           "column_name": "description",
+          "u_column_name": "description",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2945,8 +3067,9 @@
         },
         "fid": {
           "column_name": "fid",
+          "u_column_name": "fid",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2954,8 +3077,9 @@
         },
         "length": {
           "column_name": "length",
+          "u_column_name": "length",
           "data_type": "smallint",
-          "u_type": "i16",
+          "u_type": "smallint",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2963,6 +3087,7 @@
         },
         "price": {
           "column_name": "price",
+          "u_column_name": "price",
           "data_type": "numeric(4,2)",
           "u_type": "numeric(4,2)",
           "is_nullable": "Yes",
@@ -2972,8 +3097,9 @@
         },
         "rating": {
           "column_name": "rating",
+          "u_column_name": "rating",
           "data_type": "mpaa_rating",
-          "u_type": "MpaaRating",
+          "u_type": "mpaa_rating",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2981,8 +3107,9 @@
         },
         "title": {
           "column_name": "title",
+          "u_column_name": "title",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -2992,16 +3119,16 @@
     },
     "nicer_but_slower_film_list": {
       "object_type": "View",
-      "u_imports": [
-        "sqlx::Type"
-      ],
+      "u_imports": [],
       "table_name": "nicer_but_slower_film_list",
+      "u_table_name": "nicer_but_slower_film_list",
       "comment": null,
       "attributes": {
         "actors": {
           "column_name": "actors",
+          "u_column_name": "actors",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3009,8 +3136,9 @@
         },
         "category": {
           "column_name": "category",
+          "u_column_name": "category",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3018,8 +3146,9 @@
         },
         "description": {
           "column_name": "description",
+          "u_column_name": "description",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3027,8 +3156,9 @@
         },
         "fid": {
           "column_name": "fid",
+          "u_column_name": "fid",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3036,8 +3166,9 @@
         },
         "length": {
           "column_name": "length",
+          "u_column_name": "length",
           "data_type": "smallint",
-          "u_type": "i16",
+          "u_type": "smallint",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3045,6 +3176,7 @@
         },
         "price": {
           "column_name": "price",
+          "u_column_name": "price",
           "data_type": "numeric(4,2)",
           "u_type": "numeric(4,2)",
           "is_nullable": "Yes",
@@ -3054,8 +3186,9 @@
         },
         "rating": {
           "column_name": "rating",
+          "u_column_name": "rating",
           "data_type": "mpaa_rating",
-          "u_type": "MpaaRating",
+          "u_type": "mpaa_rating",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3063,8 +3196,9 @@
         },
         "title": {
           "column_name": "title",
+          "u_column_name": "title",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3074,16 +3208,16 @@
     },
     "rental_by_category": {
       "object_type": "MaterializedView",
-      "u_imports": [
-        "rust_decimal::Decimal"
-      ],
+      "u_imports": [],
       "table_name": "rental_by_category",
+      "u_table_name": "rental_by_category",
       "comment": null,
       "attributes": {
         "category": {
           "column_name": "category",
+          "u_column_name": "category",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3091,8 +3225,9 @@
         },
         "total_sales": {
           "column_name": "total_sales",
+          "u_column_name": "total_sales",
           "data_type": "numeric",
-          "u_type": "Decimal",
+          "u_type": "numeric",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3102,16 +3237,16 @@
     },
     "sales_by_film_category": {
       "object_type": "View",
-      "u_imports": [
-        "rust_decimal::Decimal"
-      ],
+      "u_imports": [],
       "table_name": "sales_by_film_category",
+      "u_table_name": "sales_by_film_category",
       "comment": null,
       "attributes": {
         "category": {
           "column_name": "category",
+          "u_column_name": "category",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3119,8 +3254,9 @@
         },
         "total_sales": {
           "column_name": "total_sales",
+          "u_column_name": "total_sales",
           "data_type": "numeric",
-          "u_type": "Decimal",
+          "u_type": "numeric",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3130,16 +3266,16 @@
     },
     "sales_by_store": {
       "object_type": "View",
-      "u_imports": [
-        "rust_decimal::Decimal"
-      ],
+      "u_imports": [],
       "table_name": "sales_by_store",
+      "u_table_name": "sales_by_store",
       "comment": null,
       "attributes": {
         "manager": {
           "column_name": "manager",
+          "u_column_name": "manager",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3147,8 +3283,9 @@
         },
         "store": {
           "column_name": "store",
+          "u_column_name": "store",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3156,8 +3293,9 @@
         },
         "total_sales": {
           "column_name": "total_sales",
+          "u_column_name": "total_sales",
           "data_type": "numeric",
-          "u_type": "Decimal",
+          "u_type": "numeric",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3169,12 +3307,14 @@
       "object_type": "View",
       "u_imports": [],
       "table_name": "staff_list",
+      "u_table_name": "staff_list",
       "comment": null,
       "attributes": {
         "address": {
           "column_name": "address",
+          "u_column_name": "address",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3182,8 +3322,9 @@
         },
         "city": {
           "column_name": "city",
+          "u_column_name": "city",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3191,8 +3332,9 @@
         },
         "country": {
           "column_name": "country",
+          "u_column_name": "country",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3200,8 +3342,9 @@
         },
         "id": {
           "column_name": "id",
+          "u_column_name": "id",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3209,8 +3352,9 @@
         },
         "name": {
           "column_name": "name",
+          "u_column_name": "name",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3218,8 +3362,9 @@
         },
         "phone": {
           "column_name": "phone",
+          "u_column_name": "phone",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3227,8 +3372,9 @@
         },
         "sid": {
           "column_name": "sid",
+          "u_column_name": "sid",
           "data_type": "integer",
-          "u_type": "i32",
+          "u_type": "integer",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},
@@ -3236,8 +3382,9 @@
         },
         "zip code": {
           "column_name": "zip code",
+          "u_column_name": "zip code",
           "data_type": "text",
-          "u_type": "String",
+          "u_type": "text",
           "is_nullable": "Yes",
           "column_default": null,
           "constraints": {},

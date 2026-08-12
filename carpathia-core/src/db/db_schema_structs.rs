@@ -43,6 +43,8 @@ pub struct AbstractTableRepr {
     pub u_imports: BTreeSet<String>,
     /// The name of the database object.
     pub table_name: String,
+    /// language safe name of the database object. This is the name you will use in your templates to reference the database object.
+    pub u_table_name: String,
     pub comment: Option<String>,
     /// The attributes the database object consists of.
     pub attributes: BTreeMap<String, AbstractAttribute>,
@@ -52,6 +54,8 @@ pub struct AbstractTableRepr {
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AbstractAttribute {
     pub column_name: String,
+    /// language safe name of the database attribute. This is the name you will use in your templates to reference the database attribute.
+    pub u_column_name: String,
     pub data_type: String,
     pub u_type: String,
     pub is_nullable: IsNullable,
@@ -225,6 +229,7 @@ mod tests {
     fn create_column_info(column_name: &str) -> AbstractAttribute {
         AbstractAttribute {
             column_name: column_name.to_string(),
+            u_column_name: column_name.to_string(),
             data_type: "integer".to_string(),
             u_type: "whatever".to_string(),
             is_nullable: "NO".parse().unwrap_or(IsNullable::No),
@@ -249,6 +254,7 @@ mod tests {
     fn create_table_info(table_name: &str) -> AbstractTableRepr {
         AbstractTableRepr {
             table_name: table_name.to_string(),
+            u_table_name: table_name.to_string(),
             object_type: "BASE TABLE".parse().unwrap_or(ObjectType::BaseTable),
             attributes: BTreeMap::new(),
             u_imports: BTreeSet::new(),

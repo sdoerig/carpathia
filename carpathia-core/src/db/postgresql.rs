@@ -336,6 +336,7 @@ impl DatabaseQuerier for PostgresQuerier {
                             .entry(table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
                                 table_name: row.table_name.clone(),
+                                u_table_name: String::new(),
                                 u_imports: BTreeSet::new(),
                                 object_type,
                                 comment: row.table_comment.clone(),
@@ -349,7 +350,8 @@ impl DatabaseQuerier for PostgresQuerier {
                         view_info_map
                             .entry(table_name.clone())
                             .or_insert_with(|| AbstractTableRepr {
-                                table_name: row.table_name.clone(),
+                                table_name: row.table_name,
+                                u_table_name: String::new(),
                                 u_imports: BTreeSet::new(),
                                 object_type,
                                 comment: row.table_comment.clone(),

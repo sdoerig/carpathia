@@ -13,6 +13,7 @@ pub(crate) const DEFAULT_TYPE_MAPPING: &TypeMapping = &TypeMapping {
 pub struct Types {
     pub version: String,
     pub type_mapping: BTreeMap<String, TypeMapping>,
+    pub db_to_code_names_mapping: BTreeMap<String, String>,
 }
 
 impl Default for Types {
@@ -26,6 +27,7 @@ impl Types {
         Types {
             version: ABSTRACT_DB_REPR_VERSION.to_string(),
             type_mapping: BTreeMap::new(),
+            db_to_code_names_mapping: BTreeMap::new(),
         }
     }
 }
