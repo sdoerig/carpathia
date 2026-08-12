@@ -78,7 +78,8 @@ impl From<PgColumnInfo> for AbstractAttribute {
             pg_column_info.data_type.clone()
         };
         AbstractAttribute {
-            column_name: pg_column_info.column_name,
+            column_name: pg_column_info.column_name.clone(),
+            u_column_name: String::new(), // Placeholder, will be filled in by enrich_adr
             data_type,
             u_type: String::new(), // Placeholder, will be filled in by enrich_adr
             is_nullable: pg_column_info
