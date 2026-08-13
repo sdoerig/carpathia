@@ -4,6 +4,7 @@ use crate::generator::template_engine;
 use crate::return_values::carpathia_errors::ErrorNumber;
 use crate::template_engine::TemplateEngine;
 mod enums;
+use carpathia_core::generator::tera_conversion::AdrTemplateData;
 use carpathia_core::templates::enum_templates::InitTemplate;
 use carpathia_core::*;
 use clap::Parser;
@@ -133,7 +134,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     };
     if config.print_schema {
-        match serde_json::to_string_pretty(&abstr_db_repr) {
+        match serde_json::to_string_pretty(&AdrTemplateData::from(&abstr_db_repr)) {
             Ok(json) => println!("{json}"),
             Err(e) => {
                 error!("Could not print schema {e}");
