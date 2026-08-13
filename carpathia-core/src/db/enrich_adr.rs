@@ -20,8 +20,14 @@ fn add_to_atr(
     db_name_map: &std::collections::BTreeMap<String, String>,
     atr: &mut super::db_schema_structs::AbstractTableRepr,
 ) {
-    debug!("add_to_atr: type_map = {}", serde_json::to_string_pretty(type_map).unwrap());
-    debug!("add_to_atr: db_name_map = {}", serde_json::to_string_pretty(db_name_map).unwrap());
+    debug!(
+        "add_to_atr: type_map = {}",
+        serde_json::to_string_pretty(type_map).unwrap()
+    );
+    debug!(
+        "add_to_atr: db_name_map = {}",
+        serde_json::to_string_pretty(db_name_map).unwrap()
+    );
     atr.u_table_name = db_name_map
         .get(&atr.table_name)
         .unwrap_or(&atr.table_name)
