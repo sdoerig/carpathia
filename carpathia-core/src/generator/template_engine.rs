@@ -326,6 +326,7 @@ mod tests {
     use crate::configuration::carpathia_conf::CarpathiaConfigBuilder;
     use crate::configuration::conf_enums::CacheModus;
     use crate::configuration::conf_enums::DbType;
+    #[cfg(feature = "postgres")]
     use crate::db::parse_db_schema::DbSchemaParser;
     use crate::templates::enum_templates::InitTemplate;
     use crate::templates::init_templates::extract_to_disk;
@@ -407,6 +408,7 @@ mod tests {
         }
     }
 
+    #[cfg(feature = "postgres")]
     #[tokio::test]
     async fn test_template_generation() {
         let generated_files = [

@@ -7,10 +7,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "actor",
+      "u_table_name": "marianne",
       "comment": null,
       "attributes": {
         "actor_id": {
           "column_name": "actor_id",
+          "u_column_name": "actor_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -21,20 +23,25 @@
               "constraint_value": "PRIMARY KEY (actor_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "actor_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "first_name": {
           "column_name": "first_name",
+          "u_column_name": "first_name",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -45,13 +52,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_name": {
           "column_name": "last_name",
+          "u_column_name": "last_name",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -62,13 +72,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -79,7 +92,9 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -92,10 +107,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "address",
+      "u_table_name": "address",
       "comment": null,
       "attributes": {
         "address": {
           "column_name": "address",
+          "u_column_name": "address",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -106,13 +123,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "address2": {
           "column_name": "address2",
+          "u_column_name": "address2",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -122,6 +142,7 @@
         },
         "address_id": {
           "column_name": "address_id",
+          "u_column_name": "address_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -132,20 +153,25 @@
               "constraint_value": "PRIMARY KEY (address_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "address_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "city_id": {
           "column_name": "city_id",
+          "u_column_name": "city_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -156,20 +182,25 @@
               "constraint_value": "FOREIGN KEY (city_id) REFERENCES city(city_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "city",
-              "referenced_column": "city_id"
+              "u_referenced_table": "city",
+              "referenced_column": "city_id",
+              "u_referenced_column": "city_id"
             },
             "NotNull": {
               "constraint_name": "city_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "district": {
           "column_name": "district",
+          "u_column_name": "district",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -180,13 +211,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -197,13 +231,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "phone": {
           "column_name": "phone",
+          "u_column_name": "phone",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -214,13 +251,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "postal_code": {
           "column_name": "postal_code",
+          "u_column_name": "postal_code",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -236,10 +276,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "category",
+      "u_table_name": "category",
       "comment": null,
       "attributes": {
         "category_id": {
           "column_name": "category_id",
+          "u_column_name": "category_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -250,20 +292,25 @@
               "constraint_value": "PRIMARY KEY (category_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "category_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -274,13 +321,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "name": {
           "column_name": "name",
+          "u_column_name": "name",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -291,7 +341,9 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -304,10 +356,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "city",
+      "u_table_name": "city",
       "comment": null,
       "attributes": {
         "city": {
           "column_name": "city",
+          "u_column_name": "city",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -318,13 +372,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "city_id": {
           "column_name": "city_id",
+          "u_column_name": "city_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -335,20 +392,25 @@
               "constraint_value": "PRIMARY KEY (city_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "city_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "country_id": {
           "column_name": "country_id",
+          "u_column_name": "country_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -359,20 +421,25 @@
               "constraint_value": "FOREIGN KEY (country_id) REFERENCES country(country_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "country",
-              "referenced_column": "country_id"
+              "u_referenced_table": "country",
+              "referenced_column": "country_id",
+              "u_referenced_column": "country_id"
             },
             "NotNull": {
               "constraint_name": "country_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -383,7 +450,9 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -396,10 +465,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "country",
+      "u_table_name": "country",
       "comment": null,
       "attributes": {
         "country": {
           "column_name": "country",
+          "u_column_name": "country",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -410,13 +481,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "country_id": {
           "column_name": "country_id",
+          "u_column_name": "country_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -427,20 +501,25 @@
               "constraint_value": "PRIMARY KEY (country_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "country_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -451,7 +530,9 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -465,10 +546,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "customer",
+      "u_table_name": "customer",
       "comment": null,
       "attributes": {
         "active": {
           "column_name": "active",
+          "u_column_name": "active",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "Yes",
@@ -478,6 +561,7 @@
         },
         "activebool": {
           "column_name": "activebool",
+          "u_column_name": "activebool",
           "data_type": "boolean",
           "u_type": "bool",
           "is_nullable": "No",
@@ -488,13 +572,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "address_id": {
           "column_name": "address_id",
+          "u_column_name": "address_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -505,20 +592,25 @@
               "constraint_value": "FOREIGN KEY (address_id) REFERENCES address(address_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "address",
-              "referenced_column": "address_id"
+              "u_referenced_table": "address",
+              "referenced_column": "address_id",
+              "u_referenced_column": "address_id"
             },
             "NotNull": {
               "constraint_name": "address_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "create_date": {
           "column_name": "create_date",
+          "u_column_name": "create_date",
           "data_type": "date",
           "u_type": "NaiveDate",
           "is_nullable": "No",
@@ -529,13 +621,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -546,20 +641,25 @@
               "constraint_value": "PRIMARY KEY (customer_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "email": {
           "column_name": "email",
+          "u_column_name": "email",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -569,6 +669,7 @@
         },
         "first_name": {
           "column_name": "first_name",
+          "u_column_name": "first_name",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -579,13 +680,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_name": {
           "column_name": "last_name",
+          "u_column_name": "last_name",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -596,13 +700,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "Yes",
@@ -612,6 +719,7 @@
         },
         "store_id": {
           "column_name": "store_id",
+          "u_column_name": "store_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -622,14 +730,18 @@
               "constraint_value": "FOREIGN KEY (store_id) REFERENCES store(store_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "store",
-              "referenced_column": "store_id"
+              "u_referenced_table": "store",
+              "referenced_column": "store_id",
+              "u_referenced_column": "store_id"
             },
             "NotNull": {
               "constraint_name": "store_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -643,10 +755,12 @@
         "sqlx::Type"
       ],
       "table_name": "film",
+      "u_table_name": "film",
       "comment": null,
       "attributes": {
         "description": {
           "column_name": "description",
+          "u_column_name": "description",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -656,6 +770,7 @@
         },
         "film_id": {
           "column_name": "film_id",
+          "u_column_name": "film_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -666,20 +781,25 @@
               "constraint_value": "PRIMARY KEY (film_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "film_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "fulltext": {
           "column_name": "fulltext",
+          "u_column_name": "fulltext",
           "data_type": "tsvector",
           "u_type": "String",
           "is_nullable": "No",
@@ -690,13 +810,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "language_id": {
           "column_name": "language_id",
+          "u_column_name": "language_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -707,20 +830,25 @@
               "constraint_value": "FOREIGN KEY (language_id) REFERENCES language(language_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "language",
-              "referenced_column": "language_id"
+              "u_referenced_table": "language",
+              "referenced_column": "language_id",
+              "u_referenced_column": "language_id"
             },
             "NotNull": {
               "constraint_name": "language_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -731,13 +859,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "length": {
           "column_name": "length",
+          "u_column_name": "length",
           "data_type": "smallint",
           "u_type": "i16",
           "is_nullable": "Yes",
@@ -747,6 +878,7 @@
         },
         "original_language_id": {
           "column_name": "original_language_id",
+          "u_column_name": "original_language_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "Yes",
@@ -757,13 +889,16 @@
               "constraint_value": "FOREIGN KEY (original_language_id) REFERENCES language(language_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "language",
-              "referenced_column": "language_id"
+              "u_referenced_table": "language",
+              "referenced_column": "language_id",
+              "u_referenced_column": "language_id"
             }
           },
           "comment": null
         },
         "rating": {
           "column_name": "rating",
+          "u_column_name": "rating",
           "data_type": "mpaa_rating",
           "u_type": "MpaaRating",
           "is_nullable": "Yes",
@@ -773,6 +908,7 @@
         },
         "release_year": {
           "column_name": "release_year",
+          "u_column_name": "release_year",
           "data_type": "year",
           "u_type": "year",
           "is_nullable": "Yes",
@@ -782,6 +918,7 @@
         },
         "rental_duration": {
           "column_name": "rental_duration",
+          "u_column_name": "rental_duration",
           "data_type": "smallint",
           "u_type": "i16",
           "is_nullable": "No",
@@ -792,13 +929,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "rental_rate": {
           "column_name": "rental_rate",
+          "u_column_name": "rental_rate",
           "data_type": "numeric(4,2)",
           "u_type": "numeric(4,2)",
           "is_nullable": "No",
@@ -809,13 +949,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "replacement_cost": {
           "column_name": "replacement_cost",
+          "u_column_name": "replacement_cost",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -826,13 +969,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "special_features": {
           "column_name": "special_features",
+          "u_column_name": "special_features",
           "data_type": "text[][1]",
           "u_type": "Vec<Vec<String>>",
           "is_nullable": "Yes",
@@ -842,6 +988,7 @@
         },
         "title": {
           "column_name": "title",
+          "u_column_name": "title",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -852,7 +999,9 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -865,10 +1014,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "film_actor",
+      "u_table_name": "film_actor",
       "comment": null,
       "attributes": {
         "actor_id": {
           "column_name": "actor_id",
+          "u_column_name": "actor_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -879,27 +1030,34 @@
               "constraint_value": "PRIMARY KEY (actor_id, film_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "ForeignKey": {
               "constraint_name": "film_actor_actor_id_fkey",
               "constraint_value": "FOREIGN KEY (actor_id) REFERENCES actor(actor_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "actor",
-              "referenced_column": "actor_id"
+              "u_referenced_table": "marianne",
+              "referenced_column": "actor_id",
+              "u_referenced_column": "actor_id"
             },
             "NotNull": {
               "constraint_name": "actor_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "film_id": {
           "column_name": "film_id",
+          "u_column_name": "film_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -910,27 +1068,34 @@
               "constraint_value": "PRIMARY KEY (actor_id, film_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "ForeignKey": {
               "constraint_name": "film_actor_film_id_fkey",
               "constraint_value": "FOREIGN KEY (film_id) REFERENCES film(film_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "film",
-              "referenced_column": "film_id"
+              "u_referenced_table": "film",
+              "referenced_column": "film_id",
+              "u_referenced_column": "film_id"
             },
             "NotNull": {
               "constraint_name": "film_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -941,7 +1106,9 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -954,10 +1121,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "film_category",
+      "u_table_name": "film_category",
       "comment": null,
       "attributes": {
         "category_id": {
           "column_name": "category_id",
+          "u_column_name": "category_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -968,27 +1137,34 @@
               "constraint_value": "PRIMARY KEY (film_id, category_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "ForeignKey": {
               "constraint_name": "film_category_category_id_fkey",
               "constraint_value": "FOREIGN KEY (category_id) REFERENCES category(category_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "category",
-              "referenced_column": "category_id"
+              "u_referenced_table": "category",
+              "referenced_column": "category_id",
+              "u_referenced_column": "category_id"
             },
             "NotNull": {
               "constraint_name": "category_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "film_id": {
           "column_name": "film_id",
+          "u_column_name": "film_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -999,27 +1175,34 @@
               "constraint_value": "PRIMARY KEY (film_id, category_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "ForeignKey": {
               "constraint_name": "film_category_film_id_fkey",
               "constraint_value": "FOREIGN KEY (film_id) REFERENCES film(film_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "film",
-              "referenced_column": "film_id"
+              "u_referenced_table": "film",
+              "referenced_column": "film_id",
+              "u_referenced_column": "film_id"
             },
             "NotNull": {
               "constraint_name": "film_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -1030,7 +1213,9 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -1043,10 +1228,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "inventory",
+      "u_table_name": "inventory",
       "comment": null,
       "attributes": {
         "film_id": {
           "column_name": "film_id",
+          "u_column_name": "film_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1057,20 +1244,25 @@
               "constraint_value": "FOREIGN KEY (film_id) REFERENCES film(film_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "film",
-              "referenced_column": "film_id"
+              "u_referenced_table": "film",
+              "referenced_column": "film_id",
+              "u_referenced_column": "film_id"
             },
             "NotNull": {
               "constraint_name": "film_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "inventory_id": {
           "column_name": "inventory_id",
+          "u_column_name": "inventory_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1081,20 +1273,25 @@
               "constraint_value": "PRIMARY KEY (inventory_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "inventory_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -1105,13 +1302,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "store_id": {
           "column_name": "store_id",
+          "u_column_name": "store_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1122,14 +1322,18 @@
               "constraint_value": "FOREIGN KEY (store_id) REFERENCES store(store_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "store",
-              "referenced_column": "store_id"
+              "u_referenced_table": "store",
+              "referenced_column": "store_id",
+              "u_referenced_column": "store_id"
             },
             "NotNull": {
               "constraint_name": "store_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -1142,10 +1346,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "language",
+      "u_table_name": "language",
       "comment": null,
       "attributes": {
         "language_id": {
           "column_name": "language_id",
+          "u_column_name": "language_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1156,20 +1362,25 @@
               "constraint_value": "PRIMARY KEY (language_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "language_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -1180,13 +1391,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "name": {
           "column_name": "name",
+          "u_column_name": "name",
           "data_type": "character(20)",
           "u_type": "character(20)",
           "is_nullable": "No",
@@ -1197,7 +1411,9 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -1210,10 +1426,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "payment",
+      "u_table_name": "payment",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1224,13 +1442,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1241,13 +1462,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -1258,20 +1482,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1282,20 +1511,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1306,13 +1540,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1323,7 +1560,9 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -1336,10 +1575,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "payment_p2022_01",
+      "u_table_name": "payment_p2022_01",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1350,13 +1591,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1367,20 +1611,25 @@
               "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
               "referenced_schema_name": "public",
               "referenced_table": "customer",
-              "referenced_column": "customer_id"
+              "u_referenced_table": "customer",
+              "referenced_column": "customer_id",
+              "u_referenced_column": "customer_id"
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -1391,20 +1640,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1415,20 +1669,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1439,20 +1698,25 @@
               "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
               "referenced_schema_name": "public",
               "referenced_table": "rental",
-              "referenced_column": "rental_id"
+              "u_referenced_table": "rental",
+              "referenced_column": "rental_id",
+              "u_referenced_column": "rental_id"
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1463,14 +1727,18 @@
               "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
               "referenced_schema_name": "public",
               "referenced_table": "staff",
-              "referenced_column": "staff_id"
+              "u_referenced_table": "staff",
+              "referenced_column": "staff_id",
+              "u_referenced_column": "staff_id"
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -1483,10 +1751,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "payment_p2022_02",
+      "u_table_name": "payment_p2022_02",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1497,13 +1767,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1514,20 +1787,25 @@
               "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
               "referenced_schema_name": "public",
               "referenced_table": "customer",
-              "referenced_column": "customer_id"
+              "u_referenced_table": "customer",
+              "referenced_column": "customer_id",
+              "u_referenced_column": "customer_id"
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -1538,20 +1816,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1562,20 +1845,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1586,20 +1874,25 @@
               "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
               "referenced_schema_name": "public",
               "referenced_table": "rental",
-              "referenced_column": "rental_id"
+              "u_referenced_table": "rental",
+              "referenced_column": "rental_id",
+              "u_referenced_column": "rental_id"
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1610,14 +1903,18 @@
               "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
               "referenced_schema_name": "public",
               "referenced_table": "staff",
-              "referenced_column": "staff_id"
+              "u_referenced_table": "staff",
+              "referenced_column": "staff_id",
+              "u_referenced_column": "staff_id"
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -1630,10 +1927,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "payment_p2022_03",
+      "u_table_name": "payment_p2022_03",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1644,13 +1943,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1661,20 +1963,25 @@
               "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
               "referenced_schema_name": "public",
               "referenced_table": "customer",
-              "referenced_column": "customer_id"
+              "u_referenced_table": "customer",
+              "referenced_column": "customer_id",
+              "u_referenced_column": "customer_id"
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -1685,20 +1992,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1709,20 +2021,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1733,20 +2050,25 @@
               "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
               "referenced_schema_name": "public",
               "referenced_table": "rental",
-              "referenced_column": "rental_id"
+              "u_referenced_table": "rental",
+              "referenced_column": "rental_id",
+              "u_referenced_column": "rental_id"
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1757,14 +2079,18 @@
               "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
               "referenced_schema_name": "public",
               "referenced_table": "staff",
-              "referenced_column": "staff_id"
+              "u_referenced_table": "staff",
+              "referenced_column": "staff_id",
+              "u_referenced_column": "staff_id"
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -1777,10 +2103,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "payment_p2022_04",
+      "u_table_name": "payment_p2022_04",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1791,13 +2119,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1808,20 +2139,25 @@
               "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
               "referenced_schema_name": "public",
               "referenced_table": "customer",
-              "referenced_column": "customer_id"
+              "u_referenced_table": "customer",
+              "referenced_column": "customer_id",
+              "u_referenced_column": "customer_id"
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -1832,20 +2168,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1856,20 +2197,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1880,20 +2226,25 @@
               "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
               "referenced_schema_name": "public",
               "referenced_table": "rental",
-              "referenced_column": "rental_id"
+              "u_referenced_table": "rental",
+              "referenced_column": "rental_id",
+              "u_referenced_column": "rental_id"
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1904,14 +2255,18 @@
               "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
               "referenced_schema_name": "public",
               "referenced_table": "staff",
-              "referenced_column": "staff_id"
+              "u_referenced_table": "staff",
+              "referenced_column": "staff_id",
+              "u_referenced_column": "staff_id"
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -1924,10 +2279,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "payment_p2022_05",
+      "u_table_name": "payment_p2022_05",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -1938,13 +2295,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -1955,20 +2315,25 @@
               "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
               "referenced_schema_name": "public",
               "referenced_table": "customer",
-              "referenced_column": "customer_id"
+              "u_referenced_table": "customer",
+              "referenced_column": "customer_id",
+              "u_referenced_column": "customer_id"
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -1979,20 +2344,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2003,20 +2373,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2027,20 +2402,25 @@
               "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
               "referenced_schema_name": "public",
               "referenced_table": "rental",
-              "referenced_column": "rental_id"
+              "u_referenced_table": "rental",
+              "referenced_column": "rental_id",
+              "u_referenced_column": "rental_id"
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2051,14 +2431,18 @@
               "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
               "referenced_schema_name": "public",
               "referenced_table": "staff",
-              "referenced_column": "staff_id"
+              "u_referenced_table": "staff",
+              "referenced_column": "staff_id",
+              "u_referenced_column": "staff_id"
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -2071,10 +2455,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "payment_p2022_06",
+      "u_table_name": "payment_p2022_06",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -2085,13 +2471,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2102,20 +2491,25 @@
               "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id)",
               "referenced_schema_name": "public",
               "referenced_table": "customer",
-              "referenced_column": "customer_id"
+              "u_referenced_table": "customer",
+              "referenced_column": "customer_id",
+              "u_referenced_column": "customer_id"
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -2126,20 +2520,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2150,20 +2549,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2174,20 +2578,25 @@
               "constraint_value": "FOREIGN KEY (rental_id) REFERENCES rental(rental_id)",
               "referenced_schema_name": "public",
               "referenced_table": "rental",
-              "referenced_column": "rental_id"
+              "u_referenced_table": "rental",
+              "referenced_column": "rental_id",
+              "u_referenced_column": "rental_id"
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2198,14 +2607,18 @@
               "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id)",
               "referenced_schema_name": "public",
               "referenced_table": "staff",
-              "referenced_column": "staff_id"
+              "u_referenced_table": "staff",
+              "referenced_column": "staff_id",
+              "u_referenced_column": "staff_id"
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -2218,10 +2631,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "payment_p2022_07",
+      "u_table_name": "payment_p2022_07",
       "comment": null,
       "attributes": {
         "amount": {
           "column_name": "amount",
+          "u_column_name": "amount",
           "data_type": "numeric(5,2)",
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
@@ -2232,13 +2647,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2249,13 +2667,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_date": {
           "column_name": "payment_date",
+          "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -2266,20 +2687,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "payment_id": {
           "column_name": "payment_id",
+          "u_column_name": "payment_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2290,20 +2716,25 @@
               "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2314,13 +2745,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2331,7 +2765,9 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -2344,10 +2780,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "rental",
+      "u_table_name": "rental",
       "comment": null,
       "attributes": {
         "customer_id": {
           "column_name": "customer_id",
+          "u_column_name": "customer_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2358,20 +2796,25 @@
               "constraint_value": "FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "customer",
-              "referenced_column": "customer_id"
+              "u_referenced_table": "customer",
+              "referenced_column": "customer_id",
+              "u_referenced_column": "customer_id"
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "inventory_id": {
           "column_name": "inventory_id",
+          "u_column_name": "inventory_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2382,20 +2825,25 @@
               "constraint_value": "FOREIGN KEY (inventory_id) REFERENCES inventory(inventory_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "inventory",
-              "referenced_column": "inventory_id"
+              "u_referenced_table": "inventory",
+              "referenced_column": "inventory_id",
+              "u_referenced_column": "inventory_id"
             },
             "NotNull": {
               "constraint_name": "inventory_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -2406,13 +2854,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "rental_date": {
           "column_name": "rental_date",
+          "u_column_name": "rental_date",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -2423,13 +2874,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "rental_id": {
           "column_name": "rental_id",
+          "u_column_name": "rental_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2440,20 +2894,25 @@
               "constraint_value": "PRIMARY KEY (rental_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "return_date": {
           "column_name": "return_date",
+          "u_column_name": "return_date",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "Yes",
@@ -2463,6 +2922,7 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2473,14 +2933,18 @@
               "constraint_value": "FOREIGN KEY (staff_id) REFERENCES staff(staff_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "staff",
-              "referenced_column": "staff_id"
+              "u_referenced_table": "staff",
+              "referenced_column": "staff_id",
+              "u_referenced_column": "staff_id"
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -2493,10 +2957,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "staff",
+      "u_table_name": "staff",
       "comment": null,
       "attributes": {
         "active": {
           "column_name": "active",
+          "u_column_name": "active",
           "data_type": "boolean",
           "u_type": "bool",
           "is_nullable": "No",
@@ -2507,13 +2973,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "address_id": {
           "column_name": "address_id",
+          "u_column_name": "address_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2524,20 +2993,25 @@
               "constraint_value": "FOREIGN KEY (address_id) REFERENCES address(address_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "address",
-              "referenced_column": "address_id"
+              "u_referenced_table": "address",
+              "referenced_column": "address_id",
+              "u_referenced_column": "address_id"
             },
             "NotNull": {
               "constraint_name": "address_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "email": {
           "column_name": "email",
+          "u_column_name": "email",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2547,6 +3021,7 @@
         },
         "first_name": {
           "column_name": "first_name",
+          "u_column_name": "first_name",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -2557,13 +3032,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_name": {
           "column_name": "last_name",
+          "u_column_name": "last_name",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -2574,13 +3052,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -2591,13 +3072,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "password": {
           "column_name": "password",
+          "u_column_name": "password",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2607,6 +3091,7 @@
         },
         "picture": {
           "column_name": "picture",
+          "u_column_name": "picture",
           "data_type": "bytea",
           "u_type": "Vec<u8>",
           "is_nullable": "Yes",
@@ -2616,6 +3101,7 @@
         },
         "staff_id": {
           "column_name": "staff_id",
+          "u_column_name": "staff_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2626,20 +3112,25 @@
               "constraint_value": "PRIMARY KEY (staff_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "store_id": {
           "column_name": "store_id",
+          "u_column_name": "store_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2650,20 +3141,25 @@
               "constraint_value": "FOREIGN KEY (store_id) REFERENCES store(store_id)",
               "referenced_schema_name": "public",
               "referenced_table": "store",
-              "referenced_column": "store_id"
+              "u_referenced_table": "store",
+              "referenced_column": "store_id",
+              "u_referenced_column": "store_id"
             },
             "NotNull": {
               "constraint_name": "store_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "username": {
           "column_name": "username",
+          "u_column_name": "username",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "No",
@@ -2674,7 +3170,9 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -2687,10 +3185,12 @@
         "chrono::{DateTime, Utc}"
       ],
       "table_name": "store",
+      "u_table_name": "store",
       "comment": null,
       "attributes": {
         "address_id": {
           "column_name": "address_id",
+          "u_column_name": "address_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2701,20 +3201,25 @@
               "constraint_value": "FOREIGN KEY (address_id) REFERENCES address(address_id) ON UPDATE CASCADE ON DELETE RESTRICT",
               "referenced_schema_name": "public",
               "referenced_table": "address",
-              "referenced_column": "address_id"
+              "u_referenced_table": "address",
+              "referenced_column": "address_id",
+              "u_referenced_column": "address_id"
             },
             "NotNull": {
               "constraint_name": "address_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "last_update": {
           "column_name": "last_update",
+          "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
@@ -2725,13 +3230,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "manager_staff_id": {
           "column_name": "manager_staff_id",
+          "u_column_name": "manager_staff_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2742,13 +3250,16 @@
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
         },
         "store_id": {
           "column_name": "store_id",
+          "u_column_name": "store_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "No",
@@ -2759,14 +3270,18 @@
               "constraint_value": "PRIMARY KEY (store_id)",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             },
             "NotNull": {
               "constraint_name": "store_id_not_null",
               "constraint_value": "NOT NULL",
               "referenced_schema_name": null,
               "referenced_table": null,
-              "referenced_column": null
+              "u_referenced_table": null,
+              "referenced_column": null,
+              "u_referenced_column": null
             }
           },
           "comment": null
@@ -2779,10 +3294,12 @@
       "object_type": "View",
       "u_imports": [],
       "table_name": "actor_info",
+      "u_table_name": "actor_info",
       "comment": null,
       "attributes": {
         "actor_id": {
           "column_name": "actor_id",
+          "u_column_name": "actor_id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "Yes",
@@ -2792,6 +3309,7 @@
         },
         "film_info": {
           "column_name": "film_info",
+          "u_column_name": "film_info",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2801,6 +3319,7 @@
         },
         "first_name": {
           "column_name": "first_name",
+          "u_column_name": "first_name",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2810,6 +3329,7 @@
         },
         "last_name": {
           "column_name": "last_name",
+          "u_column_name": "last_name",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2823,10 +3343,12 @@
       "object_type": "View",
       "u_imports": [],
       "table_name": "customer_list",
+      "u_table_name": "customer_list",
       "comment": null,
       "attributes": {
         "address": {
           "column_name": "address",
+          "u_column_name": "address",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2836,6 +3358,7 @@
         },
         "city": {
           "column_name": "city",
+          "u_column_name": "city",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2845,6 +3368,7 @@
         },
         "country": {
           "column_name": "country",
+          "u_column_name": "country",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2854,6 +3378,7 @@
         },
         "id": {
           "column_name": "id",
+          "u_column_name": "id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "Yes",
@@ -2863,6 +3388,7 @@
         },
         "name": {
           "column_name": "name",
+          "u_column_name": "name",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2872,6 +3398,7 @@
         },
         "notes": {
           "column_name": "notes",
+          "u_column_name": "notes",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2881,6 +3408,7 @@
         },
         "phone": {
           "column_name": "phone",
+          "u_column_name": "phone",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2890,6 +3418,7 @@
         },
         "sid": {
           "column_name": "sid",
+          "u_column_name": "sid",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "Yes",
@@ -2899,6 +3428,7 @@
         },
         "zip code": {
           "column_name": "zip code",
+          "u_column_name": "zip code",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2914,10 +3444,12 @@
         "sqlx::Type"
       ],
       "table_name": "film_list",
+      "u_table_name": "film_list",
       "comment": null,
       "attributes": {
         "actors": {
           "column_name": "actors",
+          "u_column_name": "actors",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2927,6 +3459,7 @@
         },
         "category": {
           "column_name": "category",
+          "u_column_name": "category",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2936,6 +3469,7 @@
         },
         "description": {
           "column_name": "description",
+          "u_column_name": "description",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2945,6 +3479,7 @@
         },
         "fid": {
           "column_name": "fid",
+          "u_column_name": "fid",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "Yes",
@@ -2954,6 +3489,7 @@
         },
         "length": {
           "column_name": "length",
+          "u_column_name": "length",
           "data_type": "smallint",
           "u_type": "i16",
           "is_nullable": "Yes",
@@ -2963,6 +3499,7 @@
         },
         "price": {
           "column_name": "price",
+          "u_column_name": "price",
           "data_type": "numeric(4,2)",
           "u_type": "numeric(4,2)",
           "is_nullable": "Yes",
@@ -2972,6 +3509,7 @@
         },
         "rating": {
           "column_name": "rating",
+          "u_column_name": "rating",
           "data_type": "mpaa_rating",
           "u_type": "MpaaRating",
           "is_nullable": "Yes",
@@ -2981,6 +3519,7 @@
         },
         "title": {
           "column_name": "title",
+          "u_column_name": "title",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -2996,10 +3535,12 @@
         "sqlx::Type"
       ],
       "table_name": "nicer_but_slower_film_list",
+      "u_table_name": "nicer_but_slower_film_list",
       "comment": null,
       "attributes": {
         "actors": {
           "column_name": "actors",
+          "u_column_name": "actors",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3009,6 +3550,7 @@
         },
         "category": {
           "column_name": "category",
+          "u_column_name": "category",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3018,6 +3560,7 @@
         },
         "description": {
           "column_name": "description",
+          "u_column_name": "description",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3027,6 +3570,7 @@
         },
         "fid": {
           "column_name": "fid",
+          "u_column_name": "fid",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "Yes",
@@ -3036,6 +3580,7 @@
         },
         "length": {
           "column_name": "length",
+          "u_column_name": "length",
           "data_type": "smallint",
           "u_type": "i16",
           "is_nullable": "Yes",
@@ -3045,6 +3590,7 @@
         },
         "price": {
           "column_name": "price",
+          "u_column_name": "price",
           "data_type": "numeric(4,2)",
           "u_type": "numeric(4,2)",
           "is_nullable": "Yes",
@@ -3054,6 +3600,7 @@
         },
         "rating": {
           "column_name": "rating",
+          "u_column_name": "rating",
           "data_type": "mpaa_rating",
           "u_type": "MpaaRating",
           "is_nullable": "Yes",
@@ -3063,6 +3610,7 @@
         },
         "title": {
           "column_name": "title",
+          "u_column_name": "title",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3078,10 +3626,12 @@
         "rust_decimal::Decimal"
       ],
       "table_name": "rental_by_category",
+      "u_table_name": "rental_by_category",
       "comment": null,
       "attributes": {
         "category": {
           "column_name": "category",
+          "u_column_name": "category",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3091,6 +3641,7 @@
         },
         "total_sales": {
           "column_name": "total_sales",
+          "u_column_name": "total_sales",
           "data_type": "numeric",
           "u_type": "Decimal",
           "is_nullable": "Yes",
@@ -3106,10 +3657,12 @@
         "rust_decimal::Decimal"
       ],
       "table_name": "sales_by_film_category",
+      "u_table_name": "sales_by_film_category",
       "comment": null,
       "attributes": {
         "category": {
           "column_name": "category",
+          "u_column_name": "category",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3119,6 +3672,7 @@
         },
         "total_sales": {
           "column_name": "total_sales",
+          "u_column_name": "total_sales",
           "data_type": "numeric",
           "u_type": "Decimal",
           "is_nullable": "Yes",
@@ -3134,10 +3688,12 @@
         "rust_decimal::Decimal"
       ],
       "table_name": "sales_by_store",
+      "u_table_name": "sales_by_store",
       "comment": null,
       "attributes": {
         "manager": {
           "column_name": "manager",
+          "u_column_name": "manager",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3147,6 +3703,7 @@
         },
         "store": {
           "column_name": "store",
+          "u_column_name": "store",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3156,6 +3713,7 @@
         },
         "total_sales": {
           "column_name": "total_sales",
+          "u_column_name": "total_sales",
           "data_type": "numeric",
           "u_type": "Decimal",
           "is_nullable": "Yes",
@@ -3169,10 +3727,12 @@
       "object_type": "View",
       "u_imports": [],
       "table_name": "staff_list",
+      "u_table_name": "staff_list",
       "comment": null,
       "attributes": {
         "address": {
           "column_name": "address",
+          "u_column_name": "address",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3182,6 +3742,7 @@
         },
         "city": {
           "column_name": "city",
+          "u_column_name": "city",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3191,6 +3752,7 @@
         },
         "country": {
           "column_name": "country",
+          "u_column_name": "country",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3200,6 +3762,7 @@
         },
         "id": {
           "column_name": "id",
+          "u_column_name": "id",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "Yes",
@@ -3209,6 +3772,7 @@
         },
         "name": {
           "column_name": "name",
+          "u_column_name": "name",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3218,6 +3782,7 @@
         },
         "phone": {
           "column_name": "phone",
+          "u_column_name": "phone",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",
@@ -3227,6 +3792,7 @@
         },
         "sid": {
           "column_name": "sid",
+          "u_column_name": "sid",
           "data_type": "integer",
           "u_type": "i32",
           "is_nullable": "Yes",
@@ -3236,6 +3802,7 @@
         },
         "zip code": {
           "column_name": "zip code",
+          "u_column_name": "zip code",
           "data_type": "text",
           "u_type": "String",
           "is_nullable": "Yes",

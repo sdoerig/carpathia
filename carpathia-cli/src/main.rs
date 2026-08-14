@@ -4,6 +4,7 @@ use crate::generator::template_engine;
 use crate::return_values::carpathia_errors::ErrorNumber;
 use crate::template_engine::TemplateEngine;
 mod enums;
+use carpathia_core::generator::tera_conversion::AdrTemplateData;
 use carpathia_core::templates::enum_templates::InitTemplate;
 use carpathia_core::*;
 use clap::Parser;
@@ -59,9 +60,12 @@ struct Args {
     /// Where to store carpathias cache file. The cache file contains hashes of the previously generated database entities   
     #[arg(long, default_value = "./carpathia_cache.json")]
     cache_file: String,
-    /// print the extracted database schema to the console in JSON format for debugging purposes.
+    /// print the extracted database schema to the console in JSON format. This can be useful for template development and debugging. You might need this.
     #[arg(long, default_value_t = false)]
     print_schema: bool,
+    /// prints the internal schema_representation. Do not refer to this representation for templating. For templating, use the `print_schema` option. This option is only for debugging purposes.
+    #[arg(long, default_value_t = false)]
+    print_internal_schema: bool,
     /// print a json file of the database types to the console. You might need this.
     #[arg(long, default_value_t = false)]
     print_db_types: bool,
@@ -132,8 +136,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             exit(i32::from(e.error_type));
         }
     };
-    if config.print_schema {
+    // print_internal_schema is not added to the configuration because it is only used for debugging purposes and should not be part of the normal configuration.
+    // This since it does not affect behavior of carpathia in any sense.
+    if args.print_internal_schema {
         match serde_json::to_string_pretty(&abstr_db_repr) {
+            Ok(json) => println!("{json}"),
+            Err(e) => {
+                error!("Could not print internal schema {e}");
+                exit(i32::from(ErrorNumber::Other));
+            }
+        }
+        exit(0);
+    }
+    if config.print_schema {
+        match serde_json::to_string_pretty(&AdrTemplateData::from(&abstr_db_repr)) {
             Ok(json) => println!("{json}"),
             Err(e) => {
                 error!("Could not print schema {e}");

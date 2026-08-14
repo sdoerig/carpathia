@@ -148,6 +148,7 @@ mod tests {
             column_name.to_string(),
             AbstractAttribute {
                 column_name: column_name.to_string(),
+                u_column_name: column_name.to_string(),
                 data_type: "integer".to_string(),
                 u_type: "whatever".to_string(),
                 is_nullable: "NO".parse().unwrap_or(IsNullable::No),
@@ -158,6 +159,7 @@ mod tests {
         );
         AbstractTableRepr {
             table_name: table_name.to_string(),
+            u_table_name: table_name.to_string(),
             object_type,
             u_imports: BTreeSet::new(),
             comment: Some("Test table".to_string()),

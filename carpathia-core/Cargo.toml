@@ -1,6 +1,6 @@
 [package]
 name = "carpathia-core"
-version = "0.2.1-beta.4"
+version = "0.2.1-beta.5"
 edition = "2024"
 license = "Apache-2.0"
 authors = ["Stefan Dörig", "sdoerig@bluewin.ch"]
@@ -25,3 +25,6 @@ tar = "0.4"
 [dev-dependencies]
 dotenv = "0.15"
 tempfile = "3.8"
+
+[features]
+postgres = []

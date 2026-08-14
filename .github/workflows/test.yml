@@ -72,12 +72,9 @@ jobs:
       - name: Rust Linting (clippy)
         run: cargo clippy --all-targets --all-features -- -D warnings
 
-      - name: Run Tests with Coverage (tarpaulin)
+      - name: Run Tests with Coverage Postgres (tarpaulin)
         run: |
-          cargo tarpaulin \
-            --out Lcov \
-            --run-types Tests \
-            -- --test-threads=1
+          cargo tarpaulin --out Lcov --run-types Tests --features postgres  -- --test-threads=1
         env:
           TEST_DB_URL: postgres://postgres:postgres@localhost:5432
           TEST_DB_NAME: carpathia

@@ -26,6 +26,7 @@ pub struct AdrTemplateData<'a> {
 pub struct TableTemplateData<'a> {
     pub object_type: &'a ObjectType,
     pub table_name: &'a str,
+    pub u_table_name: &'a str,
     pub comment: Option<&'a str>,
     pub u_imports: Vec<&'a str>,
     pub attributes: Vec<&'a AbstractAttribute>,
@@ -46,6 +47,7 @@ impl<'a> From<&'a AbstractTableRepr> for TableTemplateData<'a> {
         Self {
             object_type: &table.object_type,
             table_name: &table.table_name,
+            u_table_name: &table.u_table_name,
             comment: table.comment.as_deref(),
             u_imports: table.u_imports.iter().map(|s| s.as_str()).collect(), // BTreeSet<String> → Vec<&str>
             attributes: table.attributes.values().collect(), // BTreeMap<String, AbstractAttribute> → Vec<&AbstractAttribute>
