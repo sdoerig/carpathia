@@ -1,6 +1,5 @@
 //! This module enriches the AbstractDbRepr with user-defined type mappings
 //! based on the configuration provided by the user.
-
 use log::debug;
 
 use crate::configuration::carpathia_conf::CarpathiaConfig;
@@ -32,7 +31,9 @@ fn add_to_atr(
         .get(&atr.table_name)
         .unwrap_or(&atr.table_name)
         .clone();
+
     for attribute in &mut atr.attributes.values_mut() {
+        map_constraints_to_user_friendly_names(db_name_map, attribute);
         // Add a user-friendly mapping for the column name
         // map the user type to the ADR
         let default_type_mapping = TypeMapping {
@@ -53,6 +54,28 @@ fn add_to_atr(
         {
             debug!("insert_u_import {}", import);
             atr.u_imports.insert(import);
+        }
+    }
+}
+
+fn map_constraints_to_user_friendly_names(
+    db_name_map: &std::collections::BTreeMap<String, String>,
+    attribute: &mut super::db_schema_structs::AbstractAttribute,
+) {
+    for constraint in attribute.constraints.values_mut() {
+        if let Some(referenced_table) = &constraint.referenced_table {
+            constraint.u_referenced_table = db_name_map
+                .get(referenced_table)
+                .unwrap_or(referenced_table)
+                .clone()
+                .into();
+        }
+        if let Some(referenced_column) = &constraint.referenced_column {
+            constraint.u_referenced_column = db_name_map
+                .get(referenced_column)
+                .unwrap_or(referenced_column)
+                .clone()
+                .into();
         }
     }
 }

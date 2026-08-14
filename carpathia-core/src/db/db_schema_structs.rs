@@ -84,7 +84,9 @@ pub struct AbstractConstraint {
     pub constraint_value: String,
     pub referenced_schema_name: Option<String>,
     pub referenced_table: Option<String>,
+    pub u_referenced_table: Option<String>,
     pub referenced_column: Option<String>,
+    pub u_referenced_column: Option<String>,
 }
 
 #[derive(
@@ -242,7 +244,9 @@ mod tests {
                         constraint_name: "users_pkey".to_string(),
                         constraint_value: "".to_string(),
                         referenced_schema_name: None,
+                        u_referenced_column: None,
                         referenced_table: None,
+                        u_referenced_table: None,
                         referenced_column: None,
                     },
                 );
