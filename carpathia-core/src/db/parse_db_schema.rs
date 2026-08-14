@@ -145,27 +145,43 @@ mod tests {
                             "DB object {} attribute {} is_nullable must be equal",
                             reference_atr.table_name, attr_name
                         );
-
-                        /*assert_eq!(
-                            test_attr.constraint_type,
-                            reference_attr.constraint_type,
-                            "DB object {} attribute {} test_attr.constraint_type {:?} and reference_attr.constraint_type {:?} must be equal ",
-                            reference_atr.table_name,
-                            attr_name,
-                            test_attr.constraint_type,
-                            reference_attr.constraint_type
-                        );*/
-
-                        /*assert_eq!(
-                            test_attr.referenced_column, reference_attr.referenced_column,
-                            "DB object {} attribute {} referenced_column must be equal",
-                            reference_atr.table_name, attr_name
-                        );
-                        assert_eq!(
-                            test_attr.referenced_table, reference_attr.referenced_table,
-                            "DB object {} attribute {} referenced_table must be equal",
-                            reference_atr.table_name, attr_name
-                        );*/
+                        for (reference_constraint_name, reference_constraint) in
+                            &reference_attr.constraints
+                        {
+                            if let Some(test_constraint) =
+                                test_attr.constraints.get(reference_constraint_name)
+                            {
+                                assert_eq!(
+                                    test_constraint.constraint_name,
+                                    reference_constraint.constraint_name,
+                                    "DB object {} attribute {} constraint {} constraint_name must be equal",
+                                    reference_atr.table_name,
+                                    attr_name,
+                                    reference_constraint.constraint_name
+                                );
+                                assert_eq!(
+                                    test_constraint.referenced_column,
+                                    reference_constraint.referenced_column,
+                                    "DB object {} attribute {} constraint {} referenced_column must be equal",
+                                    reference_atr.table_name,
+                                    attr_name,
+                                    reference_constraint.constraint_name
+                                );
+                                assert_eq!(
+                                    test_constraint.referenced_table,
+                                    reference_constraint.referenced_table,
+                                    "DB object {} attribute {} constraint {} referenced_table must be equal",
+                                    reference_atr.table_name,
+                                    attr_name,
+                                    reference_constraint.constraint_name
+                                );
+                            } else {
+                                panic!(
+                                    "DB object {} attribute {} constraint {:?} not found in test schema",
+                                    reference_atr.table_name, attr_name, reference_constraint_name
+                                );
+                            }
+                        }
                     } else {
                         // No exprected DB object - something is seriously wrong. Now do panic...
                         panic!("DB object {} not found", reference_atr.table_name)
