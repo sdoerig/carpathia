@@ -50,6 +50,8 @@
       "u_type": "String"
     }
   },
-  "db_to_code_names_mapping": {} 
+  "db_to_code_names_mapping": {
+    "actor": "marianne"
+  } 
 }
 
