@@ -81,6 +81,7 @@ mod tests {
             .cache_file("./cache/carpathia_cache.json".to_string())
             .print_schema(false)
             .print_db_types(false)
+            .execute_templates(true)
             .build()
             .expect("Config building failed...")
     }

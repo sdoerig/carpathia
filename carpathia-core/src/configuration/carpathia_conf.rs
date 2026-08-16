@@ -162,27 +162,47 @@ impl CarpathiaConfigBuilder {
 impl CarpathiaConfigBuilder {
     /// Building CarpathiaConfig.
     pub fn build(self) -> Result<CarpathiaConfig, CarpathiaError> {
-        let db_host = self.db_host.ok_or_else(|| CarpathiaError {
-            message: "db_host missing".into(),
-            error_type: ErrorNumber::InvalidConfiguration,
-        })?;
-        let db_user = self.db_user.ok_or_else(|| CarpathiaError {
-            message: "db_user missing".into(),
-            error_type: ErrorNumber::InvalidConfiguration,
-        })?;
-        let db_password = self.db_password.ok_or_else(|| CarpathiaError {
-            message: "db_password missing".into(),
-            error_type: ErrorNumber::InvalidConfiguration,
-        })?;
-        let db_name = self.db_name.ok_or_else(|| CarpathiaError {
-            message: "db_name missing".into(),
-            error_type: ErrorNumber::InvalidConfiguration,
-        })?;
-        let db_type = self.db_type.ok_or_else(|| CarpathiaError {
-            message: "db_type missing".into(),
-            error_type: ErrorNumber::InvalidConfiguration,
-        })?;
-
+        let mut db_pool = DbPool::Dummy;
+        if self.execute_templates || self.print_schema || self.print_db_types {
+            let db_host = self.db_host.ok_or_else(|| CarpathiaError {
+                message: "db_host missing".into(),
+                error_type: ErrorNumber::InvalidConfiguration,
+            })?;
+            let db_user = self.db_user.ok_or_else(|| CarpathiaError {
+                message: "db_user missing".into(),
+                error_type: ErrorNumber::InvalidConfiguration,
+            })?;
+            let db_password = self.db_password.ok_or_else(|| CarpathiaError {
+                message: "db_password missing".into(),
+                error_type: ErrorNumber::InvalidConfiguration,
+            })?;
+            let db_name = self.db_name.ok_or_else(|| CarpathiaError {
+                message: "db_name missing".into(),
+                error_type: ErrorNumber::InvalidConfiguration,
+            })?;
+            let db_type = self.db_type.ok_or_else(|| CarpathiaError {
+                message: "db_type missing".into(),
+                error_type: ErrorNumber::InvalidConfiguration,
+            })?;
+            let db_port: i32 = match self.db_port {
+                Some(p) => p,
+                None => i32::from(db_type),
+            };
+            db_pool = match db_type {
+                // building an url like string db_type://user_name:user_password@db_host/db_name
+                DbType::Postgres => DbPool::Postgres(
+                    PgPoolOptions::new()
+                        .connect_lazy(&format!(
+                            "{db_type}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+                        ))
+                        .map_err(|e| CarpathiaError {
+                            message: format!("DB error: {e}"),
+                            error_type: ErrorNumber::DatabaseConnectionError,
+                        })?,
+                ),
+                DbType::Dummy => DbPool::Dummy,
+            };
+        }
         let type_map = match load_type_mappings(&self.type_mapping_file) {
             Ok(types) => {
                 info!(
@@ -196,25 +216,6 @@ impl CarpathiaConfigBuilder {
                 info!("Could not load {:?}", self.type_mapping_file.as_os_str());
                 Types::new()
             }
-        };
-
-        let db_port: i32 = match self.db_port {
-            Some(p) => p,
-            None => i32::from(db_type),
-        };
-        let db_pool = match db_type {
-            // building an url like string db_type://user_name:user_password@db_host/db_name
-            DbType::Postgres => DbPool::Postgres(
-                PgPoolOptions::new()
-                    .connect_lazy(&format!(
-                        "{db_type}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
-                    ))
-                    .map_err(|e| CarpathiaError {
-                        message: format!("DB error: {e}"),
-                        error_type: ErrorNumber::DatabaseConnectionError,
-                    })?,
-            ),
-            DbType::Dummy => DbPool::Dummy,
         };
 
         Ok(CarpathiaConfig {
@@ -269,6 +270,7 @@ mod tests {
         let result = CarpathiaConfigBuilder::new()
             .db_name("test_db")
             .db_type(DbType::Postgres)
+            .execute_templates(true)
             .build();
 
         assert!(result.is_err());
