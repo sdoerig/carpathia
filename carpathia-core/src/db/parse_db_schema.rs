@@ -5,7 +5,7 @@ use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::db::enrich_adr::add_user_mapping_to_adr;
-use crate::db::postgresql::PostgresQuerier;
+use crate::db::postgres::postgresql::PostgresQuerier;
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
 pub struct DbSchemaParser {

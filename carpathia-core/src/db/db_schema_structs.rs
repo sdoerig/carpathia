@@ -287,4 +287,64 @@ mod tests {
             .insert("name".to_string(), create_column_info("name")); // Attempt to add a duplicate attribute again
         assert_eq!(table_info.attributes.len(), 2);
     }
+
+    #[test]
+    fn test_constraint_type_from_str() {
+        let primary_key: ConstraintType = "PRIMARY KEY".parse().unwrap();
+        assert_eq!(primary_key, ConstraintType::PrimaryKey);
+
+        let unique: ConstraintType = "UNIQUE".parse().unwrap();
+        assert_eq!(unique, ConstraintType::Unique);
+
+        let foreign_key: ConstraintType = "FOREIGN KEY".parse().unwrap();
+        assert_eq!(foreign_key, ConstraintType::ForeignKey);
+
+        let check: ConstraintType = "CHECK".parse().unwrap();
+        assert_eq!(check, ConstraintType::Check);
+
+        let exclusion: ConstraintType = "EXCLUSION".parse().unwrap();
+        assert_eq!(exclusion, ConstraintType::Exclusion);
+
+        let not_null: ConstraintType = "NOT NULL".parse().unwrap();
+        assert_eq!(not_null, ConstraintType::NotNull);
+
+        let constraint_trigger: ConstraintType = "CONSTRAINT TRIGGER".parse().unwrap();
+        assert_eq!(constraint_trigger, ConstraintType::ConstraintTrigger);
+
+        let none: ConstraintType = "NONE".parse().unwrap();
+        assert_eq!(none, ConstraintType::None);
+
+        let unknown: ConstraintType = "UNKNOWN".parse().unwrap();
+        assert_eq!(unknown, ConstraintType::Unknown("UNKNOWN".to_string()));
+    }
+
+    #[test]
+    fn test_is_nullable_from_str() {
+        let yes: IsNullable = "YES".parse().unwrap();
+        assert_eq!(yes, IsNullable::Yes);
+        let unknown: IsNullable = "MAYBE".parse().unwrap();
+        assert_eq!(unknown, IsNullable::Unknown("MAYBE".to_string()));
+    }
+
+    #[test]
+    fn test_is_identity_from_str() {
+        let yes: IsIdentity = "YES".parse().unwrap();
+        assert_eq!(yes, IsIdentity::Yes);
+        let unknown: IsIdentity = "MAYBE".parse().unwrap();
+        assert_eq!(unknown, IsIdentity::Unknown("MAYBE".to_string()));
+    }
+
+    #[test]
+    fn test_is_generated_from_str() {
+        let always: IsGenerated = "ALWAYS".parse().unwrap();
+        assert_eq!(always, IsGenerated::Always);
+        let unknown: IsGenerated = "MAYBE".parse().unwrap();
+        assert_eq!(unknown, IsGenerated::Unknown("MAYBE".to_string()));
+        let by_default: IsGenerated = "BY DEFAULT".parse().unwrap();
+        assert_eq!(by_default, IsGenerated::ByDefault);
+        let by_default_on_null: IsGenerated = "BY DEFAULT ON NULL".parse().unwrap();
+        assert_eq!(by_default_on_null, IsGenerated::ByDefaultOnNull);
+        let never: IsGenerated = "NEVER".parse().unwrap();
+        assert_eq!(never, IsGenerated::Never);
+    }
 }
