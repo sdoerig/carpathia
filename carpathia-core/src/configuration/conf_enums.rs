@@ -48,6 +48,7 @@ impl Display for DbType {
     }
 }
 
+#[derive(Debug, Clone)]
 pub enum DbPool {
     Postgres(Pool<Postgres>),
     Dummy,

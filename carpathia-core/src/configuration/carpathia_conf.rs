@@ -40,6 +40,55 @@ pub struct CarpathiaConfig {
 /// CarpathiaConfigBuilder is close related to all the
 /// configuration parameters. E.g. from a CLI.
 /// Its only purpose is to create the CarpathiaConfig.
+/// How to use the builder
+///
+/// # Example just getting the templates:
+/// ```
+/// use carpathia_core::configuration::carpathia_conf::{CarpathiaConfigBuilder};
+/// use carpathia_core::templates::enum_templates::InitTemplate;
+///
+/// let config = match CarpathiaConfigBuilder::new()
+///     .template_directory("tera/rust_lib")
+///     .init_template(InitTemplate::RustLib)
+///     .build() {
+///     Ok(config) => assert_eq!(config.init_template, InitTemplate::RustLib),
+///     Err(e) => {
+///         eprintln!("Error creating configuration - : {}", e);
+///     }
+/// };
+/// ```
+///
+/// # Example with database connection and executing templates:
+/// 
+/// Note excute templates must be set to true - if not so they will not be rendered. The default is false.
+/// ```
+/// use carpathia_core::configuration::carpathia_conf::{CarpathiaConfigBuilder};
+/// use carpathia_core::configuration::conf_enums::{DbType, CacheModus, DbPool};
+///
+/// #[tokio::main]
+/// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+///     let config = match CarpathiaConfigBuilder::new()
+///         .db_host("localhost")
+///         .db_port(5432)
+///         .db_user("doerig")
+///         .db_password("doerig")
+///         .db_name("pagila")
+///         .db_type(DbType::Postgres)
+///         .output_directory("./output")
+///         .cache_file("./cache/carpathia_cache.json")
+///         .execute_templates(true)
+///         .build()
+///     {
+///         Ok(config) => {
+///            assert!(true);
+///         }
+///         Err(e) => {
+///             panic!("Error creating configuration - : {}", e);
+///         }
+///     };
+///     Ok(())
+/// }
+/// ```
 pub struct CarpathiaConfigBuilder {
     db_host: Option<String>,
     db_port: Option<i32>,
