@@ -20,6 +20,7 @@ use log::{error, info};
 use std::{collections::BTreeMap, fs, path::PathBuf};
 
 pub struct Cache {
+    //
     cache_file_old: CacheFile,
     cache_file_new: CacheFile,
     cache_file_path: PathBuf,

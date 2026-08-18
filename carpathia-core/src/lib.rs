@@ -1,17 +1,23 @@
 //! carpathia-core
 //! 
-//! Language agnostic database generator. Short description of the structure:
+//! Language agnostic database code generator. 
+//! - tera 2 based
+//! - delta aware - just generate what has changed.
+//! - abstract database representation - assemble the data smart, keep the templates simple.
+//! - tested against PostgreSQL version 13 to 18
+//! - carpathia is not an ORM - and will never be one
+//! - it is declarative, leaves you the freedom what to generate
+//! - allows you to map database types to your own custom types
+//! - offers a mapping of database names (e.g. tables, view, attributes) to code friendley names.
+//!   Exampel: in the database is a table named  `match`. This will not work when generating Rust
 //! 
-//! - cache
-//!   Any generation operation is cached in a JSON file. The cache is needed to avoit 
-//!   unnecessary generation of unchanged entities. Entities (Database entities or templates) are cached using blake2 hashing.
-//!   Hashing is based on deterministic entitiy - so with in databases entities BTreeMap or -Set are 
-//!   uses to achieve this.
-//!   Regeneration is done if one or more of these conditions are true: 
-//!   - The entity is not in the cache
-//!   - The entity is in the cache but the hash has changed
-//!   - The template has changed
-//!   - Cache override CacheModus::BypassCache is set
+//! A run consists of 
+//! - building [CarpathiaConf](crate::configuration::carpathia_conf::CarpathiaConfigBuilder)
+//! - deciding what to do
+//!   - print database type mapping
+//!   - executing the tera templates
+//!   - initializing templates - so you don't have to start from zero
+//!   -
 //! 
 //! - configuration
 //!   Contains the configuration any part of carpatia-core can be passed to. The configuration contains
@@ -24,10 +30,22 @@
 //!   - executing templates - hence generate code for database entities (tables, views, etc.)
 //!   - printing the database type mapping 
 //!   - printing the database schema
+//!   - printing the abstract database representation
 //!  
-//!   Building the configuration means
-//!   - user defined type mapping are deserialized within the configuration 
-//!   - database pool is being configurated
+//!   The database connection is not needed for:
+//!   - initializing the template examples
+//! 
+//! - db
+//!   This part contains anything dealing with the database
+//! 
+//! - generator 
+//!   Does all the tera 2 execution and generation work
+//! 
+//! - return_values
+//!   Contains the error definitions and return values
+//! 
+//! - templates
+//!   Any example template collections go in here.
 
 pub mod cache;
 pub mod configuration;
