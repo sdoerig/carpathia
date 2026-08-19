@@ -1,5 +1,3 @@
-//! carpathia-core
-//! 
 //! Language agnostic database code generator. 
 //! - tera 2 based
 //! - delta aware - just generate what has changed.
@@ -15,9 +13,14 @@
 //! - building [CarpathiaConf](crate::configuration::carpathia_conf::CarpathiaConfigBuilder)
 //! - deciding what to do
 //!   - print database type mapping
+//!     - (introspect)[crate::db] the database
+//!       which delivers the internal model (abstract database represenation)[crate::db::db_schema_structs::AbstractDbRepr]
+//! 
 //!   - executing the tera templates
+//!     - (introspect)[crate::db] the database
+//!     - call (generate_code)[crate::generator::template_engine::TemplateEngine::generate_code]
 //!   - initializing templates - so you don't have to start from zero
-//!   -
+//!   
 //! 
 //! - configuration
 //!   Contains the configuration any part of carpatia-core can be passed to. The configuration contains

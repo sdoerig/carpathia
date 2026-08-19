@@ -1,6 +1,6 @@
-/// This module extracts the datebase schema from a `PostgreSQL` database and
-/// generates a Rust struct for each table in the database. It also proviedes the
-/// intermeditate data structures to hold the extracted schema information.
+//! This module extracts the datebase schema from a `PostgreSQL` database and
+//! generates a Rust struct for each table in the database. It also proviedes the
+//! intermeditate data structures to hold the extracted schema information.
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
 use crate::db::db_schema_structs::AbstractDbRepr;
