@@ -152,6 +152,7 @@ mod tests {
                 u_column_name: column_name.to_string(),
                 data_type: "integer".to_string(),
                 u_type: "whatever".to_string(),
+                is_primary_key: false,
                 is_nullable: "NO".parse().unwrap_or(IsNullable::No),
                 column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
                 constraints: BTreeMap::new(),

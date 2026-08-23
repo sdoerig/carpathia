@@ -1,70 +1,199 @@
 {# ================================================================
-   TABLE Template 
-   ================================================================ #}
+    TABLE Template (Composite PK, Composite FK, & Insert Builder)
+    ================================================================ #}
 use sqlx::{FromRow, PgPool, Postgres, QueryBuilder};
-{% for imp in table.u_imports %}
+{%- for imp in table.u_imports %}
 use {{ imp }};
-{% endfor %}
+{%- endfor %}
 
 #[derive(Debug, Clone, FromRow)]
-pub struct {{ table.table_name | capitalize }} {
-    {% for attr in table.attributes %}
-    pub {{ attr.column_name }}: {{ attr.u_type }}{% if not loop.last %},{% endif %}
-    {% endfor %}
+pub struct {{ table.u_table_name | capitalize }} {
+    {%- for attr in table.attributes %}
+    pub {{ attr.u_column_name }}: {{ attr.u_type }}{% if not loop.last %},{% endif %}
+    {%- endfor %}
 }
 
-impl {{ table.table_name | capitalize }} {
+impl {{ table.u_table_name | capitalize }} {
 
-    {# Forward Relations #}
-    {% for attr in table.attributes %}
-        {% if "ForeignKey" in attr.constraints  %}
+    {# Forward Relations (Unterstützt auch zusammengesetzte Fremdschlüssel) #}
+    {%- for attr in table.attributes %}
+        {%- if "ForeignKey" in attr.constraints %}
     pub async fn {{ attr.constraints.ForeignKey.referenced_table }}(&self, pool: &PgPool)
         -> sqlx::Result<{{ attr.constraints.ForeignKey.referenced_table | capitalize }}>
     {
-        sqlx::query_as!(
-            {{ attr.constraints.ForeignKey.referenced_table | capitalize }},
-            "SELECT * FROM {{ attr.constraints.ForeignKey.referenced_table }} WHERE {{ attr.constraints.ForeignKey.referenced_column }} = $1",
-            self.{{ attr.column_name }}
-        )
-        .fetch_one(pool)
-        .await
+        let mut qb = QueryBuilder::<Postgres>::new("SELECT * FROM {{ attr.constraints.ForeignKey.referenced_table }} WHERE ");
+        
+        {# Falls es mehrere Spalten im ForeignKey gibt, iterieren wir über sie. 
+           Angenommen attr.constraints.ForeignKey unterstützt lists (oder fallback auf einzelspalte) #}
+        {%- if attr.constraints.ForeignKey.columns %}
+            {%- for col in attr.constraints.ForeignKey.columns %}
+        if !first { qb.push(" AND "); }
+        qb.push("{{ col.referenced_column }} = ");
+        qb.push_bind(self.{{ col.column }});
+            {%- endfor %}
+        {%- else %}
+        {# Fallback für Single-Column Foreign Key #}
+        qb.push("{{ attr.constraints.ForeignKey.referenced_column }} = ");
+        qb.push_bind(self.{{ attr.u_column_name }});
+        {%- endif %}
+
+        let query = qb.build_query_as::<{{ attr.constraints.ForeignKey.referenced_table | capitalize }}>();
+        query.fetch_one(pool).await
     }
-        {% endif %}
-    {% endfor %}
+        {%- endif %}
+    {%- endfor %}
+
+    {# UPDATE METHOD (Unterstützt kombinierte Primärschlüssel) #}
+    pub async fn update(&self, pool: &PgPool) -> sqlx::Result<Self> {
+        let mut qb = QueryBuilder::<Postgres>::new("UPDATE {{ table.table_name }} SET ");
+        
+        let mut separated = qb.separated(", ");
+        {%- for attr in table.attributes %}
+            {%- if not attr.is_primary_key %}
+        separated.push("{{ attr.column_name }} = ");
+        separated.push_bind_unseparated(&self.{{ attr.u_column_name }});
+            {%- endif %}
+        {%- endfor %}
+
+        qb.push(" WHERE ");
+        let mut first_pk = true;
+        {%- for attr in table.attributes %}
+            {%- if attr.is_primary_key %}
+        if !first_pk {
+            qb.push(" AND ");
+        }
+        qb.push("{{ attr.column_name }} = ");
+        qb.push_bind(&self.{{ attr.u_column_name }});
+        first_pk = false;
+            {%- endif %}
+        {%- endfor %}
+
+        qb.push(" RETURNING *");
+
+        let query = qb.build_query_as::<Self>();
+        query.fetch_one(pool).await
+    }
+
+    {# DELETE METHOD (Unterstützt kombinierte Primärschlüssel) #}
+    pub async fn delete(self, pool: &PgPool) -> sqlx::Result<u64> {
+        let mut qb = QueryBuilder::<Postgres>::new("DELETE FROM {{ table.table_name }} WHERE ");
+        
+        let mut first_pk = true;
+        {%- for attr in table.attributes %}
+            {%- if attr.is_primary_key %}
+        if !first_pk {
+            qb.push(" AND ");
+        }
+        qb.push("{{ attr.column_name }} = ");
+        qb.push_bind(&self.{{ attr.u_column_name }});
+        first_pk = false;
+            {%- endif %}
+        {%- endfor %}
+
+        let result = qb.build().execute(pool).await?;
+        Ok(result.rows_affected())
+    }
 }
 
-pub struct {{ table.table_name | capitalize }}Filter {
-    {% for attr in table.attributes %}
-    pub {{ attr.column_name }}: Option<{{ attr.u_type }}>{% if not loop.last %},{% endif %}
-    {% endfor %}
+{# ================================================================
+    INSERT BUILDER STRUCT
+    ================================================================ #}
+pub struct {{ table.u_table_name | capitalize }}InsertBuilder {
+    {%- for attr in table.attributes %}
+        {%- if not attr.is_primary_key %}
+    pub {{ attr.u_column_name }}: Option<{{ attr.u_type }}>,
+        {%- endif %}
+    {%- endfor %}
 }
 
-impl {{ table.table_name | capitalize }}Filter {
-
+impl {{ table.u_table_name | capitalize }}InsertBuilder {
     pub fn new() -> Self {
         Self {
-            {% for attr in table.attributes %}
-            {{ attr.column_name }}: None{% if not loop.last %},{% endif %}
-            {% endfor %}
+            {%- for attr in table.attributes %}
+                {%- if not attr.is_primary_key %}
+            {{ attr.u_column_name }}: None,
+                {%- endif %}
+            {%- endfor %}
         }
     }
 
-    {% for attr in table.attributes %}
-    pub fn {{ attr.column_name }}(mut self, value: {{ attr.u_type }}) -> Self {
-        self.{{ attr.column_name }} = Some(value);
+    {%- for attr in table.attributes %}
+        {%- if not attr.is_primary_key %}
+    pub fn {{ attr.u_column_name }}(mut self, value: {{ attr.u_type }}) -> Self {
+        self.{{ attr.u_column_name }} = Some(value);
         self
     }
-    {% endfor %}
+        {%- endif %}
+    {%- endfor %}
 
-    pub async fn fetch_all(&self, pool: &PgPool)
-        -> sqlx::Result<Vec<{{ table.table_name | capitalize }}}>
-    {
-        let mut qb = QueryBuilder::<Postgres>::new("SELECT * FROM {{ table.table_name }}");
+    pub async fn insert(self, pool: &PgPool) -> sqlx::Result<{{ table.u_table_name | capitalize }}> {
+        let mut qb = QueryBuilder::<Postgres>::new("INSERT INTO {{ table.table_name }} (");
+        
+        let mut separated = qb.separated(", ");
+        {%- for attr in table.attributes %}
+            {%- if not attr.is_primary_key %}
+        if self.{{ attr.u_column_name }}.is_some() {
+            separated.push("{{ attr.column_name }}");
+        }
+            {%- endif %}
+        {%- endfor %}
+
+        separated.push_unseparated(") VALUES (");
 
         let mut first = true;
+        {%- for attr in table.attributes %}
+            {%- if not attr.is_primary_key %}
+        if let Some(ref val) = self.{{ attr.u_column_name }} {
+            if !first {
+                qb.push(", ");
+            }
+            qb.push_bind(val);
+            first = false;
+        }
+            {%- endif %}
+        {%- endfor %}
 
-        {% for attr in table.attributes %}
-        if self.{{ attr.column_name }}.is_some() {
+        qb.push(") RETURNING *");
+
+        let query = qb.build_query_as::<{{ table.u_table_name | capitalize }}>();
+        query.fetch_one(pool).await
+    }
+}
+
+{# ================================================================
+    FILTER STRUCT
+    ================================================================ #}
+pub struct {{ table.u_table_name | capitalize }}Filter {
+    {%- for attr in table.attributes %}
+    pub {{ attr.u_column_name }}: Option<{{ attr.u_type }}>{% if not loop.last %},{% endif %}
+    {%- endfor %}
+}
+
+impl {{ table.u_table_name | capitalize }}Filter {
+
+    pub fn new() -> Self {
+        Self {
+            {%- for attr in table.attributes %}
+            {{ attr.u_column_name }}: None{% if not loop.last %},{% endif %}
+            {%- endfor %}
+        }
+    }
+
+    {%- for attr in table.attributes %}
+    pub fn {{ attr.u_column_name }}(mut self, value: {{ attr.u_type }}) -> Self {
+        self.{{ attr.u_column_name }} = Some(value);
+        self
+    }
+    {%- endfor %}
+
+    pub async fn fetch_all(&self, pool: &PgPool)
+        -> sqlx::Result<Vec<{{ table.u_table_name | capitalize }}>>
+    {
+        let mut qb = QueryBuilder::<Postgres>::new("SELECT * FROM {{ table.table_name }}");
+        let mut first = true;
+
+        {%- for attr in table.attributes %}
+        if self.{{ attr.u_column_name }}.is_some() {
             if first {
                 qb.push(" WHERE ");
                 first = false;
@@ -72,11 +201,32 @@ impl {{ table.table_name | capitalize }}Filter {
                 qb.push(" AND ");
             }
             qb.push("{{ attr.column_name }} = ");
-            qb.push_bind(self.{{ attr.column_name }}.as_ref().unwrap());
+            qb.push_bind(self.{{ attr.u_column_name }}.as_ref().unwrap());
         }
-        {% endfor %}
+        {%- endfor %}
 
-        let query = qb.build_query_as::<{{ table.table_name | capitalize }}>>();
+        let query = qb.build_query_as::<{{ table.u_table_name | capitalize }}>();
         query.fetch_all(pool).await
+    }
+
+    pub async fn delete_by_filter(&self, pool: &PgPool) -> sqlx::Result<u64> {
+        let mut qb = QueryBuilder::<Postgres>::new("DELETE FROM {{ table.table_name }}");
+        let mut first = true;
+
+        {%- for attr in table.attributes %}
+        if self.{{ attr.u_column_name }}.is_some() {
+            if first {
+                qb.push(" WHERE ");
+                first = false;
+            } else {
+                qb.push(" AND ");
+            }
+            qb.push("{{ attr.column_name }} = ");
+            qb.push_bind(self.{{ attr.u_column_name }}.as_ref().unwrap());
+        }
+        {%- endfor %}
+
+        let result = qb.build().execute(pool).await?;
+        Ok(result.rows_affected())
     }
 }

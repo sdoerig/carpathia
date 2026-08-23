@@ -60,6 +60,7 @@ pub struct AbstractAttribute {
     pub u_type: String,
     pub is_nullable: IsNullable,
     pub column_default: Option<String>,
+    pub is_primary_key: bool,
     //pub character_maximum_length: Option<i32>,
     //pub numeric_precision: Option<i32>,
     //pub numeric_scale: Option<i32>,
@@ -235,6 +236,7 @@ mod tests {
             data_type: "integer".to_string(),
             u_type: "whatever".to_string(),
             is_nullable: "NO".parse().unwrap_or(IsNullable::No),
+            is_primary_key: false,
             column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
             constraints: {
                 let mut constraints = BTreeMap::new();

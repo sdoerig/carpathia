@@ -59,7 +59,7 @@ pub struct CarpathiaConfig {
 /// ```
 ///
 /// # Example with database connection and executing templates:
-/// 
+///
 /// Note excute templates must be set to true - if not so they will not be rendered. The default is false.
 /// ```
 /// use carpathia_core::configuration::carpathia_conf::{CarpathiaConfigBuilder};
