@@ -1,14 +1,14 @@
 {
   "version": "0.1.0",
-  "tables": [
-    {
+  "tables": {
+    "actor": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "actor",
       "u_table_name": "actor",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "actor_id": {
           "column_name": "actor_id",
           "u_column_name": "actor_id",
           "data_type": "integer",
@@ -38,7 +38,7 @@
           },
           "comment": null
         },
-        {
+        "first_name": {
           "column_name": "first_name",
           "u_column_name": "first_name",
           "data_type": "text",
@@ -59,7 +59,7 @@
           },
           "comment": null
         },
-        {
+        "last_name": {
           "column_name": "last_name",
           "u_column_name": "last_name",
           "data_type": "text",
@@ -80,7 +80,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -101,16 +101,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "address": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "address",
       "u_table_name": "address",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "address": {
           "column_name": "address",
           "u_column_name": "address",
           "data_type": "text",
@@ -131,7 +131,7 @@
           },
           "comment": null
         },
-        {
+        "address2": {
           "column_name": "address2",
           "u_column_name": "address2",
           "data_type": "text",
@@ -142,7 +142,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "address_id": {
           "column_name": "address_id",
           "u_column_name": "address_id",
           "data_type": "integer",
@@ -172,7 +172,7 @@
           },
           "comment": null
         },
-        {
+        "city_id": {
           "column_name": "city_id",
           "u_column_name": "city_id",
           "data_type": "integer",
@@ -202,7 +202,7 @@
           },
           "comment": null
         },
-        {
+        "district": {
           "column_name": "district",
           "u_column_name": "district",
           "data_type": "text",
@@ -223,7 +223,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -244,7 +244,7 @@
           },
           "comment": null
         },
-        {
+        "phone": {
           "column_name": "phone",
           "u_column_name": "phone",
           "data_type": "text",
@@ -265,7 +265,7 @@
           },
           "comment": null
         },
-        {
+        "postal_code": {
           "column_name": "postal_code",
           "u_column_name": "postal_code",
           "data_type": "text",
@@ -276,16 +276,16 @@
           "constraints": {},
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "category": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "category",
       "u_table_name": "category",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "category_id": {
           "column_name": "category_id",
           "u_column_name": "category_id",
           "data_type": "integer",
@@ -315,7 +315,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -336,7 +336,7 @@
           },
           "comment": null
         },
-        {
+        "name": {
           "column_name": "name",
           "u_column_name": "name",
           "data_type": "text",
@@ -357,16 +357,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "city": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "city",
       "u_table_name": "city",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "city": {
           "column_name": "city",
           "u_column_name": "city",
           "data_type": "text",
@@ -387,7 +387,7 @@
           },
           "comment": null
         },
-        {
+        "city_id": {
           "column_name": "city_id",
           "u_column_name": "city_id",
           "data_type": "integer",
@@ -417,7 +417,7 @@
           },
           "comment": null
         },
-        {
+        "country_id": {
           "column_name": "country_id",
           "u_column_name": "country_id",
           "data_type": "integer",
@@ -447,7 +447,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -468,16 +468,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "country": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "country",
       "u_table_name": "country",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "country": {
           "column_name": "country",
           "u_column_name": "country",
           "data_type": "text",
@@ -498,7 +498,7 @@
           },
           "comment": null
         },
-        {
+        "country_id": {
           "column_name": "country_id",
           "u_column_name": "country_id",
           "data_type": "integer",
@@ -528,7 +528,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -549,16 +549,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "customer": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "customer",
       "u_table_name": "customer",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "active": {
           "column_name": "active",
           "u_column_name": "active",
           "data_type": "integer",
@@ -569,7 +569,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "activebool": {
           "column_name": "activebool",
           "u_column_name": "activebool",
           "data_type": "boolean",
@@ -590,7 +590,7 @@
           },
           "comment": null
         },
-        {
+        "address_id": {
           "column_name": "address_id",
           "u_column_name": "address_id",
           "data_type": "integer",
@@ -620,7 +620,7 @@
           },
           "comment": null
         },
-        {
+        "create_date": {
           "column_name": "create_date",
           "u_column_name": "create_date",
           "data_type": "date",
@@ -641,7 +641,7 @@
           },
           "comment": null
         },
-        {
+        "customer_id": {
           "column_name": "customer_id",
           "u_column_name": "customer_id",
           "data_type": "integer",
@@ -671,7 +671,7 @@
           },
           "comment": null
         },
-        {
+        "email": {
           "column_name": "email",
           "u_column_name": "email",
           "data_type": "text",
@@ -682,7 +682,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "first_name": {
           "column_name": "first_name",
           "u_column_name": "first_name",
           "data_type": "text",
@@ -703,7 +703,7 @@
           },
           "comment": null
         },
-        {
+        "last_name": {
           "column_name": "last_name",
           "u_column_name": "last_name",
           "data_type": "text",
@@ -724,7 +724,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -735,7 +735,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "store_id": {
           "column_name": "store_id",
           "u_column_name": "store_id",
           "data_type": "integer",
@@ -765,16 +765,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "film": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "film",
       "u_table_name": "film",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "description": {
           "column_name": "description",
           "u_column_name": "description",
           "data_type": "text",
@@ -785,7 +785,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "film_id": {
           "column_name": "film_id",
           "u_column_name": "film_id",
           "data_type": "integer",
@@ -815,7 +815,7 @@
           },
           "comment": null
         },
-        {
+        "fulltext": {
           "column_name": "fulltext",
           "u_column_name": "fulltext",
           "data_type": "tsvector",
@@ -836,7 +836,7 @@
           },
           "comment": null
         },
-        {
+        "language_id": {
           "column_name": "language_id",
           "u_column_name": "language_id",
           "data_type": "integer",
@@ -866,7 +866,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -887,7 +887,7 @@
           },
           "comment": null
         },
-        {
+        "length": {
           "column_name": "length",
           "u_column_name": "length",
           "data_type": "smallint",
@@ -898,7 +898,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "original_language_id": {
           "column_name": "original_language_id",
           "u_column_name": "original_language_id",
           "data_type": "integer",
@@ -919,7 +919,7 @@
           },
           "comment": null
         },
-        {
+        "rating": {
           "column_name": "rating",
           "u_column_name": "rating",
           "data_type": "mpaa_rating",
@@ -930,7 +930,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "release_year": {
           "column_name": "release_year",
           "u_column_name": "release_year",
           "data_type": "year",
@@ -941,7 +941,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "rental_duration": {
           "column_name": "rental_duration",
           "u_column_name": "rental_duration",
           "data_type": "smallint",
@@ -962,7 +962,7 @@
           },
           "comment": null
         },
-        {
+        "rental_rate": {
           "column_name": "rental_rate",
           "u_column_name": "rental_rate",
           "data_type": "numeric(4,2)",
@@ -983,7 +983,7 @@
           },
           "comment": null
         },
-        {
+        "replacement_cost": {
           "column_name": "replacement_cost",
           "u_column_name": "replacement_cost",
           "data_type": "numeric(5,2)",
@@ -1004,7 +1004,7 @@
           },
           "comment": null
         },
-        {
+        "special_features": {
           "column_name": "special_features",
           "u_column_name": "special_features",
           "data_type": "text[][1]",
@@ -1015,7 +1015,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "title": {
           "column_name": "title",
           "u_column_name": "title",
           "data_type": "text",
@@ -1036,16 +1036,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "film_actor": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "film_actor",
       "u_table_name": "film_actor",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "actor_id": {
           "column_name": "actor_id",
           "u_column_name": "actor_id",
           "data_type": "integer",
@@ -1084,7 +1084,7 @@
           },
           "comment": null
         },
-        {
+        "film_id": {
           "column_name": "film_id",
           "u_column_name": "film_id",
           "data_type": "integer",
@@ -1123,7 +1123,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -1144,16 +1144,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "film_category": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "film_category",
       "u_table_name": "film_category",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "category_id": {
           "column_name": "category_id",
           "u_column_name": "category_id",
           "data_type": "integer",
@@ -1192,7 +1192,7 @@
           },
           "comment": null
         },
-        {
+        "film_id": {
           "column_name": "film_id",
           "u_column_name": "film_id",
           "data_type": "integer",
@@ -1231,7 +1231,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -1252,16 +1252,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "inventory": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "inventory",
       "u_table_name": "inventory",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "film_id": {
           "column_name": "film_id",
           "u_column_name": "film_id",
           "data_type": "integer",
@@ -1291,7 +1291,7 @@
           },
           "comment": null
         },
-        {
+        "inventory_id": {
           "column_name": "inventory_id",
           "u_column_name": "inventory_id",
           "data_type": "integer",
@@ -1321,7 +1321,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -1342,7 +1342,7 @@
           },
           "comment": null
         },
-        {
+        "store_id": {
           "column_name": "store_id",
           "u_column_name": "store_id",
           "data_type": "integer",
@@ -1372,16 +1372,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "language": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "language",
       "u_table_name": "language",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "language_id": {
           "column_name": "language_id",
           "u_column_name": "language_id",
           "data_type": "integer",
@@ -1411,7 +1411,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -1432,7 +1432,7 @@
           },
           "comment": null
         },
-        {
+        "name": {
           "column_name": "name",
           "u_column_name": "name",
           "data_type": "character(20)",
@@ -1453,16 +1453,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "payment": {
       "object_type": "PartitionedTable",
+      "u_imports": [],
       "table_name": "payment",
       "u_table_name": "payment",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "amount": {
           "column_name": "amount",
           "u_column_name": "amount",
           "data_type": "numeric(5,2)",
@@ -1483,7 +1483,7 @@
           },
           "comment": null
         },
-        {
+        "customer_id": {
           "column_name": "customer_id",
           "u_column_name": "customer_id",
           "data_type": "integer",
@@ -1504,7 +1504,7 @@
           },
           "comment": null
         },
-        {
+        "payment_date": {
           "column_name": "payment_date",
           "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
@@ -1534,7 +1534,7 @@
           },
           "comment": null
         },
-        {
+        "payment_id": {
           "column_name": "payment_id",
           "u_column_name": "payment_id",
           "data_type": "integer",
@@ -1564,7 +1564,7 @@
           },
           "comment": null
         },
-        {
+        "rental_id": {
           "column_name": "rental_id",
           "u_column_name": "rental_id",
           "data_type": "integer",
@@ -1585,7 +1585,7 @@
           },
           "comment": null
         },
-        {
+        "staff_id": {
           "column_name": "staff_id",
           "u_column_name": "staff_id",
           "data_type": "integer",
@@ -1606,16 +1606,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "payment_p2022_01": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "payment_p2022_01",
       "u_table_name": "payment_p2022_01",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "amount": {
           "column_name": "amount",
           "u_column_name": "amount",
           "data_type": "numeric(5,2)",
@@ -1636,7 +1636,7 @@
           },
           "comment": null
         },
-        {
+        "customer_id": {
           "column_name": "customer_id",
           "u_column_name": "customer_id",
           "data_type": "integer",
@@ -1666,7 +1666,7 @@
           },
           "comment": null
         },
-        {
+        "payment_date": {
           "column_name": "payment_date",
           "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
@@ -1696,7 +1696,7 @@
           },
           "comment": null
         },
-        {
+        "payment_id": {
           "column_name": "payment_id",
           "u_column_name": "payment_id",
           "data_type": "integer",
@@ -1726,7 +1726,7 @@
           },
           "comment": null
         },
-        {
+        "rental_id": {
           "column_name": "rental_id",
           "u_column_name": "rental_id",
           "data_type": "integer",
@@ -1756,7 +1756,7 @@
           },
           "comment": null
         },
-        {
+        "staff_id": {
           "column_name": "staff_id",
           "u_column_name": "staff_id",
           "data_type": "integer",
@@ -1786,16 +1786,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "payment_p2022_02": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "payment_p2022_02",
       "u_table_name": "payment_p2022_02",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "amount": {
           "column_name": "amount",
           "u_column_name": "amount",
           "data_type": "numeric(5,2)",
@@ -1816,7 +1816,7 @@
           },
           "comment": null
         },
-        {
+        "customer_id": {
           "column_name": "customer_id",
           "u_column_name": "customer_id",
           "data_type": "integer",
@@ -1846,7 +1846,7 @@
           },
           "comment": null
         },
-        {
+        "payment_date": {
           "column_name": "payment_date",
           "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
@@ -1876,7 +1876,7 @@
           },
           "comment": null
         },
-        {
+        "payment_id": {
           "column_name": "payment_id",
           "u_column_name": "payment_id",
           "data_type": "integer",
@@ -1906,7 +1906,7 @@
           },
           "comment": null
         },
-        {
+        "rental_id": {
           "column_name": "rental_id",
           "u_column_name": "rental_id",
           "data_type": "integer",
@@ -1936,7 +1936,7 @@
           },
           "comment": null
         },
-        {
+        "staff_id": {
           "column_name": "staff_id",
           "u_column_name": "staff_id",
           "data_type": "integer",
@@ -1966,16 +1966,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "payment_p2022_03": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "payment_p2022_03",
       "u_table_name": "payment_p2022_03",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "amount": {
           "column_name": "amount",
           "u_column_name": "amount",
           "data_type": "numeric(5,2)",
@@ -1996,7 +1996,7 @@
           },
           "comment": null
         },
-        {
+        "customer_id": {
           "column_name": "customer_id",
           "u_column_name": "customer_id",
           "data_type": "integer",
@@ -2026,7 +2026,7 @@
           },
           "comment": null
         },
-        {
+        "payment_date": {
           "column_name": "payment_date",
           "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
@@ -2056,7 +2056,7 @@
           },
           "comment": null
         },
-        {
+        "payment_id": {
           "column_name": "payment_id",
           "u_column_name": "payment_id",
           "data_type": "integer",
@@ -2086,7 +2086,7 @@
           },
           "comment": null
         },
-        {
+        "rental_id": {
           "column_name": "rental_id",
           "u_column_name": "rental_id",
           "data_type": "integer",
@@ -2116,7 +2116,7 @@
           },
           "comment": null
         },
-        {
+        "staff_id": {
           "column_name": "staff_id",
           "u_column_name": "staff_id",
           "data_type": "integer",
@@ -2146,16 +2146,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "payment_p2022_04": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "payment_p2022_04",
       "u_table_name": "payment_p2022_04",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "amount": {
           "column_name": "amount",
           "u_column_name": "amount",
           "data_type": "numeric(5,2)",
@@ -2176,7 +2176,7 @@
           },
           "comment": null
         },
-        {
+        "customer_id": {
           "column_name": "customer_id",
           "u_column_name": "customer_id",
           "data_type": "integer",
@@ -2206,7 +2206,7 @@
           },
           "comment": null
         },
-        {
+        "payment_date": {
           "column_name": "payment_date",
           "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
@@ -2236,7 +2236,7 @@
           },
           "comment": null
         },
-        {
+        "payment_id": {
           "column_name": "payment_id",
           "u_column_name": "payment_id",
           "data_type": "integer",
@@ -2266,7 +2266,7 @@
           },
           "comment": null
         },
-        {
+        "rental_id": {
           "column_name": "rental_id",
           "u_column_name": "rental_id",
           "data_type": "integer",
@@ -2296,7 +2296,7 @@
           },
           "comment": null
         },
-        {
+        "staff_id": {
           "column_name": "staff_id",
           "u_column_name": "staff_id",
           "data_type": "integer",
@@ -2326,16 +2326,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "payment_p2022_05": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "payment_p2022_05",
       "u_table_name": "payment_p2022_05",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "amount": {
           "column_name": "amount",
           "u_column_name": "amount",
           "data_type": "numeric(5,2)",
@@ -2356,7 +2356,7 @@
           },
           "comment": null
         },
-        {
+        "customer_id": {
           "column_name": "customer_id",
           "u_column_name": "customer_id",
           "data_type": "integer",
@@ -2386,7 +2386,7 @@
           },
           "comment": null
         },
-        {
+        "payment_date": {
           "column_name": "payment_date",
           "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
@@ -2416,7 +2416,7 @@
           },
           "comment": null
         },
-        {
+        "payment_id": {
           "column_name": "payment_id",
           "u_column_name": "payment_id",
           "data_type": "integer",
@@ -2446,7 +2446,7 @@
           },
           "comment": null
         },
-        {
+        "rental_id": {
           "column_name": "rental_id",
           "u_column_name": "rental_id",
           "data_type": "integer",
@@ -2476,7 +2476,7 @@
           },
           "comment": null
         },
-        {
+        "staff_id": {
           "column_name": "staff_id",
           "u_column_name": "staff_id",
           "data_type": "integer",
@@ -2506,16 +2506,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "payment_p2022_06": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "payment_p2022_06",
       "u_table_name": "payment_p2022_06",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "amount": {
           "column_name": "amount",
           "u_column_name": "amount",
           "data_type": "numeric(5,2)",
@@ -2536,7 +2536,7 @@
           },
           "comment": null
         },
-        {
+        "customer_id": {
           "column_name": "customer_id",
           "u_column_name": "customer_id",
           "data_type": "integer",
@@ -2566,7 +2566,7 @@
           },
           "comment": null
         },
-        {
+        "payment_date": {
           "column_name": "payment_date",
           "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
@@ -2596,7 +2596,7 @@
           },
           "comment": null
         },
-        {
+        "payment_id": {
           "column_name": "payment_id",
           "u_column_name": "payment_id",
           "data_type": "integer",
@@ -2626,7 +2626,7 @@
           },
           "comment": null
         },
-        {
+        "rental_id": {
           "column_name": "rental_id",
           "u_column_name": "rental_id",
           "data_type": "integer",
@@ -2656,7 +2656,7 @@
           },
           "comment": null
         },
-        {
+        "staff_id": {
           "column_name": "staff_id",
           "u_column_name": "staff_id",
           "data_type": "integer",
@@ -2686,16 +2686,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "payment_p2022_07": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "payment_p2022_07",
       "u_table_name": "payment_p2022_07",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "amount": {
           "column_name": "amount",
           "u_column_name": "amount",
           "data_type": "numeric(5,2)",
@@ -2716,7 +2716,7 @@
           },
           "comment": null
         },
-        {
+        "customer_id": {
           "column_name": "customer_id",
           "u_column_name": "customer_id",
           "data_type": "integer",
@@ -2737,7 +2737,7 @@
           },
           "comment": null
         },
-        {
+        "payment_date": {
           "column_name": "payment_date",
           "u_column_name": "payment_date",
           "data_type": "timestamp with time zone",
@@ -2767,7 +2767,7 @@
           },
           "comment": null
         },
-        {
+        "payment_id": {
           "column_name": "payment_id",
           "u_column_name": "payment_id",
           "data_type": "integer",
@@ -2797,7 +2797,7 @@
           },
           "comment": null
         },
-        {
+        "rental_id": {
           "column_name": "rental_id",
           "u_column_name": "rental_id",
           "data_type": "integer",
@@ -2818,7 +2818,7 @@
           },
           "comment": null
         },
-        {
+        "staff_id": {
           "column_name": "staff_id",
           "u_column_name": "staff_id",
           "data_type": "integer",
@@ -2839,16 +2839,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "rental": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "rental",
       "u_table_name": "rental",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "customer_id": {
           "column_name": "customer_id",
           "u_column_name": "customer_id",
           "data_type": "integer",
@@ -2878,7 +2878,7 @@
           },
           "comment": null
         },
-        {
+        "inventory_id": {
           "column_name": "inventory_id",
           "u_column_name": "inventory_id",
           "data_type": "integer",
@@ -2908,7 +2908,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -2929,7 +2929,7 @@
           },
           "comment": null
         },
-        {
+        "rental_date": {
           "column_name": "rental_date",
           "u_column_name": "rental_date",
           "data_type": "timestamp with time zone",
@@ -2950,7 +2950,7 @@
           },
           "comment": null
         },
-        {
+        "rental_id": {
           "column_name": "rental_id",
           "u_column_name": "rental_id",
           "data_type": "integer",
@@ -2980,7 +2980,7 @@
           },
           "comment": null
         },
-        {
+        "return_date": {
           "column_name": "return_date",
           "u_column_name": "return_date",
           "data_type": "timestamp with time zone",
@@ -2991,7 +2991,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "staff_id": {
           "column_name": "staff_id",
           "u_column_name": "staff_id",
           "data_type": "integer",
@@ -3021,16 +3021,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "staff": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "staff",
       "u_table_name": "staff",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "active": {
           "column_name": "active",
           "u_column_name": "active",
           "data_type": "boolean",
@@ -3051,7 +3051,7 @@
           },
           "comment": null
         },
-        {
+        "address_id": {
           "column_name": "address_id",
           "u_column_name": "address_id",
           "data_type": "integer",
@@ -3081,7 +3081,7 @@
           },
           "comment": null
         },
-        {
+        "email": {
           "column_name": "email",
           "u_column_name": "email",
           "data_type": "text",
@@ -3092,7 +3092,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "first_name": {
           "column_name": "first_name",
           "u_column_name": "first_name",
           "data_type": "text",
@@ -3113,7 +3113,7 @@
           },
           "comment": null
         },
-        {
+        "last_name": {
           "column_name": "last_name",
           "u_column_name": "last_name",
           "data_type": "text",
@@ -3134,7 +3134,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -3155,7 +3155,7 @@
           },
           "comment": null
         },
-        {
+        "password": {
           "column_name": "password",
           "u_column_name": "password",
           "data_type": "text",
@@ -3166,7 +3166,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "picture": {
           "column_name": "picture",
           "u_column_name": "picture",
           "data_type": "bytea",
@@ -3177,7 +3177,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "staff_id": {
           "column_name": "staff_id",
           "u_column_name": "staff_id",
           "data_type": "integer",
@@ -3207,7 +3207,7 @@
           },
           "comment": null
         },
-        {
+        "store_id": {
           "column_name": "store_id",
           "u_column_name": "store_id",
           "data_type": "integer",
@@ -3237,7 +3237,7 @@
           },
           "comment": null
         },
-        {
+        "username": {
           "column_name": "username",
           "u_column_name": "username",
           "data_type": "text",
@@ -3258,16 +3258,16 @@
           },
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "store": {
       "object_type": "BaseTable",
+      "u_imports": [],
       "table_name": "store",
       "u_table_name": "store",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "address_id": {
           "column_name": "address_id",
           "u_column_name": "address_id",
           "data_type": "integer",
@@ -3297,7 +3297,7 @@
           },
           "comment": null
         },
-        {
+        "last_update": {
           "column_name": "last_update",
           "u_column_name": "last_update",
           "data_type": "timestamp with time zone",
@@ -3318,7 +3318,7 @@
           },
           "comment": null
         },
-        {
+        "manager_staff_id": {
           "column_name": "manager_staff_id",
           "u_column_name": "manager_staff_id",
           "data_type": "integer",
@@ -3339,7 +3339,7 @@
           },
           "comment": null
         },
-        {
+        "store_id": {
           "column_name": "store_id",
           "u_column_name": "store_id",
           "data_type": "integer",
@@ -3369,18 +3369,18 @@
           },
           "comment": null
         }
-      ]
+      }
     }
-  ],
-  "views": [
-    {
+  },
+  "views": {
+    "actor_info": {
       "object_type": "View",
+      "u_imports": [],
       "table_name": "actor_info",
       "u_table_name": "actor_info",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "actor_id": {
           "column_name": "actor_id",
           "u_column_name": "actor_id",
           "data_type": "integer",
@@ -3391,7 +3391,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "film_info": {
           "column_name": "film_info",
           "u_column_name": "film_info",
           "data_type": "text",
@@ -3402,7 +3402,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "first_name": {
           "column_name": "first_name",
           "u_column_name": "first_name",
           "data_type": "text",
@@ -3413,7 +3413,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "last_name": {
           "column_name": "last_name",
           "u_column_name": "last_name",
           "data_type": "text",
@@ -3424,16 +3424,16 @@
           "constraints": {},
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "customer_list": {
       "object_type": "View",
+      "u_imports": [],
       "table_name": "customer_list",
       "u_table_name": "customer_list",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "address": {
           "column_name": "address",
           "u_column_name": "address",
           "data_type": "text",
@@ -3444,7 +3444,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "city": {
           "column_name": "city",
           "u_column_name": "city",
           "data_type": "text",
@@ -3455,7 +3455,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "country": {
           "column_name": "country",
           "u_column_name": "country",
           "data_type": "text",
@@ -3466,7 +3466,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "id": {
           "column_name": "id",
           "u_column_name": "id",
           "data_type": "integer",
@@ -3477,7 +3477,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "name": {
           "column_name": "name",
           "u_column_name": "name",
           "data_type": "text",
@@ -3488,7 +3488,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "notes": {
           "column_name": "notes",
           "u_column_name": "notes",
           "data_type": "text",
@@ -3499,7 +3499,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "phone": {
           "column_name": "phone",
           "u_column_name": "phone",
           "data_type": "text",
@@ -3510,7 +3510,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "sid": {
           "column_name": "sid",
           "u_column_name": "sid",
           "data_type": "integer",
@@ -3521,7 +3521,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "zip code": {
           "column_name": "zip code",
           "u_column_name": "zip code",
           "data_type": "text",
@@ -3532,16 +3532,16 @@
           "constraints": {},
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "film_list": {
       "object_type": "View",
+      "u_imports": [],
       "table_name": "film_list",
       "u_table_name": "film_list",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "actors": {
           "column_name": "actors",
           "u_column_name": "actors",
           "data_type": "text",
@@ -3552,7 +3552,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "category": {
           "column_name": "category",
           "u_column_name": "category",
           "data_type": "text",
@@ -3563,7 +3563,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "description": {
           "column_name": "description",
           "u_column_name": "description",
           "data_type": "text",
@@ -3574,7 +3574,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "fid": {
           "column_name": "fid",
           "u_column_name": "fid",
           "data_type": "integer",
@@ -3585,7 +3585,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "length": {
           "column_name": "length",
           "u_column_name": "length",
           "data_type": "smallint",
@@ -3596,7 +3596,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "price": {
           "column_name": "price",
           "u_column_name": "price",
           "data_type": "numeric(4,2)",
@@ -3607,7 +3607,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "rating": {
           "column_name": "rating",
           "u_column_name": "rating",
           "data_type": "mpaa_rating",
@@ -3618,7 +3618,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "title": {
           "column_name": "title",
           "u_column_name": "title",
           "data_type": "text",
@@ -3629,16 +3629,16 @@
           "constraints": {},
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "nicer_but_slower_film_list": {
       "object_type": "View",
+      "u_imports": [],
       "table_name": "nicer_but_slower_film_list",
       "u_table_name": "nicer_but_slower_film_list",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "actors": {
           "column_name": "actors",
           "u_column_name": "actors",
           "data_type": "text",
@@ -3649,7 +3649,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "category": {
           "column_name": "category",
           "u_column_name": "category",
           "data_type": "text",
@@ -3660,7 +3660,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "description": {
           "column_name": "description",
           "u_column_name": "description",
           "data_type": "text",
@@ -3671,7 +3671,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "fid": {
           "column_name": "fid",
           "u_column_name": "fid",
           "data_type": "integer",
@@ -3682,7 +3682,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "length": {
           "column_name": "length",
           "u_column_name": "length",
           "data_type": "smallint",
@@ -3693,7 +3693,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "price": {
           "column_name": "price",
           "u_column_name": "price",
           "data_type": "numeric(4,2)",
@@ -3704,7 +3704,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "rating": {
           "column_name": "rating",
           "u_column_name": "rating",
           "data_type": "mpaa_rating",
@@ -3715,7 +3715,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "title": {
           "column_name": "title",
           "u_column_name": "title",
           "data_type": "text",
@@ -3726,16 +3726,16 @@
           "constraints": {},
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "rental_by_category": {
       "object_type": "MaterializedView",
+      "u_imports": [],
       "table_name": "rental_by_category",
       "u_table_name": "rental_by_category",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "category": {
           "column_name": "category",
           "u_column_name": "category",
           "data_type": "text",
@@ -3746,7 +3746,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "total_sales": {
           "column_name": "total_sales",
           "u_column_name": "total_sales",
           "data_type": "numeric",
@@ -3757,16 +3757,16 @@
           "constraints": {},
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "sales_by_film_category": {
       "object_type": "View",
+      "u_imports": [],
       "table_name": "sales_by_film_category",
       "u_table_name": "sales_by_film_category",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "category": {
           "column_name": "category",
           "u_column_name": "category",
           "data_type": "text",
@@ -3777,7 +3777,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "total_sales": {
           "column_name": "total_sales",
           "u_column_name": "total_sales",
           "data_type": "numeric",
@@ -3788,16 +3788,16 @@
           "constraints": {},
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "sales_by_store": {
       "object_type": "View",
+      "u_imports": [],
       "table_name": "sales_by_store",
       "u_table_name": "sales_by_store",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "manager": {
           "column_name": "manager",
           "u_column_name": "manager",
           "data_type": "text",
@@ -3808,7 +3808,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "store": {
           "column_name": "store",
           "u_column_name": "store",
           "data_type": "text",
@@ -3819,7 +3819,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "total_sales": {
           "column_name": "total_sales",
           "u_column_name": "total_sales",
           "data_type": "numeric",
@@ -3830,16 +3830,16 @@
           "constraints": {},
           "comment": null
         }
-      ]
+      }
     },
-    {
+    "staff_list": {
       "object_type": "View",
+      "u_imports": [],
       "table_name": "staff_list",
       "u_table_name": "staff_list",
       "comment": null,
-      "u_imports": [],
-      "attributes": [
-        {
+      "attributes": {
+        "address": {
           "column_name": "address",
           "u_column_name": "address",
           "data_type": "text",
@@ -3850,7 +3850,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "city": {
           "column_name": "city",
           "u_column_name": "city",
           "data_type": "text",
@@ -3861,7 +3861,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "country": {
           "column_name": "country",
           "u_column_name": "country",
           "data_type": "text",
@@ -3872,7 +3872,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "id": {
           "column_name": "id",
           "u_column_name": "id",
           "data_type": "integer",
@@ -3883,7 +3883,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "name": {
           "column_name": "name",
           "u_column_name": "name",
           "data_type": "text",
@@ -3894,7 +3894,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "phone": {
           "column_name": "phone",
           "u_column_name": "phone",
           "data_type": "text",
@@ -3905,7 +3905,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "sid": {
           "column_name": "sid",
           "u_column_name": "sid",
           "data_type": "integer",
@@ -3916,7 +3916,7 @@
           "constraints": {},
           "comment": null
         },
-        {
+        "zip code": {
           "column_name": "zip code",
           "u_column_name": "zip code",
           "data_type": "text",
@@ -3927,7 +3927,7 @@
           "constraints": {},
           "comment": null
         }
-      ]
+      }
     }
-  ]
+  }
 }
