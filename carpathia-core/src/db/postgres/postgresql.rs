@@ -1,14 +1,14 @@
+use crate::configuration::carpathia_conf::CarpathiaConfig;
+use crate::configuration::conf_enums::DbPool;
 /// PostgreSQL schema querieer. Currently implemented
 /// - Basic tables
 /// - Views
 /// - Materialized Views
-use super::db_schema_structs::{
+use crate::db::db_schema_structs::{
     ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType,
 };
-use super::traits::DatabaseQuerier;
-use crate::configuration::carpathia_conf::CarpathiaConfig;
-use crate::configuration::conf_enums::DbPool;
-use crate::db::postgresql_structs::{PgColumnInfo, PgConstraintInfo, PgConstraintMap};
+use crate::db::postgres::postgresql_structs::{PgColumnInfo, PgConstraintInfo, PgConstraintMap};
+use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
 use std::collections::{BTreeMap, BTreeSet};

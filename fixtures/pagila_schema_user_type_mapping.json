@@ -17,6 +17,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('actor_actor_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "actor_pkey",
@@ -46,6 +47,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "first_name_not_null",
@@ -66,6 +68,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_name_not_null",
@@ -86,6 +89,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -117,6 +121,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "address_not_null",
@@ -137,6 +142,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -147,6 +153,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('address_address_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "address_pkey",
@@ -176,6 +183,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "address_city_id_fkey",
@@ -205,6 +213,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "district_not_null",
@@ -225,6 +234,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -245,6 +255,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "phone_not_null",
@@ -265,6 +276,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         }
@@ -286,6 +298,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('category_category_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "category_pkey",
@@ -315,6 +328,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -335,6 +349,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "name_not_null",
@@ -366,6 +381,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "city_not_null",
@@ -386,6 +402,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('city_city_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "city_pkey",
@@ -415,6 +432,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "city_country_id_fkey",
@@ -444,6 +462,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -475,6 +494,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "country_not_null",
@@ -495,6 +515,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('country_country_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "country_pkey",
@@ -524,6 +545,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -556,6 +578,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -566,6 +589,7 @@
           "u_type": "bool",
           "is_nullable": "No",
           "column_default": "true",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "activebool_not_null",
@@ -586,6 +610,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "customer_address_id_fkey",
@@ -615,6 +640,7 @@
           "u_type": "NaiveDate",
           "is_nullable": "No",
           "column_default": "CURRENT_DATE",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "create_date_not_null",
@@ -635,6 +661,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('customer_customer_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "customer_pkey",
@@ -664,6 +691,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -674,6 +702,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "first_name_not_null",
@@ -694,6 +723,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_name_not_null",
@@ -714,6 +744,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "Yes",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -724,6 +755,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "customer_store_id_fkey",
@@ -765,6 +797,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -775,6 +808,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('film_film_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "film_pkey",
@@ -804,6 +838,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "fulltext_not_null",
@@ -824,6 +859,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "film_language_id_fkey",
@@ -853,6 +889,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -873,6 +910,7 @@
           "u_type": "i16",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -883,6 +921,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "film_original_language_id_fkey",
@@ -903,6 +942,7 @@
           "u_type": "MpaaRating",
           "is_nullable": "Yes",
           "column_default": "'G'::mpaa_rating",
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -913,6 +953,7 @@
           "u_type": "year",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -923,6 +964,7 @@
           "u_type": "i16",
           "is_nullable": "No",
           "column_default": "3",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "rental_duration_not_null",
@@ -943,6 +985,7 @@
           "u_type": "numeric(4,2)",
           "is_nullable": "No",
           "column_default": "4.99",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "rental_rate_not_null",
@@ -963,6 +1006,7 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": "19.99",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "replacement_cost_not_null",
@@ -983,6 +1027,7 @@
           "u_type": "Vec<Vec<String>>",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -993,6 +1038,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "title_not_null",
@@ -1024,6 +1070,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "film_actor_pkey",
@@ -1062,6 +1109,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "film_actor_pkey",
@@ -1100,6 +1148,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -1131,6 +1180,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "film_category_pkey",
@@ -1169,6 +1219,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "film_category_pkey",
@@ -1207,6 +1258,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -1238,6 +1290,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "inventory_film_id_fkey",
@@ -1267,6 +1320,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('inventory_inventory_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "inventory_pkey",
@@ -1296,6 +1350,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -1316,6 +1371,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "inventory_store_id_fkey",
@@ -1356,6 +1412,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('language_language_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "language_pkey",
@@ -1385,6 +1442,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -1405,6 +1463,7 @@
           "u_type": "character(20)",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "name_not_null",
@@ -1436,6 +1495,7 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
@@ -1456,6 +1516,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "customer_id_not_null",
@@ -1476,6 +1537,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_pkey",
@@ -1505,6 +1567,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_pkey",
@@ -1534,6 +1597,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "rental_id_not_null",
@@ -1554,6 +1618,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "staff_id_not_null",
@@ -1585,6 +1650,7 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
@@ -1605,6 +1671,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_01_customer_id_fkey",
@@ -1634,6 +1701,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_01_pkey",
@@ -1663,6 +1731,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_01_pkey",
@@ -1692,6 +1761,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_01_rental_id_fkey",
@@ -1721,6 +1791,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_01_staff_id_fkey",
@@ -1761,6 +1832,7 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
@@ -1781,6 +1853,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_02_customer_id_fkey",
@@ -1810,6 +1883,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_02_pkey",
@@ -1839,6 +1913,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_02_pkey",
@@ -1868,6 +1943,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_02_rental_id_fkey",
@@ -1897,6 +1973,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_02_staff_id_fkey",
@@ -1937,6 +2014,7 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
@@ -1957,6 +2035,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_03_customer_id_fkey",
@@ -1986,6 +2065,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_03_pkey",
@@ -2015,6 +2095,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_03_pkey",
@@ -2044,6 +2125,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_03_rental_id_fkey",
@@ -2073,6 +2155,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_03_staff_id_fkey",
@@ -2113,6 +2196,7 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
@@ -2133,6 +2217,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_04_customer_id_fkey",
@@ -2162,6 +2247,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_04_pkey",
@@ -2191,6 +2277,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_04_pkey",
@@ -2220,6 +2307,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_04_rental_id_fkey",
@@ -2249,6 +2337,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_04_staff_id_fkey",
@@ -2289,6 +2378,7 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
@@ -2309,6 +2399,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_05_customer_id_fkey",
@@ -2338,6 +2429,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_05_pkey",
@@ -2367,6 +2459,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_05_pkey",
@@ -2396,6 +2489,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_05_rental_id_fkey",
@@ -2425,6 +2519,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_05_staff_id_fkey",
@@ -2465,6 +2560,7 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
@@ -2485,6 +2581,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_06_customer_id_fkey",
@@ -2514,6 +2611,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_06_pkey",
@@ -2543,6 +2641,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_06_pkey",
@@ -2572,6 +2671,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_06_rental_id_fkey",
@@ -2601,6 +2701,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "payment_p2022_06_staff_id_fkey",
@@ -2641,6 +2742,7 @@
           "u_type": "numeric(5,2)",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
@@ -2661,6 +2763,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "customer_id_not_null",
@@ -2681,6 +2784,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_07_pkey",
@@ -2710,6 +2814,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('payment_payment_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_07_pkey",
@@ -2739,6 +2844,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "rental_id_not_null",
@@ -2759,6 +2865,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "staff_id_not_null",
@@ -2790,6 +2897,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "rental_customer_id_fkey",
@@ -2819,6 +2927,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "rental_inventory_id_fkey",
@@ -2848,6 +2957,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -2868,6 +2978,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "rental_date_not_null",
@@ -2888,6 +2999,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('rental_rental_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "rental_pkey",
@@ -2917,6 +3029,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -2927,6 +3040,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "rental_staff_id_fkey",
@@ -2967,6 +3081,7 @@
           "u_type": "bool",
           "is_nullable": "No",
           "column_default": "true",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "active_not_null",
@@ -2987,6 +3102,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "staff_address_id_fkey",
@@ -3016,6 +3132,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3026,6 +3143,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "first_name_not_null",
@@ -3046,6 +3164,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_name_not_null",
@@ -3066,6 +3185,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -3086,6 +3206,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3096,6 +3217,7 @@
           "u_type": "Vec<u8>",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3106,6 +3228,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('staff_staff_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "staff_pkey",
@@ -3135,6 +3258,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "staff_store_id_fkey",
@@ -3164,6 +3288,7 @@
           "u_type": "String",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "username_not_null",
@@ -3195,6 +3320,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "ForeignKey": {
               "constraint_name": "store_address_id_fkey",
@@ -3224,6 +3350,7 @@
           "u_type": "DateTime<Utc>",
           "is_nullable": "No",
           "column_default": "now()",
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
@@ -3244,6 +3371,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {
             "NotNull": {
               "constraint_name": "manager_staff_id_not_null",
@@ -3264,6 +3392,7 @@
           "u_type": "i32",
           "is_nullable": "No",
           "column_default": "nextval('store_store_id_seq'::regclass)",
+          "is_primary_key": true,
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "store_pkey",
@@ -3304,6 +3433,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3314,6 +3444,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3324,6 +3455,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3334,6 +3466,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         }
@@ -3353,6 +3486,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3363,6 +3497,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3373,6 +3508,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3383,6 +3519,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3393,6 +3530,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3403,6 +3541,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3413,6 +3552,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3423,6 +3563,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3433,6 +3574,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         }
@@ -3454,6 +3596,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3464,6 +3607,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3474,6 +3618,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3484,6 +3629,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3494,6 +3640,7 @@
           "u_type": "i16",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3504,6 +3651,7 @@
           "u_type": "numeric(4,2)",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3514,6 +3662,7 @@
           "u_type": "MpaaRating",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3524,6 +3673,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         }
@@ -3545,6 +3695,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3555,6 +3706,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3565,6 +3717,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3575,6 +3728,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3585,6 +3739,7 @@
           "u_type": "i16",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3595,6 +3750,7 @@
           "u_type": "numeric(4,2)",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3605,6 +3761,7 @@
           "u_type": "MpaaRating",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3615,6 +3772,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         }
@@ -3636,6 +3794,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3646,6 +3805,7 @@
           "u_type": "Decimal",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         }
@@ -3667,6 +3827,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3677,6 +3838,7 @@
           "u_type": "Decimal",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         }
@@ -3698,6 +3860,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3708,6 +3871,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3718,6 +3882,7 @@
           "u_type": "Decimal",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         }
@@ -3737,6 +3902,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3747,6 +3913,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3757,6 +3924,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3767,6 +3935,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3777,6 +3946,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3787,6 +3957,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3797,6 +3968,7 @@
           "u_type": "i32",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         },
@@ -3807,6 +3979,7 @@
           "u_type": "String",
           "is_nullable": "Yes",
           "column_default": null,
+          "is_primary_key": false,
           "constraints": {},
           "comment": null
         }

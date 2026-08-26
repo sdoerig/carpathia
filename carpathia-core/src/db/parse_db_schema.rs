@@ -1,11 +1,11 @@
-/// This module extracts the datebase schema from a `PostgreSQL` database and
-/// generates a Rust struct for each table in the database. It also proviedes the
-/// intermeditate data structures to hold the extracted schema information.
+//! This module extracts the datebase schema from a `PostgreSQL` database and
+//! generates a Rust struct for each table in the database. It also proviedes the
+//! intermeditate data structures to hold the extracted schema information.
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
 use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::db::enrich_adr::add_user_mapping_to_adr;
-use crate::db::postgresql::PostgresQuerier;
+use crate::db::postgres::postgresql::PostgresQuerier;
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
 pub struct DbSchemaParser {
@@ -13,6 +13,10 @@ pub struct DbSchemaParser {
 }
 
 impl DbSchemaParser {
+    /// Introspects the schema
+    /// ```rust
+    ///
+    /// ```
     pub async fn parse_schema(config: &CarpathiaConfig) -> Result<AbstractDbRepr, CarpathiaError> {
         match config.db_pool {
             DbPool::Postgres(_) => match PostgresQuerier::get_schema(config).await {
@@ -81,6 +85,7 @@ mod tests {
             .cache_file("./cache/carpathia_cache.json".to_string())
             .print_schema(false)
             .print_db_types(false)
+            .execute_templates(true)
             .build()
             .expect("Config building failed...")
     }

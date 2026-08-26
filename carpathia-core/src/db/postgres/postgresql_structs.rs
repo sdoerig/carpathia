@@ -88,6 +88,9 @@ impl From<PgColumnInfo> for AbstractAttribute {
                 .is_nullable
                 .parse()
                 .unwrap_or(IsNullable::Unknown(pg_column_info.is_nullable)),
+            is_primary_key: pg_column_info
+                .constraints
+                .contains_key(&ConstraintType::PrimaryKey),
             column_default: pg_column_info.column_default,
 
             constraints: pg_column_info.constraints,

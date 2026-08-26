@@ -25,21 +25,21 @@ Perfect for teams building type-safe, maintainable database layers in Rust witho
 ## 🚀 Quick Start
 
 ### 1. Install
+Build it from source
 
 ```bash
-cargo install carpathia-cli
-Or build from source:
-
-bash
-cd carpathia-cli
+git clone git@github.com:sdoerig/carpathia.git
+cd carpathia
 cargo build --release
-2. Prepare a PostgreSQL Database
+```
+
+### 2. Prepare a PostgreSQL Database
 Ensure you have a PostgreSQL server running and a database with a schema (e.g., Pagila).
 
-3. Create a Template Directory
-Create a folder (e.g., ./templates/rust_lib) with .tera files:
+### 3. Create a Template Directory
+Create a folder for the tera files 
 
-bash
+```bash
 mkdir -p templates/rust_lib
 Example template: templates/rust_lib/tables.user.rs.tera
 
