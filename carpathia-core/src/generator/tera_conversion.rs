@@ -1,5 +1,5 @@
 use crate::db::db_schema_structs::{
-    AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType,
+    AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType, TableProperties
 };
 /// This module contains the data structures used to pass data to Tera templates for generating code from an AbstractDbRepr.
 /// The data structures are designed to be serializable with Serde, allowing them to be easily converted into a format that
@@ -29,6 +29,7 @@ pub struct TableTemplateData<'a> {
     pub u_table_name: &'a str,
     pub comment: Option<&'a str>,
     pub u_imports: Vec<&'a str>,
+    pub table_properties: Vec<&'a TableProperties>,
     pub attributes: Vec<&'a AbstractAttribute>,
 }
 
@@ -38,6 +39,7 @@ impl<'a> From<&'a AbstractDbRepr> for AdrTemplateData<'a> {
             version: &adr.version,
             tables: adr.tables.values().map(|t| t.into()).collect(),
             views: adr.views.values().map(|v| v.into()).collect(),
+
         }
     }
 }
@@ -51,6 +53,7 @@ impl<'a> From<&'a AbstractTableRepr> for TableTemplateData<'a> {
             comment: table.comment.as_deref(),
             u_imports: table.u_imports.iter().map(|s| s.as_str()).collect(), // BTreeSet<String> → Vec<&str>
             attributes: table.attributes.values().collect(), // BTreeMap<String, AbstractAttribute> → Vec<&AbstractAttribute>
+            table_properties: table.table_properties.iter().collect(),
         }
     }
 }

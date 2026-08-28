@@ -339,6 +339,7 @@ impl DatabaseQuerier for PostgresQuerier {
                                 u_table_name: String::new(),
                                 u_imports: BTreeSet::new(),
                                 object_type,
+                                table_properties: BTreeSet::new(),
                                 comment: row.table_comment.clone(),
                                 attributes: BTreeMap::new(),
                             })
@@ -354,6 +355,7 @@ impl DatabaseQuerier for PostgresQuerier {
                                 u_table_name: String::new(),
                                 u_imports: BTreeSet::new(),
                                 object_type,
+                                table_properties: BTreeSet::new(),
                                 comment: row.table_comment.clone(),
                                 attributes: BTreeMap::new(),
                             })

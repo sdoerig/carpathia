@@ -164,6 +164,7 @@ mod tests {
             u_table_name: table_name.to_string(),
             object_type,
             u_imports: BTreeSet::new(),
+            table_properties: BTreeSet::new(),
             comment: Some("Test table".to_string()),
             attributes: abstract_attribte_map,
         }
