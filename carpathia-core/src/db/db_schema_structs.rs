@@ -218,7 +218,7 @@ pub enum ConstraintType {
     NotNull,
     ConstraintTrigger,
     None,
-    Unknown(String),
+    Unknown,
 }
 
 impl FromStr for ConstraintType {
@@ -236,7 +236,7 @@ impl FromStr for ConstraintType {
             "" | "none" => Ok(ConstraintType::None),
             _ => {
                 debug!("Invalid constraint type: {}", s);
-                Ok(ConstraintType::Unknown(s.to_string()))
+                Ok(ConstraintType::Unknown)
             }
         }
     }
@@ -338,7 +338,7 @@ mod tests {
         assert_eq!(none, ConstraintType::None);
 
         let unknown: ConstraintType = "UNKNOWN".parse().unwrap();
-        assert_eq!(unknown, ConstraintType::Unknown("UNKNOWN".to_string()));
+        assert_eq!(unknown, ConstraintType::Unknown);
     }
 
     #[test]

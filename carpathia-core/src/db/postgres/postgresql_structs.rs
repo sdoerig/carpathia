@@ -1,11 +1,48 @@
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, str::FromStr};
 
 use log::debug;
+use sqlx::prelude::Type;
 
 use crate::db::db_schema_structs::{
     AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable,
 };
 
+#[derive(
+    Type, Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, PartialOrd, Ord,
+)]
+#[sqlx(rename_all = "lowercase")]
+pub enum PgConstraintType {
+    PrimaryKey,
+    ForeignKey,
+    Unique,
+    Check,
+    Exclusion,
+    NotNull,
+    ConstraintTrigger,
+    None,
+    Unknown,
+}
+
+impl FromStr for PgConstraintType {
+    type Err = std::convert::Infallible;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "p" | "primary key" => Ok(PgConstraintType::PrimaryKey),
+            "u" | "unique" => Ok(PgConstraintType::Unique),
+            "f" | "foreign key" => Ok(PgConstraintType::ForeignKey),
+            "c" | "check" => Ok(PgConstraintType::Check),
+            "x" | "exclusion" => Ok(PgConstraintType::Exclusion),
+            "n" | "not null" => Ok(PgConstraintType::NotNull),
+            "t" | "constraint trigger" => Ok(PgConstraintType::ConstraintTrigger),
+            "" | "none" => Ok(PgConstraintType::None),
+            _ => {
+                debug!("Invalid constraint type: {}", s);
+                Ok(PgConstraintType::Unknown)
+            }
+        }
+    }
+}
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct PgColumnInfo {
     pub object_type: String,
@@ -47,7 +84,19 @@ impl PgColumnInfo {
                 .iter()
                 .map(|(constraint_type, constraint_info)| {
                     (
-                        constraint_type.clone(),
+                        match constraint_type {
+                            PgConstraintType::PrimaryKey => ConstraintType::PrimaryKey,
+                            PgConstraintType::ForeignKey => ConstraintType::ForeignKey,
+                            PgConstraintType::Unique => ConstraintType::Unique,
+                            PgConstraintType::Check => ConstraintType::Check,
+                            PgConstraintType::Exclusion => ConstraintType::Exclusion,
+                            PgConstraintType::NotNull => ConstraintType::NotNull,
+                            PgConstraintType::ConstraintTrigger => {
+                                ConstraintType::ConstraintTrigger
+                            }
+                            PgConstraintType::None => ConstraintType::None,
+                            PgConstraintType::Unknown => ConstraintType::Unknown,
+                        },
                         AbstractConstraint {
                             constraint_name: constraint_info.constraint_name.clone(),
                             constraint_value: constraint_info.constraint_value.clone(),
@@ -107,7 +156,7 @@ impl From<PgColumnInfo> for AbstractAttribute {
 )]
 pub(crate) struct PgConstraintMap {
     pg_constraint_info:
-        BTreeMap<(String, String, String), BTreeMap<ConstraintType, PgConstraintInfo>>,
+        BTreeMap<(String, String, String), BTreeMap<PgConstraintType, PgConstraintInfo>>,
 }
 
 impl PgConstraintMap {
@@ -126,7 +175,7 @@ impl PgConstraintMap {
                     constraint_info
                         .constraint_type
                         .parse()
-                        .unwrap_or(ConstraintType::None),
+                        .unwrap_or(PgConstraintType::None),
                     constraint_info.clone(),
                 );
         }
