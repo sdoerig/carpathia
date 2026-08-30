@@ -1,5 +1,5 @@
 use crate::db::db_schema_structs::{
-    AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType, TableProperties
+    AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType, TableProperties,
 };
 /// This module contains the data structures used to pass data to Tera templates for generating code from an AbstractDbRepr.
 /// The data structures are designed to be serializable with Serde, allowing them to be easily converted into a format that
@@ -39,7 +39,6 @@ impl<'a> From<&'a AbstractDbRepr> for AdrTemplateData<'a> {
             version: &adr.version,
             tables: adr.tables.values().map(|t| t.into()).collect(),
             views: adr.views.values().map(|v| v.into()).collect(),
-
         }
     }
 }

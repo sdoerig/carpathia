@@ -22,14 +22,6 @@ fn add_to_atr(
     db_name_map: &std::collections::BTreeMap<String, String>,
     atr: &mut super::db_schema_structs::AbstractTableRepr,
 ) {
-    debug!(
-        "add_to_atr: type_map = {}",
-        serde_json::to_string_pretty(type_map).unwrap()
-    );
-    debug!(
-        "add_to_atr: db_name_map = {}",
-        serde_json::to_string_pretty(db_name_map).unwrap()
-    );
     atr.u_table_name = db_name_map
         .get(&atr.table_name)
         .unwrap_or(&atr.table_name)
@@ -68,15 +60,15 @@ fn map_constraints_to_user_friendly_names(
 ) {
     for (key, constraint) in attribute.constraints.iter_mut() {
         match key {
-            ConstraintType::PrimaryKey => atr_tbl_prop.extend(vec![
-                TableProperties::PrimaryKey,
-                TableProperties::Insertable,
-                TableProperties::Selectable,
-                TableProperties::Deletable,
-                TableProperties::Updatable,
-            ]),
-            ConstraintType::ForeignKey => atr_tbl_prop.extend(vec![TableProperties::ForeignKey]),
-            _ => atr_tbl_prop.extend(vec![]),
+            ConstraintType::PrimaryKey => {
+                atr_tbl_prop.insert(TableProperties::PrimaryKey);
+            }
+            ConstraintType::ForeignKey => {
+                atr_tbl_prop.insert(TableProperties::ForeignKey);
+            }
+            _ => {
+                // Basically anything is selectable.
+            }
         };
         if let Some(referenced_table) = &constraint.referenced_table {
             constraint.u_referenced_table = db_name_map

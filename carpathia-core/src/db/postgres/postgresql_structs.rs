@@ -91,6 +91,9 @@ impl From<PgColumnInfo> for AbstractAttribute {
             is_primary_key: pg_column_info
                 .constraints
                 .contains_key(&ConstraintType::PrimaryKey),
+            character_maximum_length: pg_column_info.character_maximum_length,
+            numeric_precision: pg_column_info.numeric_precision,
+            numeric_scale: pg_column_info.numeric_scale,
             column_default: pg_column_info.column_default,
 
             constraints: pg_column_info.constraints,

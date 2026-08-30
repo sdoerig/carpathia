@@ -62,9 +62,9 @@ pub struct AbstractAttribute {
     pub is_nullable: IsNullable,
     pub column_default: Option<String>,
     pub is_primary_key: bool,
-    //pub character_maximum_length: Option<i32>,
-    //pub numeric_precision: Option<i32>,
-    //pub numeric_scale: Option<i32>,
+    pub character_maximum_length: Option<i32>,
+    pub numeric_precision: Option<i32>,
+    pub numeric_scale: Option<i32>,
     //pub is_identity: IsIdentity,
     //pub identity_generation: Option<String>,
     //pub is_generated: IsGenerated,
@@ -255,6 +255,9 @@ mod tests {
             is_nullable: "NO".parse().unwrap_or(IsNullable::No),
             is_primary_key: false,
             column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
+            numeric_precision: None,
+            numeric_scale: None,
+            character_maximum_length: None,
             constraints: {
                 let mut constraints = BTreeMap::new();
                 constraints.insert(
