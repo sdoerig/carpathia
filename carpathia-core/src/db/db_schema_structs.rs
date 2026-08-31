@@ -221,27 +221,6 @@ pub enum ConstraintType {
     Unknown,
 }
 
-impl FromStr for ConstraintType {
-    type Err = std::convert::Infallible;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "p" | "primary key" => Ok(ConstraintType::PrimaryKey),
-            "u" | "unique" => Ok(ConstraintType::Unique),
-            "f" | "foreign key" => Ok(ConstraintType::ForeignKey),
-            "c" | "check" => Ok(ConstraintType::Check),
-            "x" | "exclusion" => Ok(ConstraintType::Exclusion),
-            "n" | "not null" => Ok(ConstraintType::NotNull),
-            "t" | "constraint trigger" => Ok(ConstraintType::ConstraintTrigger),
-            "" | "none" => Ok(ConstraintType::None),
-            _ => {
-                debug!("Invalid constraint type: {}", s);
-                Ok(ConstraintType::Unknown)
-            }
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -309,36 +288,6 @@ mod tests {
             .attributes
             .insert("name".to_string(), create_column_info("name")); // Attempt to add a duplicate attribute again
         assert_eq!(table_info.attributes.len(), 2);
-    }
-
-    #[test]
-    fn test_constraint_type_from_str() {
-        let primary_key: ConstraintType = "PRIMARY KEY".parse().unwrap();
-        assert_eq!(primary_key, ConstraintType::PrimaryKey);
-
-        let unique: ConstraintType = "UNIQUE".parse().unwrap();
-        assert_eq!(unique, ConstraintType::Unique);
-
-        let foreign_key: ConstraintType = "FOREIGN KEY".parse().unwrap();
-        assert_eq!(foreign_key, ConstraintType::ForeignKey);
-
-        let check: ConstraintType = "CHECK".parse().unwrap();
-        assert_eq!(check, ConstraintType::Check);
-
-        let exclusion: ConstraintType = "EXCLUSION".parse().unwrap();
-        assert_eq!(exclusion, ConstraintType::Exclusion);
-
-        let not_null: ConstraintType = "NOT NULL".parse().unwrap();
-        assert_eq!(not_null, ConstraintType::NotNull);
-
-        let constraint_trigger: ConstraintType = "CONSTRAINT TRIGGER".parse().unwrap();
-        assert_eq!(constraint_trigger, ConstraintType::ConstraintTrigger);
-
-        let none: ConstraintType = "NONE".parse().unwrap();
-        assert_eq!(none, ConstraintType::None);
-
-        let unknown: ConstraintType = "UNKNOWN".parse().unwrap();
-        assert_eq!(unknown, ConstraintType::Unknown);
     }
 
     #[test]

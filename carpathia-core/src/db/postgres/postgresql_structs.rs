@@ -37,6 +37,12 @@ impl From<&PgConstraintType> for ConstraintType {
     }
 }
 
+impl From<PgConstraintType> for ConstraintType {
+    fn from(pg_constraint_type: PgConstraintType) -> Self {
+        (&pg_constraint_type).into()
+    }
+}
+
 impl FromStr for PgConstraintType {
     type Err = std::convert::Infallible;
 
@@ -207,4 +213,80 @@ pub(crate) struct PgConstraintInfo {
     pub foreign_schema_name: Option<String>,
     pub foreign_relation_name: Option<String>,
     pub foreign_attribute_name: Option<String>,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_constraint_type_from_str_and_to_constraint_type() {
+        struct EnumTest {
+            // parsing from this string...
+            parsed_from: String,
+            // must become this enum value...
+            pg_const_type: PgConstraintType,
+            // must cast into this ADR enum value.
+            const_type: ConstraintType,
+        }
+
+        let enum_variants = vec![
+            EnumTest {
+                parsed_from: "PRIMARY KEY".to_string(),
+                pg_const_type: PgConstraintType::PrimaryKey,
+                const_type: ConstraintType::PrimaryKey,
+            },
+            EnumTest {
+                parsed_from: "UNIQUE".to_string(),
+                pg_const_type: PgConstraintType::Unique,
+                const_type: ConstraintType::Unique,
+            },
+            EnumTest {
+                parsed_from: "FOREIGN KEY".to_string(),
+                pg_const_type: PgConstraintType::ForeignKey,
+                const_type: ConstraintType::ForeignKey,
+            },
+            EnumTest {
+                parsed_from: "CHECK".to_string(),
+                pg_const_type: PgConstraintType::Check,
+                const_type: ConstraintType::Check,
+            },
+            EnumTest {
+                parsed_from: "EXCLUSION".to_string(),
+                pg_const_type: PgConstraintType::Exclusion,
+                const_type: ConstraintType::Exclusion,
+            },
+            EnumTest {
+                parsed_from: "NOT NULL".to_string(),
+                pg_const_type: PgConstraintType::NotNull,
+                const_type: ConstraintType::NotNull,
+            },
+            EnumTest {
+                parsed_from: "CONSTRAINT TRIGGER".to_string(),
+                pg_const_type: PgConstraintType::ConstraintTrigger,
+                const_type: ConstraintType::ConstraintTrigger,
+            },
+            EnumTest {
+                parsed_from: String::new(),
+                pg_const_type: PgConstraintType::None,
+                const_type: ConstraintType::None,
+            },
+            EnumTest {
+                parsed_from: "NONE".to_string(),
+                pg_const_type: PgConstraintType::None,
+                const_type: ConstraintType::None,
+            },
+            EnumTest {
+                parsed_from: "UNKNOWN".to_string(),
+                pg_const_type: PgConstraintType::Unknown("UNKNOWN".to_string()),
+                const_type: ConstraintType::Unknown,
+            },
+        ];
+        for enum_test in enum_variants.iter() {
+            let pg_const_type: PgConstraintType = enum_test.parsed_from.parse().unwrap();
+            assert_eq!(pg_const_type, enum_test.pg_const_type);
+            let const_type: ConstraintType = pg_const_type.into();
+            assert_eq!(const_type, enum_test.const_type);
+        }
+    }
 }
