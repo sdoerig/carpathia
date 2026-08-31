@@ -1,16 +1,14 @@
 use std::{collections::BTreeMap, str::FromStr};
 
 use log::debug;
-use sqlx::prelude::Type;
 
 use crate::db::db_schema_structs::{
     AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable,
 };
 
 #[derive(
-    Type, Debug, serde::Serialize, serde::Deserialize, Clone, PartialEq, Eq, Hash, PartialOrd, Ord,
+    Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize,
 )]
-#[sqlx(rename_all = "lowercase")]
 pub enum PgConstraintType {
     PrimaryKey,
     ForeignKey,
@@ -20,7 +18,23 @@ pub enum PgConstraintType {
     NotNull,
     ConstraintTrigger,
     None,
-    Unknown,
+    Unknown(String),
+}
+
+impl From<&PgConstraintType> for ConstraintType {
+    fn from(pg_constraint_type: &PgConstraintType) -> Self {
+        match pg_constraint_type {
+            PgConstraintType::PrimaryKey => ConstraintType::PrimaryKey,
+            PgConstraintType::ForeignKey => ConstraintType::ForeignKey,
+            PgConstraintType::Unique => ConstraintType::Unique,
+            PgConstraintType::Check => ConstraintType::Check,
+            PgConstraintType::Exclusion => ConstraintType::Exclusion,
+            PgConstraintType::NotNull => ConstraintType::NotNull,
+            PgConstraintType::ConstraintTrigger => ConstraintType::ConstraintTrigger,
+            PgConstraintType::None => ConstraintType::None,
+            PgConstraintType::Unknown(_) => ConstraintType::Unknown,
+        }
+    }
 }
 
 impl FromStr for PgConstraintType {
@@ -38,7 +52,7 @@ impl FromStr for PgConstraintType {
             "" | "none" => Ok(PgConstraintType::None),
             _ => {
                 debug!("Invalid constraint type: {}", s);
-                Ok(PgConstraintType::Unknown)
+                Ok(PgConstraintType::Unknown(s.to_string()))
             }
         }
     }
@@ -84,19 +98,7 @@ impl PgColumnInfo {
                 .iter()
                 .map(|(constraint_type, constraint_info)| {
                     (
-                        match constraint_type {
-                            PgConstraintType::PrimaryKey => ConstraintType::PrimaryKey,
-                            PgConstraintType::ForeignKey => ConstraintType::ForeignKey,
-                            PgConstraintType::Unique => ConstraintType::Unique,
-                            PgConstraintType::Check => ConstraintType::Check,
-                            PgConstraintType::Exclusion => ConstraintType::Exclusion,
-                            PgConstraintType::NotNull => ConstraintType::NotNull,
-                            PgConstraintType::ConstraintTrigger => {
-                                ConstraintType::ConstraintTrigger
-                            }
-                            PgConstraintType::None => ConstraintType::None,
-                            PgConstraintType::Unknown => ConstraintType::Unknown,
-                        },
+                        constraint_type.into(),
                         AbstractConstraint {
                             constraint_name: constraint_info.constraint_name.clone(),
                             constraint_value: constraint_info.constraint_value.clone(),
