@@ -7,7 +7,9 @@ use crate::configuration::conf_enums::DbPool;
 use crate::db::db_schema_structs::{
     ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType,
 };
-use crate::db::postgres::postgresql_structs::{PgColumnInfo, PgConstraintInfo, PgConstraintMap};
+use crate::db::postgres::postgresql_structs::{
+    PgColumnInfo, PgConstraintInfo, PgConstraintMap, PgObjectType,
+};
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
@@ -324,13 +326,14 @@ impl DatabaseQuerier for PostgresQuerier {
             let num_rows = rows.len();
             debug!("Fetched {num_rows} rows from schema query with offset {offset}");
             for mut row in rows {
+                let pg_object_type: PgObjectType = row.object_type.parse().unwrap_or_else(|_| {
+                    debug!("Unknown object type: {}", row.object_type);
+                    PgObjectType::Other
+                });
                 row = row.constraint_map(&constraint_map);
                 debug!("Processing column: {}.{}", row.table_name, row.column_name);
                 let table_name = row.table_name.clone();
-                let object_type = row.object_type.parse().unwrap_or_else(|_| {
-                    debug!("Unknown object type: {}", row.object_type);
-                    ObjectType::Other
-                });
+                let object_type: ObjectType = pg_object_type.into();
                 let attribute = AbstractAttribute::from(row.clone());
                 match object_type {
                     ObjectType::BaseTable | ObjectType::PartitionedTable => {

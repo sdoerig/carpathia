@@ -119,23 +119,6 @@ pub enum ObjectType {
     Unknown(String),
 }
 
-impl FromStr for ObjectType {
-    type Err = std::convert::Infallible;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "base table" => Ok(ObjectType::BaseTable),
-            "partitioned table" => Ok(ObjectType::PartitionedTable),
-            "view" => Ok(ObjectType::View),
-            "materialized view" => Ok(ObjectType::MaterializedView),
-            _ => {
-                debug!("Invalid object type: {}", s);
-                Ok(ObjectType::Unknown(s.to_string()))
-            }
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum IsNullable {
     Yes,
@@ -260,7 +243,7 @@ mod tests {
         AbstractTableRepr {
             table_name: table_name.to_string(),
             u_table_name: table_name.to_string(),
-            object_type: "BASE TABLE".parse().unwrap_or(ObjectType::BaseTable),
+            object_type: ObjectType::BaseTable,
             attributes: BTreeMap::new(),
             u_imports: BTreeSet::new(),
             table_properties: BTreeSet::new(),

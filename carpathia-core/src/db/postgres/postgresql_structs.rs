@@ -3,8 +3,56 @@ use std::{collections::BTreeMap, str::FromStr};
 use log::debug;
 
 use crate::db::db_schema_structs::{
-    AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable,
+    AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable, ObjectType,
 };
+
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
+)]
+pub enum PgObjectType {
+    BaseTable,
+    PartitionedTable,
+    View,
+    MaterializedView,
+    Other,
+    Unknown(String),
+}
+
+impl FromStr for PgObjectType {
+    type Err = std::convert::Infallible;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "base table" => Ok(PgObjectType::BaseTable),
+            "partitioned table" => Ok(PgObjectType::PartitionedTable),
+            "view" => Ok(PgObjectType::View),
+            "materialized view" => Ok(PgObjectType::MaterializedView),
+            _ => {
+                debug!("Invalid object type: {}", s);
+                Ok(PgObjectType::Unknown(s.to_string()))
+            }
+        }
+    }
+}
+
+impl From<&PgObjectType> for ObjectType {
+    fn from(pg_object_type: &PgObjectType) -> Self {
+        match pg_object_type {
+            PgObjectType::BaseTable => ObjectType::BaseTable,
+            PgObjectType::PartitionedTable => ObjectType::PartitionedTable,
+            PgObjectType::View => ObjectType::View,
+            PgObjectType::MaterializedView => ObjectType::MaterializedView,
+            PgObjectType::Other => ObjectType::Other,
+            PgObjectType::Unknown(s) => ObjectType::Unknown(s.to_owned()),
+        }
+    }
+}
+
+impl From<PgObjectType> for ObjectType {
+    fn from(pg_object_type: PgObjectType) -> Self {
+        (&pg_object_type).into()
+    }
+}
 
 #[derive(
     Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, serde::Serialize, serde::Deserialize,
@@ -218,6 +266,25 @@ pub(crate) struct PgConstraintInfo {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_pg_object_type_from_str() {
+        let test_cases = vec![
+            ("BASE TABLE", PgObjectType::BaseTable),
+            ("PARTITIONED TABLE", PgObjectType::PartitionedTable),
+            ("VIEW", PgObjectType::View),
+            ("MATERIALIZED VIEW", PgObjectType::MaterializedView),
+            ("OTHER", PgObjectType::Unknown("OTHER".to_string())),
+            (
+                "UNKNOWN_TYPE",
+                PgObjectType::Unknown("UNKNOWN_TYPE".to_string()),
+            ),
+        ];
+        for (input, expected) in test_cases {
+            let result: PgObjectType = input.parse().unwrap();
+            assert_eq!(result, expected);
+        }
+    }
 
     #[test]
     fn test_constraint_type_from_str_and_to_constraint_type() {
