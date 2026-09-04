@@ -7,9 +7,8 @@ use crate::configuration::conf_enums::DbPool;
 use crate::db::db_schema_structs::{
     ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType,
 };
-use crate::db::postgres::postgresql_structs::{
-    PgColumnInfo, PgConstraintInfo, PgConstraintMap, PgObjectType,
-};
+use crate::db::postgres::postgres_enums::PgObjectType;
+use crate::db::postgres::postgresql_structs::{PgColumnInfo, PgConstraintInfo, PgConstraintMap};
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
