@@ -153,7 +153,7 @@ mod tests {
                 data_type: "integer".to_string(),
                 u_type: "whatever".to_string(),
                 is_primary_key: false,
-                is_nullable: "NO".parse().unwrap_or(IsNullable::No),
+                is_nullable: IsNullable::No,
                 character_maximum_length: None,
                 numeric_precision: None,
                 numeric_scale: None,

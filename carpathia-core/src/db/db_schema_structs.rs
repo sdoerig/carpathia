@@ -3,11 +3,7 @@
 //! represents a database database in a canonical model. It will be referenced as ADR or
 //! Internal Representation (IR). It can be seen as a contract between the templates and carpathia.
 //!
-use log::debug;
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    str::FromStr,
-};
+use std::collections::{BTreeMap, BTreeSet};
 
 /// The version of the ADR - it has nothing to do with the software version of carpathia -
 /// it only references to the ADR itself. Exprect for
@@ -126,41 +122,11 @@ pub enum IsNullable {
     Unknown(String),
 }
 
-impl FromStr for IsNullable {
-    type Err = std::convert::Infallible;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "yes" => Ok(IsNullable::Yes),
-            "no" => Ok(IsNullable::No),
-            _ => {
-                debug!("Invalid value for is_nullable: {}", s);
-                Ok(IsNullable::Unknown(s.to_string()))
-            }
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum IsIdentity {
     Yes,
     No,
     Unknown(String),
-}
-
-impl FromStr for IsIdentity {
-    type Err = std::convert::Infallible;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "yes" => Ok(IsIdentity::Yes),
-            "no" => Ok(IsIdentity::No),
-            _ => {
-                debug!("Invalid value for is_identity: {}", s);
-                Ok(IsIdentity::Unknown(s.to_string()))
-            }
-        }
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
@@ -170,23 +136,6 @@ pub enum IsGenerated {
     ByDefaultOnNull,
     Never,
     Unknown(String),
-}
-
-impl FromStr for IsGenerated {
-    type Err = std::convert::Infallible;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s.to_lowercase().as_str() {
-            "always" => Ok(IsGenerated::Always),
-            "by default" => Ok(IsGenerated::ByDefault),
-            "by default on null" => Ok(IsGenerated::ByDefaultOnNull),
-            "never" => Ok(IsGenerated::Never),
-            _ => {
-                debug!("Invalid value for is_generated: {}", s);
-                Ok(IsGenerated::Unknown(s.to_string()))
-            }
-        }
-    }
 }
 
 #[derive(
@@ -214,7 +163,7 @@ mod tests {
             u_column_name: column_name.to_string(),
             data_type: "integer".to_string(),
             u_type: "whatever".to_string(),
-            is_nullable: "NO".parse().unwrap_or(IsNullable::No),
+            is_nullable: IsNullable::No,
             is_primary_key: false,
             column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
             numeric_precision: None,
@@ -275,31 +224,17 @@ mod tests {
 
     #[test]
     fn test_is_nullable_from_str() {
-        let yes: IsNullable = "YES".parse().unwrap();
+        let yes: IsNullable = IsNullable::Yes;
         assert_eq!(yes, IsNullable::Yes);
-        let unknown: IsNullable = "MAYBE".parse().unwrap();
+        let unknown: IsNullable = IsNullable::Unknown("MAYBE".to_string());
         assert_eq!(unknown, IsNullable::Unknown("MAYBE".to_string()));
     }
 
     #[test]
     fn test_is_identity_from_str() {
-        let yes: IsIdentity = "YES".parse().unwrap();
+        let yes: IsIdentity = IsIdentity::Yes;
         assert_eq!(yes, IsIdentity::Yes);
-        let unknown: IsIdentity = "MAYBE".parse().unwrap();
+        let unknown: IsIdentity = IsIdentity::Unknown("MAYBE".to_string());
         assert_eq!(unknown, IsIdentity::Unknown("MAYBE".to_string()));
-    }
-
-    #[test]
-    fn test_is_generated_from_str() {
-        let always: IsGenerated = "ALWAYS".parse().unwrap();
-        assert_eq!(always, IsGenerated::Always);
-        let unknown: IsGenerated = "MAYBE".parse().unwrap();
-        assert_eq!(unknown, IsGenerated::Unknown("MAYBE".to_string()));
-        let by_default: IsGenerated = "BY DEFAULT".parse().unwrap();
-        assert_eq!(by_default, IsGenerated::ByDefault);
-        let by_default_on_null: IsGenerated = "BY DEFAULT ON NULL".parse().unwrap();
-        assert_eq!(by_default_on_null, IsGenerated::ByDefaultOnNull);
-        let never: IsGenerated = "NEVER".parse().unwrap();
-        assert_eq!(never, IsGenerated::Never);
     }
 }

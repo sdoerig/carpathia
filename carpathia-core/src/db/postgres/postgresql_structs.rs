@@ -1,12 +1,10 @@
-use std::{collections::BTreeMap};
+use std::collections::BTreeMap;
 
 use log::debug;
 
 use crate::db::{
-    db_schema_structs::{
-        AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable,
-    },
-    postgres::postgres_enums::PgConstraintType,
+    db_schema_structs::{AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable},
+    postgres::postgres_enums::{PgConstraintType, PgIsNullable},
 };
 
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
@@ -82,15 +80,17 @@ impl From<PgColumnInfo> for AbstractAttribute {
         } else {
             pg_column_info.data_type.clone()
         };
+        let pg_is_nullable: PgIsNullable = pg_column_info
+            .is_nullable
+            .parse()
+            .unwrap_or(PgIsNullable::Unknown(pg_column_info.is_nullable.clone()));
+        let is_nullable: IsNullable = pg_is_nullable.into();
         AbstractAttribute {
             column_name: pg_column_info.column_name.clone(),
             u_column_name: String::new(), // Placeholder, will be filled in by enrich_adr
             data_type,
             u_type: String::new(), // Placeholder, will be filled in by enrich_adr
-            is_nullable: pg_column_info
-                .is_nullable
-                .parse()
-                .unwrap_or(IsNullable::Unknown(pg_column_info.is_nullable)),
+            is_nullable,
             is_primary_key: pg_column_info
                 .constraints
                 .contains_key(&ConstraintType::PrimaryKey),

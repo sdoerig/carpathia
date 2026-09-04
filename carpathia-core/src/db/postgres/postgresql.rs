@@ -327,7 +327,7 @@ impl DatabaseQuerier for PostgresQuerier {
             for mut row in rows {
                 let pg_object_type: PgObjectType = row.object_type.parse().unwrap_or_else(|_| {
                     debug!("Unknown object type: {}", row.object_type);
-                    PgObjectType::Other
+                    PgObjectType::Unknown(row.object_type.clone())
                 });
                 row = row.constraint_map(&constraint_map);
                 debug!("Processing column: {}.{}", row.table_name, row.column_name);

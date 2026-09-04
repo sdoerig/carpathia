@@ -2,7 +2,9 @@ use std::str::FromStr;
 
 use log::debug;
 
-use crate::db::db_schema_structs::{ConstraintType, ObjectType};
+use crate::db::db_schema_structs::{
+    ConstraintType, IsGenerated, IsIdentity, IsNullable, ObjectType,
+};
 
 #[derive(
     Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
@@ -12,7 +14,6 @@ pub enum PgObjectType {
     PartitionedTable,
     View,
     MaterializedView,
-    Other,
     Unknown(String),
 }
 
@@ -40,7 +41,6 @@ impl From<&PgObjectType> for ObjectType {
             PgObjectType::PartitionedTable => ObjectType::PartitionedTable,
             PgObjectType::View => ObjectType::View,
             PgObjectType::MaterializedView => ObjectType::MaterializedView,
-            PgObjectType::Other => ObjectType::Other,
             PgObjectType::Unknown(s) => ObjectType::Unknown(s.to_owned()),
         }
     }
@@ -110,51 +110,179 @@ impl FromStr for PgConstraintType {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+pub enum PgIsNullable {
+    Yes,
+    No,
+    Unknown(String),
+}
+
+impl FromStr for PgIsNullable {
+    type Err = std::convert::Infallible;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "yes" => Ok(PgIsNullable::Yes),
+            "no" => Ok(PgIsNullable::No),
+            _ => {
+                debug!("Invalid value for is_nullable: {}", s);
+                Ok(PgIsNullable::Unknown(s.to_string()))
+            }
+        }
+    }
+}
+
+impl From<&PgIsNullable> for IsNullable {
+    fn from(pg_is_nullable: &PgIsNullable) -> Self {
+        match pg_is_nullable {
+            PgIsNullable::Yes => IsNullable::Yes,
+            PgIsNullable::No => IsNullable::No,
+            PgIsNullable::Unknown(s) => IsNullable::Unknown(s.to_owned()),
+        }
+    }
+}
+
+impl From<PgIsNullable> for IsNullable {
+    fn from(pg_is_nullable: PgIsNullable) -> Self {
+        (&pg_is_nullable).into()
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+pub enum PgIsIdentity {
+    Yes,
+    No,
+    Unknown(String),
+}
+
+impl FromStr for PgIsIdentity {
+    type Err = std::convert::Infallible;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "yes" => Ok(PgIsIdentity::Yes),
+            "no" => Ok(PgIsIdentity::No),
+            _ => {
+                debug!("Invalid value for is_identity: {}", s);
+                Ok(PgIsIdentity::Unknown(s.to_string()))
+            }
+        }
+    }
+}
+
+impl From<&PgIsIdentity> for IsIdentity {
+    fn from(pg_is_identity: &PgIsIdentity) -> Self {
+        match pg_is_identity {
+            PgIsIdentity::Yes => IsIdentity::Yes,
+            PgIsIdentity::No => IsIdentity::No,
+            PgIsIdentity::Unknown(s) => IsIdentity::Unknown(s.to_owned()),
+        }
+    }
+}
+
+impl From<PgIsIdentity> for IsIdentity {
+    fn from(pg_is_identity: PgIsIdentity) -> Self {
+        (&pg_is_identity).into()
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+pub enum PgIsGenerated {
+    Always,
+    ByDefault,
+    ByDefaultOnNull,
+    Never,
+    Unknown(String),
+}
+
+impl FromStr for PgIsGenerated {
+    type Err = std::convert::Infallible;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "always" => Ok(PgIsGenerated::Always),
+            "by default" => Ok(PgIsGenerated::ByDefault),
+            "by default on null" => Ok(PgIsGenerated::ByDefaultOnNull),
+            "never" => Ok(PgIsGenerated::Never),
+            _ => {
+                debug!("Invalid value for is_generated: {}", s);
+                Ok(PgIsGenerated::Unknown(s.to_string()))
+            }
+        }
+    }
+}
+
+impl From<&PgIsGenerated> for IsGenerated {
+    fn from(pg_is_generated: &PgIsGenerated) -> Self {
+        match pg_is_generated {
+            PgIsGenerated::Always => IsGenerated::Always,
+            PgIsGenerated::ByDefault => IsGenerated::ByDefault,
+            PgIsGenerated::ByDefaultOnNull => IsGenerated::ByDefaultOnNull,
+            PgIsGenerated::Never => IsGenerated::Never,
+            PgIsGenerated::Unknown(s) => IsGenerated::Unknown(s.to_owned()),
+        }
+    }
+}
+
+impl From<PgIsGenerated> for IsGenerated {
+    fn from(pg_is_generated: PgIsGenerated) -> Self {
+        (&pg_is_generated).into()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    struct EnumTest<P, I> {
+        // parsing from this string...
+        parsed_from: String,
+        // must become this enum value...
+        pg_const_type: P,
+        // must cast into this ADR enum value.
+        const_type: I,
+    }
+
     #[test]
     fn test_pg_object_type_from_str() {
-        let test_cases = vec![
-            ("BASE TABLE", PgObjectType::BaseTable, ObjectType::BaseTable),
-            (
-                "PARTITIONED TABLE",
-                PgObjectType::PartitionedTable,
-                ObjectType::PartitionedTable,
-            ),
-            ("VIEW", PgObjectType::View, ObjectType::View),
-            (
-                "MATERIALIZED VIEW",
-                PgObjectType::MaterializedView,
-                ObjectType::MaterializedView,
-            ),
-            (
-                "OTHER",
-                PgObjectType::Unknown("OTHER".to_string()),
-                ObjectType::Unknown("OTHER".to_string()),
-            ),
+        let test_cases = [
+            EnumTest {
+                parsed_from: "BASE TABLE".to_string(),
+                pg_const_type: PgObjectType::BaseTable,
+                const_type: ObjectType::BaseTable,
+            },
+            EnumTest {
+                parsed_from: "PARTITIONED TABLE".to_string(),
+                pg_const_type: PgObjectType::PartitionedTable,
+                const_type: ObjectType::PartitionedTable,
+            },
+            EnumTest {
+                parsed_from: "VIEW".to_string(),
+                pg_const_type: PgObjectType::View,
+                const_type: ObjectType::View,
+            },
+            EnumTest {
+                parsed_from: "MATERIALIZED VIEW".to_string(),
+                pg_const_type: PgObjectType::MaterializedView,
+                const_type: ObjectType::MaterializedView,
+            },
+            EnumTest {
+                parsed_from: "UNKNOWN".to_string(),
+                pg_const_type: PgObjectType::Unknown("UNKNOWN".to_string()),
+                const_type: ObjectType::Unknown("UNKNOWN".to_string()),
+            },
         ];
-        for (input, expected_pg, expected_adr) in test_cases {
-            let result: PgObjectType = input.parse().unwrap();
-            assert_eq!(result, expected_pg);
-            let adr_result: ObjectType = result.into();
-            assert_eq!(adr_result, expected_adr);
+        for enum_test in test_cases.iter() {
+            let pg_object_type: PgObjectType = enum_test.parsed_from.parse().unwrap();
+            assert_eq!(pg_object_type, enum_test.pg_const_type);
+            let const_type: ObjectType = (&pg_object_type).into();
+            assert_eq!(const_type, enum_test.const_type);
         }
     }
 
     #[test]
     fn test_constraint_type_from_str_and_to_constraint_type() {
-        struct EnumTest {
-            // parsing from this string...
-            parsed_from: String,
-            // must become this enum value...
-            pg_const_type: PgConstraintType,
-            // must cast into this ADR enum value.
-            const_type: ConstraintType,
-        }
-
-        let enum_variants = vec![
+        let enum_variants = [
             EnumTest {
                 parsed_from: "PRIMARY KEY".to_string(),
                 pg_const_type: PgConstraintType::PrimaryKey,
@@ -210,6 +338,97 @@ mod tests {
             let pg_const_type: PgConstraintType = enum_test.parsed_from.parse().unwrap();
             assert_eq!(pg_const_type, enum_test.pg_const_type);
             let const_type: ConstraintType = pg_const_type.into();
+            assert_eq!(const_type, enum_test.const_type);
+        }
+    }
+
+    #[test]
+    fn test_pg_const_type_from_str_and_to_is_nullable() {
+        let enum_variants = [
+            EnumTest {
+                parsed_from: "YES".to_string(),
+                pg_const_type: PgIsNullable::Yes,
+                const_type: IsNullable::Yes,
+            },
+            EnumTest {
+                parsed_from: "NO".to_string(),
+                pg_const_type: PgIsNullable::No,
+                const_type: IsNullable::No,
+            },
+            EnumTest {
+                parsed_from: "UNKNOWN".to_string(),
+                pg_const_type: PgIsNullable::Unknown("UNKNOWN".to_string()),
+                const_type: IsNullable::Unknown("UNKNOWN".to_string()),
+            },
+        ];
+        for enum_test in enum_variants.iter() {
+            let pg_const_type: PgIsNullable = enum_test.parsed_from.parse().unwrap();
+            assert_eq!(pg_const_type, enum_test.pg_const_type);
+            let const_type: IsNullable = pg_const_type.into();
+            assert_eq!(const_type, enum_test.const_type);
+        }
+    }
+
+    #[test]
+    fn test_pg_is_identity_from_str_and_to_is_identity() {
+        let enum_variants = [
+            EnumTest {
+                parsed_from: "YES".to_string(),
+                pg_const_type: PgIsIdentity::Yes,
+                const_type: IsIdentity::Yes,
+            },
+            EnumTest {
+                parsed_from: "NO".to_string(),
+                pg_const_type: PgIsIdentity::No,
+                const_type: IsIdentity::No,
+            },
+            EnumTest {
+                parsed_from: "UNKNOWN".to_string(),
+                pg_const_type: PgIsIdentity::Unknown("UNKNOWN".to_string()),
+                const_type: IsIdentity::Unknown("UNKNOWN".to_string()),
+            },
+        ];
+        for enum_test in enum_variants.iter() {
+            let pg_const_type: PgIsIdentity = enum_test.parsed_from.parse().unwrap();
+            assert_eq!(pg_const_type, enum_test.pg_const_type);
+            let const_type: IsIdentity = pg_const_type.into();
+            assert_eq!(const_type, enum_test.const_type);
+        }
+    }
+
+    #[test]
+    fn test_pg_is_generated_from_str_and_to_is_generated() {
+        let enum_variants = [
+            EnumTest {
+                parsed_from: "ALWAYS".to_string(),
+                pg_const_type: PgIsGenerated::Always,
+                const_type: IsGenerated::Always,
+            },
+            EnumTest {
+                parsed_from: "BY DEFAULT".to_string(),
+                pg_const_type: PgIsGenerated::ByDefault,
+                const_type: IsGenerated::ByDefault,
+            },
+            EnumTest {
+                parsed_from: "BY DEFAULT ON NULL".to_string(),
+                pg_const_type: PgIsGenerated::ByDefaultOnNull,
+                const_type: IsGenerated::ByDefaultOnNull,
+            },
+            EnumTest {
+                parsed_from: "NEVER".to_string(),
+                pg_const_type: PgIsGenerated::Never,
+                const_type: IsGenerated::Never,
+            },
+            EnumTest {
+                parsed_from: "UNKNOWN".to_string(),
+                pg_const_type: PgIsGenerated::Unknown("UNKNOWN".to_string()),
+                const_type: IsGenerated::Unknown("UNKNOWN".to_string()),
+            },
+        ];
+        for enum_test in enum_variants.iter() {
+            let pg_const_type: PgIsGenerated = enum_test.parsed_from.parse().unwrap();
+            assert_eq!(pg_const_type, enum_test.pg_const_type);
+            let const_type: IsGenerated = pg_const_type.into();
             assert_eq!(const_type, enum_test.const_type);
         }
     }
