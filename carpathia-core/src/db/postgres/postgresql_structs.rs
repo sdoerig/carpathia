@@ -1,10 +1,10 @@
-use std::{collections::BTreeMap, str::FromStr};
+use std::{collections::BTreeMap};
 
 use log::debug;
 
 use crate::db::{
     db_schema_structs::{
-        AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable, ObjectType,
+        AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable,
     },
     postgres::postgres_enums::PgConstraintType,
 };
