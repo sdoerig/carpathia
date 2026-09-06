@@ -3,11 +3,11 @@
 //! intermeditate data structures to hold the extracted schema information.
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
-use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::db::enrich_adr::add_user_mapping_to_adr;
 use crate::db::postgres::postgresql::PostgresQuerier;
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
+use carpathia_adr::adr::abstract_db_repr::AbstractDbRepr;
 pub struct DbSchemaParser {
     // You can add fields here if needed, for example, to hold configuration or state
 }
@@ -42,8 +42,8 @@ mod tests {
     use crate::configuration::carpathia_conf::CarpathiaConfigBuilder;
     use crate::configuration::conf_enums::DbType;
     use crate::configuration::conf_structs::Types;
-    use crate::db::db_schema_structs::AbstractTableRepr;
     use crate::generator::template_engine::get_db_types;
+    use carpathia_adr::adr::abstract_db_repr::AbstractTableRepr;
 
     fn setup_test_config(with_type_mapping: bool) -> CarpathiaConfig {
         // Load .env.test (if available)

@@ -13,8 +13,8 @@
  */
 use super::cache_structs::{CacheFile, CacheFileDiff, compare_cache_files};
 use crate::configuration::carpathia_conf::CarpathiaConfig;
-use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
+use carpathia_adr::adr::abstract_db_repr::AbstractDbRepr;
 use log::{error, info};
 
 use std::{collections::BTreeMap, fs, path::PathBuf};
@@ -116,12 +116,12 @@ mod tests {
     use crate::cache::cache_file::Cache;
     use crate::configuration::conf_enums::{CacheModus, DbPool};
     use crate::configuration::conf_structs::Types;
-    use crate::db::db_schema_structs::AbstractAttribute;
-    use crate::db::db_schema_structs::AbstractDbRepr;
-    use crate::db::db_schema_structs::{
+    use crate::templates::enum_templates::InitTemplate;
+    use carpathia_adr::adr::abstract_db_repr::AbstractAttribute;
+    use carpathia_adr::adr::abstract_db_repr::AbstractDbRepr;
+    use carpathia_adr::adr::abstract_db_repr::{
         ABSTRACT_DB_REPR_VERSION, AbstractTableRepr, IsNullable, ObjectType,
     };
-    use crate::templates::enum_templates::InitTemplate;
     use std::collections::{BTreeMap, BTreeSet};
     const TEMPLATES: &BTreeMap<String, PathBuf> = &BTreeMap::new();
     fn create_abstract_db_repr(

@@ -2,7 +2,7 @@ use std::str::FromStr;
 
 use log::debug;
 
-use crate::db::db_schema_structs::{
+use carpathia_adr::adr::abstract_db_repr::{
     ConstraintType, IsGenerated, IsIdentity, IsNullable, ObjectType,
 };
 

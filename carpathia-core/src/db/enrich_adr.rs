@@ -6,10 +6,11 @@ use log::debug;
 
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_structs::TypeMapping;
-use crate::db::db_schema_structs::TableProperties;
-use crate::db::db_schema_structs::{AbstractDbRepr, ConstraintType};
+use carpathia_adr::adr::abstract_db_repr::{
+    AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ConstraintType, TableProperties,
+};
 
-pub(crate) fn add_user_mapping_to_adr(conf: &CarpathiaConfig, adr: &mut AbstractDbRepr) {
+pub fn add_user_mapping_to_adr(conf: &CarpathiaConfig, adr: &mut AbstractDbRepr) {
     let type_map = &conf.type_map.type_mapping;
     let db_to_code_names_map = &conf.type_map.db_to_code_names_mapping;
     for atr in adr.tables.values_mut().chain(adr.views.values_mut()) {
@@ -20,7 +21,7 @@ pub(crate) fn add_user_mapping_to_adr(conf: &CarpathiaConfig, adr: &mut Abstract
 fn add_to_atr(
     type_map: &std::collections::BTreeMap<String, TypeMapping>,
     db_name_map: &std::collections::BTreeMap<String, String>,
-    atr: &mut super::db_schema_structs::AbstractTableRepr,
+    atr: &mut AbstractTableRepr,
 ) {
     atr.u_table_name = db_name_map
         .get(&atr.table_name)
@@ -56,7 +57,7 @@ fn add_to_atr(
 fn map_constraints_to_user_friendly_names(
     atr_tbl_prop: &mut BTreeSet<TableProperties>,
     db_name_map: &std::collections::BTreeMap<String, String>,
-    attribute: &mut super::db_schema_structs::AbstractAttribute,
+    attribute: &mut AbstractAttribute,
 ) {
     for (key, constraint) in attribute.constraints.iter_mut() {
         match key {

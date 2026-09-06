@@ -1,6 +1,6 @@
 /// Serializable type mapping structur.
 /// Provides mapping from DB-Types to custom types.
-use crate::db::db_schema_structs::ABSTRACT_DB_REPR_VERSION;
+use carpathia_adr::adr::abstract_db_repr::ABSTRACT_DB_REPR_VERSION;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 

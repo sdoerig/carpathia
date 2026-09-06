@@ -1,11 +1,10 @@
 use std::collections::BTreeMap;
 
-use log::debug;
-
-use crate::db::{
-    db_schema_structs::{AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable},
-    postgres::postgres_enums::{PgConstraintType, PgIsNullable},
+use crate::db::postgres::postgres_enums::{PgConstraintType, PgIsNullable};
+use carpathia_adr::adr::abstract_db_repr::{
+    AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable,
 };
+use log::debug;
 
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct PgColumnInfo {

@@ -1,10 +1,10 @@
 use crate::cache::cache_file::Cache;
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_structs::{DEFAULT_TYPE_MAPPING, Types};
-use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::generator::generator_structs::{Template, TemplateType};
-use crate::generator::tera_conversion::AdrTemplateData;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
+use carpathia_adr::adr::abstract_db_repr::AbstractDbRepr;
+use carpathia_adr::adr::tera_conversion::AdrTemplateData;
 use log::{debug, error, info};
 use std::collections::BTreeMap;
 use std::fs;

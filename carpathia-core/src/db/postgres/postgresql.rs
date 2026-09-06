@@ -1,16 +1,16 @@
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
-/// PostgreSQL schema querieer. Currently implemented
-/// - Basic tables
-/// - Views
-/// - Materialized Views
-use crate::db::db_schema_structs::{
-    ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType,
-};
 use crate::db::postgres::postgres_enums::PgObjectType;
 use crate::db::postgres::postgresql_structs::{PgColumnInfo, PgConstraintInfo, PgConstraintMap};
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
+/// PostgreSQL schema querieer. Currently implemented
+/// - Basic tables
+/// - Views
+/// - Materialized Views
+use carpathia_adr::adr::abstract_db_repr::{
+    ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType,
+};
 use log::{debug, error, info};
 use std::collections::{BTreeMap, BTreeSet};
 pub(crate) struct PostgresQuerier;
