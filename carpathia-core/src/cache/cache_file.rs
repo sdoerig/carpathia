@@ -115,13 +115,13 @@ mod tests {
     use super::*;
     use crate::cache::cache_file::Cache;
     use crate::configuration::conf_enums::{CacheModus, DbPool};
-    use crate::configuration::conf_structs::Types;
     use crate::templates::enum_templates::InitTemplate;
     use carpathia_adr::adr::abstract_db_repr::AbstractAttribute;
     use carpathia_adr::adr::abstract_db_repr::AbstractDbRepr;
     use carpathia_adr::adr::abstract_db_repr::{
         ABSTRACT_DB_REPR_VERSION, AbstractTableRepr, IsNullable, ObjectType,
     };
+    use carpathia_adr::db_type_mapping::db_to_user_type_structs::Types;
     use std::collections::{BTreeMap, BTreeSet};
     const TEMPLATES: &BTreeMap<String, PathBuf> = &BTreeMap::new();
     fn create_abstract_db_repr(

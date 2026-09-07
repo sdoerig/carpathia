@@ -41,9 +41,9 @@ mod tests {
     use super::*;
     use crate::configuration::carpathia_conf::CarpathiaConfigBuilder;
     use crate::configuration::conf_enums::DbType;
-    use crate::configuration::conf_structs::Types;
     use crate::generator::template_engine::get_db_types;
     use carpathia_adr::adr::abstract_db_repr::AbstractTableRepr;
+    use carpathia_adr::db_type_mapping::db_to_user_type_structs::Types;
 
     fn setup_test_config(with_type_mapping: bool) -> CarpathiaConfig {
         // Load .env.test (if available)
