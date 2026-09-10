@@ -1,10 +1,10 @@
 use std::collections::BTreeMap;
 
-use log::debug;
-
-use crate::db::db_schema_structs::{
+use crate::db::postgres::postgres_enums::{PgConstraintType, PgIsNullable};
+use carpathia_adr::adr::abstract_db_repr::{
     AbstractAttribute, AbstractConstraint, ConstraintType, IsNullable,
 };
+use log::debug;
 
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct PgColumnInfo {
@@ -47,7 +47,7 @@ impl PgColumnInfo {
                 .iter()
                 .map(|(constraint_type, constraint_info)| {
                     (
-                        constraint_type.clone(),
+                        constraint_type.into(),
                         AbstractConstraint {
                             constraint_name: constraint_info.constraint_name.clone(),
                             constraint_value: constraint_info.constraint_value.clone(),
@@ -79,18 +79,23 @@ impl From<PgColumnInfo> for AbstractAttribute {
         } else {
             pg_column_info.data_type.clone()
         };
+        let pg_is_nullable: PgIsNullable = pg_column_info
+            .is_nullable
+            .parse()
+            .unwrap_or(PgIsNullable::Unknown(pg_column_info.is_nullable.clone()));
+        let is_nullable: IsNullable = pg_is_nullable.into();
         AbstractAttribute {
             column_name: pg_column_info.column_name.clone(),
             u_column_name: String::new(), // Placeholder, will be filled in by enrich_adr
             data_type,
             u_type: String::new(), // Placeholder, will be filled in by enrich_adr
-            is_nullable: pg_column_info
-                .is_nullable
-                .parse()
-                .unwrap_or(IsNullable::Unknown(pg_column_info.is_nullable)),
+            is_nullable,
             is_primary_key: pg_column_info
                 .constraints
                 .contains_key(&ConstraintType::PrimaryKey),
+            character_maximum_length: pg_column_info.character_maximum_length,
+            numeric_precision: pg_column_info.numeric_precision,
+            numeric_scale: pg_column_info.numeric_scale,
             column_default: pg_column_info.column_default,
 
             constraints: pg_column_info.constraints,
@@ -104,7 +109,7 @@ impl From<PgColumnInfo> for AbstractAttribute {
 )]
 pub(crate) struct PgConstraintMap {
     pg_constraint_info:
-        BTreeMap<(String, String, String), BTreeMap<ConstraintType, PgConstraintInfo>>,
+        BTreeMap<(String, String, String), BTreeMap<PgConstraintType, PgConstraintInfo>>,
 }
 
 impl PgConstraintMap {
@@ -123,7 +128,7 @@ impl PgConstraintMap {
                     constraint_info
                         .constraint_type
                         .parse()
-                        .unwrap_or(ConstraintType::None),
+                        .unwrap_or(PgConstraintType::None),
                     constraint_info.clone(),
                 );
         }

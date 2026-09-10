@@ -1,14 +1,17 @@
 //! This module enriches the AbstractDbRepr with user-defined type mappings
 //! based on the configuration provided by the user.
+use std::collections::BTreeSet;
+
 use log::debug;
 
-use crate::configuration::carpathia_conf::CarpathiaConfig;
-use crate::configuration::conf_structs::TypeMapping;
-use crate::db::db_schema_structs::AbstractDbRepr;
+use crate::adr::abstract_db_repr::{
+    AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ConstraintType, TableProperties,
+};
+use crate::db_type::db_to_user_type_structs::{TypeMapping, Types};
 
-pub(crate) fn add_user_mapping_to_adr(conf: &CarpathiaConfig, adr: &mut AbstractDbRepr) {
-    let type_map = &conf.type_map.type_mapping;
-    let db_to_code_names_map = &conf.type_map.db_to_code_names_mapping;
+pub fn add_user_mapping_to_adr(conf_types: &Types, adr: &mut AbstractDbRepr) {
+    let type_map = &conf_types.type_mapping;
+    let db_to_code_names_map = &conf_types.db_to_code_names_mapping;
     for atr in adr.tables.values_mut().chain(adr.views.values_mut()) {
         add_to_atr(type_map, db_to_code_names_map, atr);
     }
@@ -17,23 +20,15 @@ pub(crate) fn add_user_mapping_to_adr(conf: &CarpathiaConfig, adr: &mut Abstract
 fn add_to_atr(
     type_map: &std::collections::BTreeMap<String, TypeMapping>,
     db_name_map: &std::collections::BTreeMap<String, String>,
-    atr: &mut super::db_schema_structs::AbstractTableRepr,
+    atr: &mut AbstractTableRepr,
 ) {
-    debug!(
-        "add_to_atr: type_map = {}",
-        serde_json::to_string_pretty(type_map).unwrap()
-    );
-    debug!(
-        "add_to_atr: db_name_map = {}",
-        serde_json::to_string_pretty(db_name_map).unwrap()
-    );
     atr.u_table_name = db_name_map
         .get(&atr.table_name)
         .unwrap_or(&atr.table_name)
         .clone();
 
     for attribute in &mut atr.attributes.values_mut() {
-        map_constraints_to_user_friendly_names(db_name_map, attribute);
+        map_constraints_to_user_friendly_names(&mut atr.table_properties, db_name_map, attribute);
         // Add a user-friendly mapping for the column name
         // map the user type to the ADR
         let default_type_mapping = TypeMapping {
@@ -59,10 +54,22 @@ fn add_to_atr(
 }
 
 fn map_constraints_to_user_friendly_names(
+    atr_tbl_prop: &mut BTreeSet<TableProperties>,
     db_name_map: &std::collections::BTreeMap<String, String>,
-    attribute: &mut super::db_schema_structs::AbstractAttribute,
+    attribute: &mut AbstractAttribute,
 ) {
-    for constraint in attribute.constraints.values_mut() {
+    for (key, constraint) in attribute.constraints.iter_mut() {
+        match key {
+            ConstraintType::PrimaryKey => {
+                atr_tbl_prop.insert(TableProperties::PrimaryKey);
+            }
+            ConstraintType::ForeignKey => {
+                atr_tbl_prop.insert(TableProperties::ForeignKey);
+            }
+            _ => {
+                // Basically anything is selectable.
+            }
+        };
         if let Some(referenced_table) = &constraint.referenced_table {
             constraint.u_referenced_table = db_name_map
                 .get(referenced_table)

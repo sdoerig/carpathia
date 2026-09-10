@@ -6,8 +6,8 @@
 `carpathia-core` is the brain of the `carpathia-cli` tool. It provides a robust, testable, and extensible API to:
 
 - Connect to PostgreSQL and extract schema metadata
-- Represent the schema as a canonical `AbstractDbRepr` (ADR)
-- Compare schema versions using cryptographic hashes (Blake3)
+- Represent the schema as a canonical `AbstractTemplateRepr` (ATR)
+- Generating oly what has changed
 - Render templates with full context (tables, views, attributes)
 - Support custom type mappings and caching
 
@@ -17,27 +17,20 @@ Use it directly in your own tools, CI pipelines, or build systems — no CLI req
 
 ## ✅ Features
 
-- ✅ **Schema Extraction**: Full PostgreSQL schema parsing (tables, views, constraints, comments, arrays)
+- ✅ **Schema Extraction**: Full PostgreSQL schema parsing (tables, views, constraints, comments, user-defined datatypes)
 - ✅ **Canonical Representation**: `AbstractDbRepr` as a stable contract between parser and template engine
 - ✅ **Intelligent Caching**: Skip regeneration using file and schema hashes
-- ✅ **Template Engine**: Integrates with [Tera](https://tera.netlify.app/) for flexible code generation
-- ✅ **Type Mapping**: Map PostgreSQL types (`text`, `uuid`, etc.) to custom Rust types via JSON
+- ✅ **Template Engine**: Integrates with [Tera](https://github.com/Keats/tera2) for flexible code generation
+- ✅ **Type Mapping**: Map database types (`text`, `uuid`, etc.) to custom types via JSON
 - ✅ **Extensible**: Add support for new database types via `DatabaseQuerier` trait
-- ✅ **Zero Runtime Dependencies**: Only `sqlx`, `serde`, `tera`, `blake3`, and `log`
 
 ---
 
 ## 📦 Usage as a Library
 
-Add to your `Cargo.toml`:
+Example code - printing the Abstract :
 
-```toml
-[dependencies]
-carpathia-core = { git = "https://github.com/yourusername/carpathia" }
-Example: Generate Code Programmatically
-rust
-use carpathia_core::*;
-use std::path::Path;
+```rust
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

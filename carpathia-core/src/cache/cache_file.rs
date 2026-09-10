@@ -13,8 +13,8 @@
  */
 use super::cache_structs::{CacheFile, CacheFileDiff, compare_cache_files};
 use crate::configuration::carpathia_conf::CarpathiaConfig;
-use crate::db::db_schema_structs::AbstractDbRepr;
 use crate::return_values::carpathia_errors::CarpathiaError;
+use carpathia_adr::adr::abstract_db_repr::AbstractDbRepr;
 use log::{error, info};
 
 use std::{collections::BTreeMap, fs, path::PathBuf};
@@ -115,13 +115,13 @@ mod tests {
     use super::*;
     use crate::cache::cache_file::Cache;
     use crate::configuration::conf_enums::{CacheModus, DbPool};
-    use crate::configuration::conf_structs::Types;
-    use crate::db::db_schema_structs::AbstractAttribute;
-    use crate::db::db_schema_structs::AbstractDbRepr;
-    use crate::db::db_schema_structs::{
+    use crate::templates::enum_templates::InitTemplate;
+    use carpathia_adr::adr::abstract_db_repr::AbstractAttribute;
+    use carpathia_adr::adr::abstract_db_repr::AbstractDbRepr;
+    use carpathia_adr::adr::abstract_db_repr::{
         ABSTRACT_DB_REPR_VERSION, AbstractTableRepr, IsNullable, ObjectType,
     };
-    use crate::templates::enum_templates::InitTemplate;
+    use carpathia_adr::db_type::db_to_user_type_structs::Types;
     use std::collections::{BTreeMap, BTreeSet};
     const TEMPLATES: &BTreeMap<String, PathBuf> = &BTreeMap::new();
     fn create_abstract_db_repr(
@@ -153,7 +153,10 @@ mod tests {
                 data_type: "integer".to_string(),
                 u_type: "whatever".to_string(),
                 is_primary_key: false,
-                is_nullable: "NO".parse().unwrap_or(IsNullable::No),
+                is_nullable: IsNullable::No,
+                character_maximum_length: None,
+                numeric_precision: None,
+                numeric_scale: None,
                 column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
                 constraints: BTreeMap::new(),
                 comment: Some("Primary key for users table".to_string()),
@@ -164,6 +167,7 @@ mod tests {
             u_table_name: table_name.to_string(),
             object_type,
             u_imports: BTreeSet::new(),
+            table_properties: BTreeSet::new(),
             comment: Some("Test table".to_string()),
             attributes: abstract_attribte_map,
         }

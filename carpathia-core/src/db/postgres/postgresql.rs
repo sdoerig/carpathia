@@ -1,15 +1,16 @@
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
+use crate::db::postgres::postgres_enums::PgObjectType;
+use crate::db::postgres::postgresql_structs::{PgColumnInfo, PgConstraintInfo, PgConstraintMap};
+use crate::db::traits::DatabaseQuerier;
+use crate::return_values::carpathia_errors::CarpathiaError;
 /// PostgreSQL schema querieer. Currently implemented
 /// - Basic tables
 /// - Views
 /// - Materialized Views
-use crate::db::db_schema_structs::{
+use carpathia_adr::adr::abstract_db_repr::{
     ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType,
 };
-use crate::db::postgres::postgresql_structs::{PgColumnInfo, PgConstraintInfo, PgConstraintMap};
-use crate::db::traits::DatabaseQuerier;
-use crate::return_values::carpathia_errors::CarpathiaError;
 use log::{debug, error, info};
 use std::collections::{BTreeMap, BTreeSet};
 pub(crate) struct PostgresQuerier;
@@ -101,6 +102,8 @@ WITH cols AS (
         n.nspname AS table_schema,
         c.relname AS table_name,
         a.attname AS column_name,
+        a.atttypmod AS atttypmod,
+        a.atttypid as atttypid,
         format_type(a.atttypid, a.atttypmod) AS data_type,
         a.attndims::int4 AS array_dimensions,
         NOT a.attnotnull AS is_nullable,
@@ -172,9 +175,9 @@ SELECT
     col.column_default,
     CASE WHEN c.relkind = 'r' THEN 'YES' ELSE 'NO' END AS table_is_insertable,
     CASE WHEN c.relkind = 'r' THEN 'YES' ELSE 'NO' END AS column_is_updatable,
-    NULL AS character_maximum_length,
-    NULL AS numeric_precision,
-    NULL AS numeric_scale,
+    information_schema._pg_char_max_length(col.atttypid, col.atttypmod) AS character_maximum_length,
+    information_schema._pg_numeric_precision(col.atttypid, col.atttypmod) AS numeric_precision,
+    information_schema._pg_numeric_scale(col.atttypid, col.atttypmod) AS numeric_scale,
 
     CASE WHEN col.identity_generation <> '' THEN 'YES' ELSE 'NO' END AS is_identity,
     col.identity_generation,
@@ -322,13 +325,14 @@ impl DatabaseQuerier for PostgresQuerier {
             let num_rows = rows.len();
             debug!("Fetched {num_rows} rows from schema query with offset {offset}");
             for mut row in rows {
+                let pg_object_type: PgObjectType = row.object_type.parse().unwrap_or_else(|_| {
+                    debug!("Unknown object type: {}", row.object_type);
+                    PgObjectType::Unknown(row.object_type.clone())
+                });
                 row = row.constraint_map(&constraint_map);
                 debug!("Processing column: {}.{}", row.table_name, row.column_name);
                 let table_name = row.table_name.clone();
-                let object_type = row.object_type.parse().unwrap_or_else(|_| {
-                    debug!("Unknown object type: {}", row.object_type);
-                    ObjectType::Other
-                });
+                let object_type: ObjectType = pg_object_type.into();
                 let attribute = AbstractAttribute::from(row.clone());
                 match object_type {
                     ObjectType::BaseTable | ObjectType::PartitionedTable => {
@@ -339,6 +343,7 @@ impl DatabaseQuerier for PostgresQuerier {
                                 u_table_name: String::new(),
                                 u_imports: BTreeSet::new(),
                                 object_type,
+                                table_properties: BTreeSet::new(),
                                 comment: row.table_comment.clone(),
                                 attributes: BTreeMap::new(),
                             })
@@ -354,6 +359,7 @@ impl DatabaseQuerier for PostgresQuerier {
                                 u_table_name: String::new(),
                                 u_imports: BTreeSet::new(),
                                 object_type,
+                                table_properties: BTreeSet::new(),
                                 comment: row.table_comment.clone(),
                                 attributes: BTreeMap::new(),
                             })

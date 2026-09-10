@@ -6,8 +6,7 @@
 //!   is passed via (configuration)[crate::configuration::carpathia_conf::CarpathiaConfig] struct
 //!
 
-pub mod db_schema_structs;
-pub(crate) mod enrich_adr;
+pub use carpathia_adr::adr::enrich_adr;
 pub mod parse_db_schema;
 pub mod postgres;
 

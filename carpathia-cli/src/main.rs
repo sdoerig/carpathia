@@ -200,7 +200,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
 
         if config.print_db_types {
-            match template_engine::get_db_types(&config, &abstr_db_repr) {
+            match template_engine::get_db_types(&config.type_map, &abstr_db_repr) {
                 Ok(db_types) => match serde_json::to_string_pretty(&db_types) {
                     Ok(json) => println!("{json}"),
                     Err(e) => {

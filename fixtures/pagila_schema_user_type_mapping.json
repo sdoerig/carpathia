@@ -8,6 +8,13 @@
       ],
       "table_name": "actor",
       "u_table_name": "marianne",
+      "table_properties": [
+        "PrimaryKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "actor_id": {
@@ -112,6 +119,14 @@
       ],
       "table_name": "address",
       "u_table_name": "address",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "address": {
@@ -289,6 +304,13 @@
       ],
       "table_name": "category",
       "u_table_name": "category",
+      "table_properties": [
+        "PrimaryKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "category_id": {
@@ -372,6 +394,14 @@
       ],
       "table_name": "city",
       "u_table_name": "city",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "city": {
@@ -485,6 +515,13 @@
       ],
       "table_name": "country",
       "u_table_name": "country",
+      "table_properties": [
+        "PrimaryKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "country": {
@@ -569,6 +606,14 @@
       ],
       "table_name": "customer",
       "u_table_name": "customer",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "active": {
@@ -788,6 +833,14 @@
       ],
       "table_name": "film",
       "u_table_name": "film",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "description": {
@@ -1061,6 +1114,14 @@
       ],
       "table_name": "film_actor",
       "u_table_name": "film_actor",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "actor_id": {
@@ -1171,6 +1232,14 @@
       ],
       "table_name": "film_category",
       "u_table_name": "film_category",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "category_id": {
@@ -1281,6 +1350,14 @@
       ],
       "table_name": "inventory",
       "u_table_name": "inventory",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "film_id": {
@@ -1403,6 +1480,13 @@
       ],
       "table_name": "language",
       "u_table_name": "language",
+      "table_properties": [
+        "PrimaryKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "language_id": {
@@ -1486,6 +1570,13 @@
       ],
       "table_name": "payment",
       "u_table_name": "payment",
+      "table_properties": [
+        "PrimaryKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "amount": {
@@ -1641,6 +1732,14 @@
       ],
       "table_name": "payment_p2022_01",
       "u_table_name": "payment_p2022_01",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "amount": {
@@ -1823,6 +1922,14 @@
       ],
       "table_name": "payment_p2022_02",
       "u_table_name": "payment_p2022_02",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "amount": {
@@ -2005,6 +2112,14 @@
       ],
       "table_name": "payment_p2022_03",
       "u_table_name": "payment_p2022_03",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "amount": {
@@ -2187,6 +2302,14 @@
       ],
       "table_name": "payment_p2022_04",
       "u_table_name": "payment_p2022_04",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "amount": {
@@ -2369,6 +2492,14 @@
       ],
       "table_name": "payment_p2022_05",
       "u_table_name": "payment_p2022_05",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "amount": {
@@ -2551,6 +2682,14 @@
       ],
       "table_name": "payment_p2022_06",
       "u_table_name": "payment_p2022_06",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "amount": {
@@ -2733,6 +2872,13 @@
       ],
       "table_name": "payment_p2022_07",
       "u_table_name": "payment_p2022_07",
+      "table_properties": [
+        "PrimaryKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "amount": {
@@ -2888,6 +3034,14 @@
       ],
       "table_name": "rental",
       "u_table_name": "rental",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "customer_id": {
@@ -3072,6 +3226,14 @@
       ],
       "table_name": "staff",
       "u_table_name": "staff",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "active": {
@@ -3311,6 +3473,14 @@
       ],
       "table_name": "store",
       "u_table_name": "store",
+      "table_properties": [
+        "PrimaryKey",
+        "ForeignKey",
+        "Selectable",
+        "Insertable",
+        "Deletable",
+        "Updatable"
+      ],
       "comment": null,
       "attributes": {
         "address_id": {
@@ -3424,6 +3594,7 @@
       "u_imports": [],
       "table_name": "actor_info",
       "u_table_name": "actor_info",
+      "table_properties": [],
       "comment": null,
       "attributes": {
         "actor_id": {
@@ -3477,6 +3648,7 @@
       "u_imports": [],
       "table_name": "customer_list",
       "u_table_name": "customer_list",
+      "table_properties": [],
       "comment": null,
       "attributes": {
         "address": {
@@ -3587,6 +3759,7 @@
       ],
       "table_name": "film_list",
       "u_table_name": "film_list",
+      "table_properties": [],
       "comment": null,
       "attributes": {
         "actors": {
@@ -3686,6 +3859,7 @@
       ],
       "table_name": "nicer_but_slower_film_list",
       "u_table_name": "nicer_but_slower_film_list",
+      "table_properties": [],
       "comment": null,
       "attributes": {
         "actors": {
@@ -3785,6 +3959,7 @@
       ],
       "table_name": "rental_by_category",
       "u_table_name": "rental_by_category",
+      "table_properties": [],
       "comment": null,
       "attributes": {
         "category": {
@@ -3818,6 +3993,7 @@
       ],
       "table_name": "sales_by_film_category",
       "u_table_name": "sales_by_film_category",
+      "table_properties": [],
       "comment": null,
       "attributes": {
         "category": {
@@ -3851,6 +4027,7 @@
       ],
       "table_name": "sales_by_store",
       "u_table_name": "sales_by_store",
+      "table_properties": [],
       "comment": null,
       "attributes": {
         "manager": {
@@ -3893,6 +4070,7 @@
       "u_imports": [],
       "table_name": "staff_list",
       "u_table_name": "staff_list",
+      "table_properties": [],
       "comment": null,
       "attributes": {
         "address": {

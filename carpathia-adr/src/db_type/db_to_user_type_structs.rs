@@ -1,10 +1,10 @@
 /// Serializable type mapping structur.
 /// Provides mapping from DB-Types to custom types.
-use crate::db::db_schema_structs::ABSTRACT_DB_REPR_VERSION;
+use crate::adr::abstract_db_repr::ABSTRACT_DB_REPR_VERSION;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-pub(crate) const DEFAULT_TYPE_MAPPING: &TypeMapping = &TypeMapping {
+pub const DEFAULT_TYPE_MAPPING: &TypeMapping = &TypeMapping {
     u_import: Some(String::new()),
     u_type: String::new(),
 };

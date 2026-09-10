@@ -1,0 +1,17 @@
+[package]
+name = "carpathia-adr"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+authors = ["Stefan Dörig", "sdoerig@bluewin.ch"]
+description = "Database schema abstract database representation (ADR)"
+repository = "https://github.com/sdoerig/carpathia"
+homepage = "https://github.com/sdoerig/carpathia"
+categories = ["command-line-utilities", "database"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "2.0.20"
+log = "0.4"
+
+[dev-dependencies]
