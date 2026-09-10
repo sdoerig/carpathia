@@ -4,15 +4,14 @@ use std::collections::BTreeSet;
 
 use log::debug;
 
-use crate::configuration::carpathia_conf::CarpathiaConfig;
-use carpathia_adr::adr::abstract_db_repr::{
+use crate::adr::abstract_db_repr::{
     AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ConstraintType, TableProperties,
 };
-use carpathia_adr::db_type_mapping::db_to_user_type_structs::TypeMapping;
+use crate::db_type::db_to_user_type_structs::{TypeMapping, Types};
 
-pub fn add_user_mapping_to_adr(conf: &CarpathiaConfig, adr: &mut AbstractDbRepr) {
-    let type_map = &conf.type_map.type_mapping;
-    let db_to_code_names_map = &conf.type_map.db_to_code_names_mapping;
+pub fn add_user_mapping_to_adr(conf_types: &Types, adr: &mut AbstractDbRepr) {
+    let type_map = &conf_types.type_mapping;
+    let db_to_code_names_map = &conf_types.db_to_code_names_mapping;
     for atr in adr.tables.values_mut().chain(adr.views.values_mut()) {
         add_to_atr(type_map, db_to_code_names_map, atr);
     }

@@ -21,7 +21,7 @@ impl DbSchemaParser {
         match config.db_pool {
             DbPool::Postgres(_) => match PostgresQuerier::get_schema(config).await {
                 Ok(mut schema) => {
-                    add_user_mapping_to_adr(config, &mut schema);
+                    add_user_mapping_to_adr(&config.type_map, &mut schema);
                     Ok(schema)
                 }
                 Err(e) => Err(e),
@@ -43,7 +43,7 @@ mod tests {
     use crate::configuration::conf_enums::DbType;
     use crate::generator::template_engine::get_db_types;
     use carpathia_adr::adr::abstract_db_repr::AbstractTableRepr;
-    use carpathia_adr::db_type_mapping::db_to_user_type_structs::Types;
+    use carpathia_adr::db_type::db_to_user_type_structs::Types;
 
     fn setup_test_config(with_type_mapping: bool) -> CarpathiaConfig {
         // Load .env.test (if available)
@@ -261,7 +261,7 @@ mod tests {
         let mut config = setup_test_config(false);
         config.print_db_types = true;
         let abstr_db_repr = DbSchemaParser::parse_schema(&config).await.unwrap();
-        let db_types = match get_db_types(&config, &abstr_db_repr) {
+        let db_types = match get_db_types(&config.type_map, &abstr_db_repr) {
             Ok(t) => t,
             Err(e) => panic!("Must have db types got error {}", e),
         };

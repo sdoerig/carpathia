@@ -1,4 +1,4 @@
-use carpathia_adr::db_type_mapping::db_to_user_type_structs::Types;
+use carpathia_adr::db_type::db_to_user_type_structs::Types;
 use std::fs::File;
 use std::io::BufReader;
 use std::path::PathBuf;

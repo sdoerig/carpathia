@@ -9,7 +9,7 @@ use super::conf_enums::{DbPool, DbType};
 use super::conf_file_reader::load_type_mappings;
 use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use crate::templates::enum_templates::InitTemplate;
-use carpathia_adr::db_type_mapping::db_to_user_type_structs::Types;
+use carpathia_adr::db_type::db_to_user_type_structs::Types;
 use log::info;
 use sqlx::postgres::PgPoolOptions;
 use std::path::PathBuf;

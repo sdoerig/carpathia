@@ -121,7 +121,7 @@ mod tests {
     use carpathia_adr::adr::abstract_db_repr::{
         ABSTRACT_DB_REPR_VERSION, AbstractTableRepr, IsNullable, ObjectType,
     };
-    use carpathia_adr::db_type_mapping::db_to_user_type_structs::Types;
+    use carpathia_adr::db_type::db_to_user_type_structs::Types;
     use std::collections::{BTreeMap, BTreeSet};
     const TEMPLATES: &BTreeMap<String, PathBuf> = &BTreeMap::new();
     fn create_abstract_db_repr(
