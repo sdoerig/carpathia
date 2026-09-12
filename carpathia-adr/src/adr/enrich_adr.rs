@@ -5,7 +5,8 @@ use std::collections::BTreeSet;
 use log::debug;
 
 use crate::adr::abstract_db_repr::{
-    AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ConstraintType, TableProperties,
+    AbstractAttribute, AbstractDbRepr, AbstractForeignKey, AbstractPrimaryKey,
+    AbstractReferencedTable, AbstractTableRepr, ConstraintType, KeyType, TableProperties,
 };
 use crate::db_type::db_to_user_type_structs::{TypeMapping, Types};
 
@@ -61,10 +62,67 @@ fn map_constraints_to_user_friendly_names(
     for (key, constraint) in attribute.constraints.iter_mut() {
         match key {
             ConstraintType::PrimaryKey => {
-                atr_tbl_prop.insert(TableProperties::PrimaryKey);
+                let pk: AbstractPrimaryKey = atr_tbl_prop
+                    .iter()
+                    .find_map(|prop| match prop {
+                        TableProperties::PrimaryKey(pk) => Some(pk.clone()),
+                        _ => None,
+                    })
+                    .unwrap_or_else(|| AbstractPrimaryKey {
+                        constraint_name: constraint.constraint_name.clone(),
+                        columns: std::iter::once(attribute.column_name.clone()).collect(),
+                        key_type: KeyType::SingleColumn,
+                    });
+
+                atr_tbl_prop.insert(TableProperties::PrimaryKey(
+                    pk + AbstractPrimaryKey {
+                        constraint_name: constraint.constraint_name.clone(),
+                        columns: std::iter::once(attribute.column_name.clone()).collect(),
+                        key_type: KeyType::SingleColumn,
+                    },
+                ));
             }
             ConstraintType::ForeignKey => {
-                atr_tbl_prop.insert(TableProperties::ForeignKey);
+                let fk: AbstractForeignKey = atr_tbl_prop
+                    .iter()
+                    .find_map(|prop| match prop {
+                        TableProperties::ForeignKey(fk) => Some(fk.clone()),
+                        _ => None,
+                    })
+                    .unwrap_or_else(|| AbstractForeignKey {
+                        constraint_name: constraint.constraint_name.clone(),
+                        columns: std::iter::once(AbstractReferencedTable {
+                            column: attribute.column_name.clone(),
+                            referenced_table: constraint
+                                .referenced_table
+                                .clone()
+                                .unwrap_or_default(),
+                            referenced_column: constraint
+                                .referenced_column
+                                .clone()
+                                .unwrap_or_default(),
+                        })
+                        .collect(),
+                        key_type: KeyType::SingleColumn,
+                    });
+                atr_tbl_prop.insert(TableProperties::ForeignKey(
+                    fk + AbstractForeignKey {
+                        constraint_name: constraint.constraint_name.clone(),
+                        columns: std::iter::once(AbstractReferencedTable {
+                            column: attribute.column_name.clone(),
+                            referenced_table: constraint
+                                .referenced_table
+                                .clone()
+                                .unwrap_or_default(),
+                            referenced_column: constraint
+                                .referenced_column
+                                .clone()
+                                .unwrap_or_default(),
+                        })
+                        .collect(),
+                        key_type: KeyType::SingleColumn,
+                    },
+                ));
             }
             _ => {
                 // Basically anything is selectable.

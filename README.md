@@ -34,6 +34,7 @@ Built as a modular system with a CLI frontend (`carpathia-cli`) and a reusable c
 | `carpathia-core` | Reusable Rust library. Use it programmatically in your build scripts, CI pipelines, or custom tools. |
 
 Both are published as separate crates and can be used independently.
+| `carpathia-cli` | Command-line tool for end-users. Run it manually or in CI to generate code. |
 
 # Concept
 
