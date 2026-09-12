@@ -29,6 +29,7 @@ Built as a modular system with a CLI frontend (`carpathia-cli`) and a reusable c
 
 | Component | Description |
 | --------- | ----------- |
+| `carpathia-adr` | Abstract Database Representation (ADR). Canonical representation of the database schema. |
 | `carpathia-cli` | Command-line tool for end-users. Run it manually or in CI to generate code. |
 | `carpathia-core` | Reusable Rust library. Use it programmatically in your build scripts, CI pipelines, or custom tools. |
 
