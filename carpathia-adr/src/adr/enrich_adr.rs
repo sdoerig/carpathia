@@ -90,8 +90,9 @@ fn map_constraints_to_user_friendly_names(
                         _ => None,
                     })
                     .unwrap_or_else(|| AbstractForeignKey {
-                        constraint_name: constraint.constraint_name.clone(),
                         columns: std::iter::once(AbstractReferencedTable {
+                            constraint_name: constraint.constraint_name.clone(),
+                            key_type: KeyType::SingleColumn,
                             column: attribute.column_name.clone(),
                             referenced_table: constraint
                                 .referenced_table
@@ -103,12 +104,12 @@ fn map_constraints_to_user_friendly_names(
                                 .unwrap_or_default(),
                         })
                         .collect(),
-                        key_type: KeyType::SingleColumn,
                     });
                 atr_tbl_prop.insert(TableProperties::ForeignKey(
                     fk + AbstractForeignKey {
-                        constraint_name: constraint.constraint_name.clone(),
                         columns: std::iter::once(AbstractReferencedTable {
+                            key_type: KeyType::SingleColumn,
+                            constraint_name: constraint.constraint_name.clone(),
                             column: attribute.column_name.clone(),
                             referenced_table: constraint
                                 .referenced_table
@@ -120,7 +121,6 @@ fn map_constraints_to_user_friendly_names(
                                 .unwrap_or_default(),
                         })
                         .collect(),
-                        key_type: KeyType::SingleColumn,
                     },
                 ));
             }

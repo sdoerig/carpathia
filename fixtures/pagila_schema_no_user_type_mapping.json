@@ -143,15 +143,15 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "address_city_id_fkey",
             "columns": [
               {
+                "constraint_name": "address_city_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "city_id",
                 "referenced_table": "city",
                 "referenced_column": "city_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         }
       ],
@@ -467,15 +467,15 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "city_country_id_fkey",
             "columns": [
               {
+                "constraint_name": "city_country_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "country_id",
                 "referenced_table": "country",
                 "referenced_column": "country_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         }
       ],
@@ -715,33 +715,35 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "customer_address_id_fkey",
             "columns": [
               {
+                "constraint_name": "customer_address_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "address_id",
                 "referenced_table": "address",
                 "referenced_column": "address_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "customer_address_id_fkey",
             "columns": [
               {
+                "constraint_name": "customer_address_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "address_id",
                 "referenced_table": "address",
                 "referenced_column": "address_id"
               },
               {
+                "constraint_name": "customer_store_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "store_id",
                 "referenced_table": "store",
                 "referenced_column": "store_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -1003,33 +1005,35 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "film_language_id_fkey",
             "columns": [
               {
+                "constraint_name": "film_language_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "language_id",
                 "referenced_table": "language",
                 "referenced_column": "language_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "film_language_id_fkey",
             "columns": [
               {
+                "constraint_name": "film_language_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "language_id",
                 "referenced_table": "language",
                 "referenced_column": "language_id"
               },
               {
+                "constraint_name": "film_original_language_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "original_language_id",
                 "referenced_table": "language",
                 "referenced_column": "language_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -1368,33 +1372,35 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "film_actor_actor_id_fkey",
             "columns": [
               {
+                "constraint_name": "film_actor_actor_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "actor_id",
                 "referenced_table": "actor",
                 "referenced_column": "actor_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "film_actor_actor_id_fkey",
             "columns": [
               {
+                "constraint_name": "film_actor_actor_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "actor_id",
                 "referenced_table": "actor",
                 "referenced_column": "actor_id"
               },
               {
+                "constraint_name": "film_actor_film_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "film_id",
                 "referenced_table": "film",
                 "referenced_column": "film_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -1537,33 +1543,35 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "film_category_category_id_fkey",
             "columns": [
               {
+                "constraint_name": "film_category_category_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "category_id",
                 "referenced_table": "category",
                 "referenced_column": "category_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "film_category_category_id_fkey",
             "columns": [
               {
+                "constraint_name": "film_category_category_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "category_id",
                 "referenced_table": "category",
                 "referenced_column": "category_id"
               },
               {
+                "constraint_name": "film_category_film_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "film_id",
                 "referenced_table": "film",
                 "referenced_column": "film_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -1696,33 +1704,35 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "inventory_film_id_fkey",
             "columns": [
               {
+                "constraint_name": "inventory_film_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "film_id",
                 "referenced_table": "film",
                 "referenced_column": "film_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "inventory_film_id_fkey",
             "columns": [
               {
+                "constraint_name": "inventory_film_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "film_id",
                 "referenced_table": "film",
                 "referenced_column": "film_id"
               },
               {
+                "constraint_name": "inventory_store_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "store_id",
                 "referenced_table": "store",
                 "referenced_column": "store_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -2173,51 +2183,55 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_01_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_01_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_01_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_01_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_01_rental_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "rental_id",
                 "referenced_table": "rental",
                 "referenced_column": "rental_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_01_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_01_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_01_staff_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "staff_id",
                 "referenced_table": "staff",
                 "referenced_column": "staff_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -2441,51 +2455,55 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_02_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_02_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_02_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_02_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_02_rental_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "rental_id",
                 "referenced_table": "rental",
                 "referenced_column": "rental_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_02_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_02_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_02_staff_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "staff_id",
                 "referenced_table": "staff",
                 "referenced_column": "staff_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -2709,51 +2727,55 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_03_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_03_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_03_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_03_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_03_rental_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "rental_id",
                 "referenced_table": "rental",
                 "referenced_column": "rental_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_03_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_03_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_03_staff_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "staff_id",
                 "referenced_table": "staff",
                 "referenced_column": "staff_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -2977,51 +2999,55 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_04_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_04_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_04_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_04_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_04_rental_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "rental_id",
                 "referenced_table": "rental",
                 "referenced_column": "rental_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_04_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_04_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_04_staff_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "staff_id",
                 "referenced_table": "staff",
                 "referenced_column": "staff_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -3245,51 +3271,55 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_05_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_05_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_05_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_05_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_05_rental_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "rental_id",
                 "referenced_table": "rental",
                 "referenced_column": "rental_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_05_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_05_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_05_staff_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "staff_id",
                 "referenced_table": "staff",
                 "referenced_column": "staff_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -3513,51 +3543,55 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_06_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_06_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_06_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_06_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_06_rental_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "rental_id",
                 "referenced_table": "rental",
                 "referenced_column": "rental_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "payment_p2022_06_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "payment_p2022_06_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "payment_p2022_06_staff_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "staff_id",
                 "referenced_table": "staff",
                 "referenced_column": "staff_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -3963,51 +3997,55 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "rental_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "rental_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "rental_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "rental_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "rental_inventory_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "inventory_id",
                 "referenced_table": "inventory",
                 "referenced_column": "inventory_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "rental_customer_id_fkey",
             "columns": [
               {
+                "constraint_name": "rental_customer_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "customer_id",
                 "referenced_table": "customer",
                 "referenced_column": "customer_id"
               },
               {
+                "constraint_name": "rental_staff_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "staff_id",
                 "referenced_table": "staff",
                 "referenced_column": "staff_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -4226,33 +4264,35 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "staff_address_id_fkey",
             "columns": [
               {
+                "constraint_name": "staff_address_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "address_id",
                 "referenced_table": "address",
                 "referenced_column": "address_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         },
         {
           "ForeignKey": {
-            "constraint_name": "staff_address_id_fkey",
             "columns": [
               {
+                "constraint_name": "staff_address_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "address_id",
                 "referenced_table": "address",
                 "referenced_column": "address_id"
               },
               {
+                "constraint_name": "staff_store_id_fkey",
+                "key_type": "SingleColumn",
                 "column": "store_id",
                 "referenced_table": "store",
                 "referenced_column": "store_id"
               }
-            ],
-            "key_type": "MultiColumn"
+            ]
           }
         }
       ],
@@ -4538,15 +4578,15 @@
         },
         {
           "ForeignKey": {
-            "constraint_name": "store_address_id_fkey",
             "columns": [
               {
+                "constraint_name": "store_address_id_fkey",
+                "key_type": "MultiColumn",
                 "column": "address_id",
                 "referenced_table": "address",
                 "referenced_column": "address_id"
               }
-            ],
-            "key_type": "SingleColumn"
+            ]
           }
         }
       ],

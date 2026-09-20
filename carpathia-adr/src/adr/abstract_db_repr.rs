@@ -4,7 +4,8 @@
 //! Internal Representation (IR). It can be seen as a contract between the templates and carpathia.
 //!
 use serde::{Deserialize, Serialize};
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::hash::Hash;
 use std::ops::Add;
 /// The version of the ADR - it has nothing to do with the software version of carpathia -
 /// it only references to the ADR itself. Exprect for
@@ -116,26 +117,38 @@ pub enum KeyType {
     Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
 )]
 pub struct AbstractForeignKey {
-    pub constraint_name: String,
     pub columns: BTreeSet<AbstractReferencedTable>,
-    pub key_type: KeyType,
 }
 
 impl Add for AbstractForeignKey {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
-        let mut combined_columns = self.columns;
-        combined_columns.extend(other.columns);
-        let key_type = if combined_columns.len() > 1 {
-            KeyType::MultiColumn
-        } else {
-            KeyType::SingleColumn
-        };
+        //let other_columns = other.columns;
+        let mut other_columns: BTreeSet<AbstractReferencedTable> = BTreeSet::new();
+        let mut changed_key_types: HashMap<String, KeyType> = HashMap::new();
+        for column in self.columns.iter().chain(other.columns.iter()) {
+            if changed_key_types.contains_key(&column.constraint_name) {
+                changed_key_types.insert(column.constraint_name.clone(), KeyType::MultiColumn);
+            } else {
+                changed_key_types.insert(column.constraint_name.clone(), column.key_type.clone());
+            }
+        }
+        for column in self.columns.iter().chain(other.columns.iter()) {
+            other_columns.insert(AbstractReferencedTable {
+                constraint_name: column.constraint_name.clone(),
+                key_type: changed_key_types
+                    .get(&column.constraint_name)
+                    .cloned()
+                    .unwrap_or(KeyType::SingleColumn),
+                column: column.column.clone(),
+                referenced_table: column.referenced_table.clone(),
+                referenced_column: column.referenced_column.clone(),
+            });
+        }
+
         AbstractForeignKey {
-            constraint_name: self.constraint_name,
-            columns: combined_columns,
-            key_type,
+            columns: other_columns,
         }
     }
 }
@@ -144,6 +157,8 @@ impl Add for AbstractForeignKey {
     Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, Ord, PartialOrd,
 )]
 pub struct AbstractReferencedTable {
+    pub constraint_name: String,
+    pub key_type: KeyType,
     pub column: String,
     pub referenced_table: String,
     pub referenced_column: String,
@@ -273,58 +288,63 @@ mod tests {
             comment: Some("Users table".to_string()),
         }
     }
-
     #[test]
     fn test_abstract_foreign_key_addition() {
         let fk1 = AbstractForeignKey {
-            constraint_name: "fk1".to_string(),
             columns: BTreeSet::from([AbstractReferencedTable {
+                constraint_name: "fk1".to_string(),
+                key_type: KeyType::SingleColumn,
                 column: "column1".to_string(),
                 referenced_table: "ref_table1".to_string(),
                 referenced_column: "ref_column1".to_string(),
             }]),
-            key_type: KeyType::SingleColumn,
         };
-        assert_eq!(fk1.constraint_name, "fk1");
+        assert_eq!(fk1.columns.len(), 1);
+        assert_eq!(fk1.columns.iter().next().unwrap().constraint_name, "fk1");
         assert_eq!(
-            fk1.columns,
-            BTreeSet::from([AbstractReferencedTable {
-                column: "column1".to_string(),
-                referenced_table: "ref_table1".to_string(),
-                referenced_column: "ref_column1".to_string(),
-            }])
+            fk1.columns.iter().next().unwrap().key_type,
+            KeyType::SingleColumn
         );
-        assert_eq!(fk1.key_type, KeyType::SingleColumn);
-
         let fk2 = AbstractForeignKey {
-            constraint_name: "fk2".to_string(),
             columns: BTreeSet::from([AbstractReferencedTable {
+                constraint_name: "fk1".to_string(),
+                key_type: KeyType::SingleColumn,
                 column: "column2".to_string(),
                 referenced_table: "ref_table2".to_string(),
                 referenced_column: "ref_column2".to_string(),
             }]),
-            key_type: KeyType::SingleColumn,
         };
 
         let combined_fk = fk1 + fk2;
 
-        assert_eq!(combined_fk.constraint_name, "fk1");
         assert_eq!(
-            combined_fk.columns,
-            BTreeSet::from([
-                AbstractReferencedTable {
-                    column: "column1".to_string(),
-                    referenced_table: "ref_table1".to_string(),
-                    referenced_column: "ref_column1".to_string(),
-                },
-                AbstractReferencedTable {
-                    column: "column2".to_string(),
-                    referenced_table: "ref_table2".to_string(),
-                    referenced_column: "ref_column2".to_string(),
-                }
-            ])
+            combined_fk.columns.len(),
+            2,
+            "Expected 2 columns in combined foreign key, got {:?}",
+            combined_fk
         );
-        assert_eq!(combined_fk.key_type, KeyType::MultiColumn);
+        assert_eq!(
+            combined_fk
+                .columns
+                .iter()
+                .find(|c| c.column == "column1")
+                .unwrap()
+                .key_type,
+            KeyType::MultiColumn,
+            "Expected column1 to have key_type MultiColumn {:?}",
+            combined_fk
+        );
+        assert_eq!(
+            combined_fk
+                .columns
+                .iter()
+                .find(|c| c.column == "column2")
+                .unwrap()
+                .key_type,
+            KeyType::MultiColumn,
+            "Expected column2 to have key_type MultiColumn {:?}",
+            combined_fk
+        );
     }
 
     #[test]
