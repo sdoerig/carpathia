@@ -290,7 +290,7 @@ mod tests {
     }
     #[test]
     fn test_abstract_foreign_key_addition() {
-        let fk1 = AbstractForeignKey {
+        let column1 = AbstractForeignKey {
             columns: BTreeSet::from([AbstractReferencedTable {
                 constraint_name: "fk1".to_string(),
                 key_type: KeyType::SingleColumn,
@@ -299,13 +299,16 @@ mod tests {
                 referenced_column: "ref_column1".to_string(),
             }]),
         };
-        assert_eq!(fk1.columns.len(), 1);
-        assert_eq!(fk1.columns.iter().next().unwrap().constraint_name, "fk1");
+        assert_eq!(column1.columns.len(), 1);
         assert_eq!(
-            fk1.columns.iter().next().unwrap().key_type,
+            column1.columns.iter().next().unwrap().constraint_name,
+            "fk1"
+        );
+        assert_eq!(
+            column1.columns.iter().next().unwrap().key_type,
             KeyType::SingleColumn
         );
-        let fk2 = AbstractForeignKey {
+        let column2 = AbstractForeignKey {
             columns: BTreeSet::from([AbstractReferencedTable {
                 constraint_name: "fk1".to_string(),
                 key_type: KeyType::SingleColumn,
@@ -315,7 +318,7 @@ mod tests {
             }]),
         };
 
-        let combined_fk = fk1 + fk2;
+        let combined_fk = column1 + column2;
 
         assert_eq!(
             combined_fk.columns.len(),
@@ -344,6 +347,57 @@ mod tests {
             KeyType::MultiColumn,
             "Expected column2 to have key_type MultiColumn {:?}",
             combined_fk
+        );
+
+        let column3 = AbstractForeignKey {
+            columns: BTreeSet::from([AbstractReferencedTable {
+                constraint_name: "fk2".to_string(),
+                key_type: KeyType::SingleColumn,
+                column: "column3".to_string(),
+                referenced_table: "ref_table3".to_string(),
+                referenced_column: "ref_column3".to_string(),
+            }]),
+        };
+
+        let combined_fk2 = combined_fk + column3;
+        assert_eq!(
+            combined_fk2.columns.len(),
+            3,
+            "Expected 3 columns in combined foreign key, got {:?}",
+            combined_fk2
+        );
+        assert_eq!(
+            combined_fk2
+                .columns
+                .iter()
+                .find(|c| c.column == "column3")
+                .unwrap()
+                .key_type,
+            KeyType::SingleColumn,
+            "Expected column3 to have key_type SingleColumn {:?}",
+            combined_fk2
+        );
+        assert_eq!(
+            combined_fk2
+                .columns
+                .iter()
+                .find(|c| c.column == "column1")
+                .unwrap()
+                .key_type,
+            KeyType::MultiColumn,
+            "Expected column1 to have key_type MultiColumn {:?}",
+            combined_fk2
+        );
+        assert_eq!(
+            combined_fk2
+                .columns
+                .iter()
+                .find(|c| c.column == "column2")
+                .unwrap()
+                .key_type,
+            KeyType::MultiColumn,
+            "Expected column2 to have key_type MultiColumn {:?}",
+            combined_fk2
         );
     }
 
