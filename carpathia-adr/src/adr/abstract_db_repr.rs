@@ -134,16 +134,17 @@ impl Add for AbstractForeignKey {
                 changed_key_types.insert(column.constraint_name.clone(), column.key_type.clone());
             }
         }
-        for column in self.columns.iter().chain(other.columns.iter()) {
+        for column in self.columns.into_iter().chain(other.columns) {
+            let key_type = changed_key_types
+                .get(&column.constraint_name)
+                .cloned()
+                .unwrap_or(KeyType::SingleColumn);
             other_columns.insert(AbstractReferencedTable {
-                constraint_name: column.constraint_name.clone(),
-                key_type: changed_key_types
-                    .get(&column.constraint_name)
-                    .cloned()
-                    .unwrap_or(KeyType::SingleColumn),
-                column: column.column.clone(),
-                referenced_table: column.referenced_table.clone(),
-                referenced_column: column.referenced_column.clone(),
+                constraint_name: column.constraint_name,
+                key_type,
+                column: column.column,
+                referenced_table: column.referenced_table,
+                referenced_column: column.referenced_column,
             });
         }
 
