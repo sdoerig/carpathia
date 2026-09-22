@@ -17,7 +17,10 @@ use std::ops::Add;
 /// - Patch changes e.g. 0.1.0 to 0.1.1 will just fix bugs e.g. if the database constrant UNIQUE would have ben
 ///   given back as none, fixig it to return unique would be such a change.
 pub const ABSTRACT_DB_REPR_VERSION: &str = env!("CARGO_PKG_VERSION");
-
+const KEY_TYPE_CHANGE_DEFAULT: &KeyTypeChange = &KeyTypeChange {
+    attribute_name: vec![],
+    key_type: KeyType::SingleColumn,
+};
 /// Wrapping structure holding the database representation.
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct AbstractDbRepr {
@@ -120,28 +123,41 @@ pub struct AbstractForeignKey {
     pub columns: BTreeSet<AbstractReferencedTable>,
 }
 
+struct KeyTypeChange {
+    attribute_name: Vec<String>,
+    key_type: KeyType,
+}
+
 impl Add for AbstractForeignKey {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
         //let other_columns = other.columns;
         let mut other_columns: BTreeSet<AbstractReferencedTable> = BTreeSet::new();
-        let mut changed_key_types: HashMap<String, KeyType> = HashMap::new();
+        let mut changed_key_types: HashMap<String, KeyTypeChange> = HashMap::new();
         for column in self.columns.iter().chain(other.columns.iter()) {
-            if changed_key_types.contains_key(&column.constraint_name) {
-                changed_key_types.insert(column.constraint_name.clone(), KeyType::MultiColumn);
+            if let Some(existing) = changed_key_types.get_mut(&column.constraint_name)
+                && !existing.attribute_name.contains(&column.column)
+            {
+                existing.attribute_name.push(column.column.clone());
+                existing.key_type = KeyType::MultiColumn;
             } else {
-                changed_key_types.insert(column.constraint_name.clone(), column.key_type.clone());
+                changed_key_types.insert(
+                    column.constraint_name.clone(),
+                    KeyTypeChange {
+                        attribute_name: vec![column.column.clone()],
+                        key_type: KeyType::SingleColumn,
+                    },
+                );
             }
         }
         for column in self.columns.into_iter().chain(other.columns) {
             let key_type = changed_key_types
                 .get(&column.constraint_name)
-                .cloned()
-                .unwrap_or(KeyType::SingleColumn);
+                .unwrap_or(KEY_TYPE_CHANGE_DEFAULT);
             other_columns.insert(AbstractReferencedTable {
                 constraint_name: column.constraint_name,
-                key_type,
+                key_type: key_type.key_type.clone(),
                 column: column.column,
                 referenced_table: column.referenced_table,
                 referenced_column: column.referenced_column,
@@ -309,6 +325,22 @@ mod tests {
             column1.columns.iter().next().unwrap().key_type,
             KeyType::SingleColumn
         );
+        // Adding the same foreign key again - it should still be a single column foreign key
+        let column1_duplicate = column1.clone();
+        let combined_fk = column1.clone() + column1_duplicate;
+        assert_eq!(
+            combined_fk.columns.len(),
+            1,
+            "Expected 1 column in combined foreign key, got {:?}",
+            combined_fk
+        );
+        assert_eq!(
+            combined_fk.columns.iter().next().unwrap().key_type,
+            KeyType::SingleColumn,
+            "Expected key_type to be SingleColumn {:?}",
+            combined_fk
+        );
+
         let column2 = AbstractForeignKey {
             columns: BTreeSet::from([AbstractReferencedTable {
                 constraint_name: "fk1".to_string(),
