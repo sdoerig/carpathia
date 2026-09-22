@@ -136,11 +136,18 @@ impl Add for AbstractForeignKey {
         let mut other_columns: BTreeSet<AbstractReferencedTable> = BTreeSet::new();
         let mut changed_key_types: HashMap<String, KeyTypeChange> = HashMap::new();
         for column in self.columns.iter().chain(other.columns.iter()) {
-            if let Some(existing) = changed_key_types.get_mut(&column.constraint_name)
-                && !existing.attribute_name.contains(&column.column)
-            {
-                existing.attribute_name.push(column.column.clone());
-                existing.key_type = KeyType::MultiColumn;
+            if let Some(existing) = changed_key_types.get_mut(&column.constraint_name) {
+                if !existing.attribute_name.contains(&column.column) {
+                    existing.attribute_name.push(column.column.clone());
+                    existing.key_type = KeyType::MultiColumn;
+                } else if existing.attribute_name.contains(&column.column) {
+                    // If the column is already present, we don't need to change the key type
+                    // Done to prevent overwriting of the key type, which
+                    // will result in losing the column names subsumed under this particlular
+                    // constraint name. If removed this will result in a loss of information
+                    // and will result in a wrong representation of the database schema.
+                    let _ = -1; // No operation, just a placeholder to indicate no change
+                }
             } else {
                 changed_key_types.insert(
                     column.constraint_name.clone(),
