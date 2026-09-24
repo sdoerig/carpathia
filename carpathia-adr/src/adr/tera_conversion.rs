@@ -15,14 +15,14 @@ use crate::adr::abstract_db_repr::{
 /// should get the job done.
 ///
 use serde::Serialize;
-#[derive(Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Clone, Debug, PartialEq, Eq)]
 pub struct AdrTemplateData<'a> {
     pub version: &'a str,
     pub tables: Vec<TableTemplateData<'a>>,
     pub views: Vec<TableTemplateData<'a>>,
 }
 
-#[derive(Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Clone, Debug, PartialEq, Eq)]
 pub struct TableTemplateData<'a> {
     pub object_type: &'a ObjectType,
     pub table_name: &'a str,
