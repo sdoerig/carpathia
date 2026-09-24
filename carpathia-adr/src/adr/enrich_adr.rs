@@ -105,7 +105,8 @@ fn map_constraints_to_user_friendly_names(
                         })
                         .collect(),
                     });
-                atr_tbl_prop.insert(TableProperties::ForeignKey(
+
+                atr_tbl_prop.replace(TableProperties::ForeignKey(
                     fk + AbstractForeignKey {
                         columns: std::iter::once(AbstractReferencedTable {
                             key_type: KeyType::SingleColumn,
