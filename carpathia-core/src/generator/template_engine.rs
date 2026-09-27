@@ -355,7 +355,6 @@ mod tests {
         extract_to_disk(&conf).map_err(|e| panic!("Could not extract templates {}", e));
 
         match list_files(&conf.template_directory, &conf.template_directory, "tera") {
-            // silly test proofes nothing - create it later
             Ok(files) => {
                 for p in templates.as_ref() {
                     assert!(

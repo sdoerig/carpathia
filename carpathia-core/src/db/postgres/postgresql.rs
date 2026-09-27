@@ -12,7 +12,6 @@ use carpathia_adr::adr::abstract_db_repr::{
     ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType,
 };
 use log::{debug, error, info};
-use std::collections::{BTreeMap, BTreeSet};
 pub(crate) struct PostgresQuerier;
 
 const LIMIT: i64 = 1000;
@@ -338,14 +337,12 @@ impl DatabaseQuerier for PostgresQuerier {
                     ObjectType::BaseTable | ObjectType::PartitionedTable => {
                         table_info_map
                             .entry(table_name.clone())
-                            .or_insert_with(|| AbstractTableRepr {
-                                table_name: row.table_name.clone(),
-                                u_table_name: String::new(),
-                                u_imports: BTreeSet::new(),
-                                object_type,
-                                table_properties: BTreeSet::new(),
-                                comment: row.table_comment.clone(),
-                                attributes: BTreeMap::new(),
+                            .or_insert_with(|| {
+                                AbstractTableRepr::new(
+                                    object_type,
+                                    table_name,
+                                    row.table_comment.clone(),
+                                )
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);
@@ -354,14 +351,12 @@ impl DatabaseQuerier for PostgresQuerier {
                     ObjectType::View | ObjectType::MaterializedView => {
                         view_info_map
                             .entry(table_name.clone())
-                            .or_insert_with(|| AbstractTableRepr {
-                                table_name: row.table_name,
-                                u_table_name: String::new(),
-                                u_imports: BTreeSet::new(),
-                                object_type,
-                                table_properties: BTreeSet::new(),
-                                comment: row.table_comment.clone(),
-                                attributes: BTreeMap::new(),
+                            .or_insert_with(|| {
+                                AbstractTableRepr::new(
+                                    object_type,
+                                    table_name,
+                                    row.table_comment.clone(),
+                                )
                             })
                             .attributes
                             .insert(attribute.column_name.clone(), attribute);

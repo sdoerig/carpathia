@@ -1,11 +1,12 @@
 //! This module enriches the AbstractDbRepr with user-defined type mappings
 //! based on the configuration provided by the user.
-use std::collections::BTreeSet;
-
 use log::debug;
+use std::collections::BTreeSet;
+use std::marker::PhantomData;
 
 use crate::adr::abstract_db_repr::{
-    AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ConstraintType, TableProperties,
+    AbstractAttribute, AbstractDbRepr, AbstractForeignKey, AbstractPrimaryKey,
+    AbstractReferencedTable, AbstractTableRepr, ConstraintType, KeyType, TableProperties,
 };
 use crate::db_type::db_to_user_type_structs::{TypeMapping, Types};
 
@@ -28,7 +29,6 @@ fn add_to_atr(
         .clone();
 
     for attribute in &mut atr.attributes.values_mut() {
-        map_constraints_to_user_friendly_names(&mut atr.table_properties, db_name_map, attribute);
         // Add a user-friendly mapping for the column name
         // map the user type to the ADR
         let default_type_mapping = TypeMapping {
@@ -51,6 +51,9 @@ fn add_to_atr(
             atr.u_imports.insert(import);
         }
     }
+    for attribute in &mut atr.attributes.values_mut() {
+        map_constraints_to_user_friendly_names(&mut atr.table_properties, db_name_map, attribute);
+    }
 }
 
 fn map_constraints_to_user_friendly_names(
@@ -59,17 +62,6 @@ fn map_constraints_to_user_friendly_names(
     attribute: &mut AbstractAttribute,
 ) {
     for (key, constraint) in attribute.constraints.iter_mut() {
-        match key {
-            ConstraintType::PrimaryKey => {
-                atr_tbl_prop.insert(TableProperties::PrimaryKey);
-            }
-            ConstraintType::ForeignKey => {
-                atr_tbl_prop.insert(TableProperties::ForeignKey);
-            }
-            _ => {
-                // Basically anything is selectable.
-            }
-        };
         if let Some(referenced_table) = &constraint.referenced_table {
             constraint.u_referenced_table = db_name_map
                 .get(referenced_table)
@@ -84,5 +76,89 @@ fn map_constraints_to_user_friendly_names(
                 .clone()
                 .into();
         }
+        match key {
+            ConstraintType::PrimaryKey => {
+                let pk: AbstractPrimaryKey = atr_tbl_prop
+                    .iter()
+                    .find_map(|prop| match prop {
+                        TableProperties::PrimaryKey(pk) => Some(pk.clone()),
+                        _ => None,
+                    })
+                    .unwrap_or_else(|| AbstractPrimaryKey {
+                        columns: std::iter::once(AbstractReferencedTable {
+                            constraint_name: constraint.constraint_name.clone(),
+                            key_type: KeyType::SingleColumn,
+                            column: attribute.column_name.clone(),
+                            u_column: attribute.u_column_name.clone(),
+                            referenced_table: None,
+                            u_referenced_column: None,
+                            referenced_column: None,
+                            u_referenced_table: None,
+                        })
+                        .collect(),
+                        _marker: PhantomData,
+                    });
+
+                atr_tbl_prop.replace(TableProperties::PrimaryKey(
+                    pk + AbstractPrimaryKey {
+                        columns: std::iter::once(AbstractReferencedTable {
+                            key_type: KeyType::SingleColumn,
+                            constraint_name: constraint.constraint_name.clone(),
+                            column: attribute.column_name.clone(),
+                            u_column: attribute.u_column_name.clone(),
+                            referenced_table: None,
+                            u_referenced_table: None,
+                            referenced_column: None,
+                            u_referenced_column: None,
+                        })
+                        .collect(),
+                        _marker: PhantomData,
+                    },
+                ));
+            }
+            ConstraintType::ForeignKey => {
+                let fk: AbstractForeignKey = atr_tbl_prop
+                    .iter()
+                    .find_map(|prop| match prop {
+                        TableProperties::ForeignKey(fk) => Some(fk.clone()),
+                        _ => None,
+                    })
+                    .unwrap_or_else(|| AbstractForeignKey {
+                        columns: std::iter::once(AbstractReferencedTable {
+                            constraint_name: constraint.constraint_name.clone(),
+                            key_type: KeyType::SingleColumn,
+                            column: attribute.column_name.clone(),
+                            u_column: attribute.u_column_name.clone(),
+                            referenced_table: constraint.referenced_table.clone(),
+                            u_referenced_column: constraint.u_referenced_column.clone(),
+
+                            referenced_column: constraint.referenced_column.clone(),
+                            u_referenced_table: constraint.u_referenced_table.clone(),
+                        })
+                        .collect(),
+                        _marker: PhantomData,
+                    });
+
+                atr_tbl_prop.replace(TableProperties::ForeignKey(
+                    fk + AbstractForeignKey {
+                        columns: std::iter::once(AbstractReferencedTable {
+                            key_type: KeyType::SingleColumn,
+                            constraint_name: constraint.constraint_name.clone(),
+                            column: attribute.column_name.clone(),
+                            u_column: attribute.u_column_name.clone(),
+                            referenced_table: constraint.referenced_table.clone(),
+                            u_referenced_table: constraint.u_referenced_table.clone(),
+                            referenced_column: constraint.referenced_column.clone(),
+                            u_referenced_column: constraint.u_referenced_column.clone(),
+                        })
+                        .collect(),
+                        _marker: PhantomData,
+                    },
+                ));
+            }
+            _ => {
+                // Basically anything is selectable.
+            }
+        };
     }
 }
