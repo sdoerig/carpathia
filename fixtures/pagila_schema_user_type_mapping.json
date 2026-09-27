@@ -11,11 +11,14 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "actor_pkey",
             "columns": [
-              "actor_id"
-            ],
-            "key_type": "SingleColumn"
+              {
+                "constraint_name": "actor_pkey",
+                "key_type": "SingleColumn",
+                "column": "actor_id",
+                "u_column": "actor_id"
+              }
+            ]
           }
         }
       ],
@@ -35,21 +38,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "actor_pkey",
-              "constraint_value": "PRIMARY KEY (actor_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (actor_id)"
             },
             "NotNull": {
               "constraint_name": "actor_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -68,12 +61,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "first_name_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -92,12 +80,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_name_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -116,12 +99,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -138,11 +116,14 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "address_pkey",
             "columns": [
-              "address_id"
-            ],
-            "key_type": "SingleColumn"
+              {
+                "constraint_name": "address_pkey",
+                "key_type": "SingleColumn",
+                "column": "address_id",
+                "u_column": "address_id"
+              }
+            ]
           }
         },
         {
@@ -150,10 +131,13 @@
             "columns": [
               {
                 "constraint_name": "address_city_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "city_id",
+                "u_column": "city_id",
                 "referenced_table": "city",
-                "referenced_column": "city_id"
+                "u_referenced_table": "city",
+                "referenced_column": "city_id",
+                "u_referenced_column": "city_id"
               }
             ]
           }
@@ -175,12 +159,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "address_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -213,21 +192,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "address_pkey",
-              "constraint_value": "PRIMARY KEY (address_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (address_id)"
             },
             "NotNull": {
               "constraint_name": "address_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -255,12 +224,7 @@
             },
             "NotNull": {
               "constraint_name": "city_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -279,12 +243,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "district_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -303,12 +262,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -327,12 +281,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "phone_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -363,11 +312,14 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "category_pkey",
             "columns": [
-              "category_id"
-            ],
-            "key_type": "SingleColumn"
+              {
+                "constraint_name": "category_pkey",
+                "key_type": "SingleColumn",
+                "column": "category_id",
+                "u_column": "category_id"
+              }
+            ]
           }
         }
       ],
@@ -387,21 +339,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "category_pkey",
-              "constraint_value": "PRIMARY KEY (category_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (category_id)"
             },
             "NotNull": {
               "constraint_name": "category_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -420,12 +362,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -444,12 +381,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "name_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -466,11 +398,14 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "city_pkey",
             "columns": [
-              "city_id"
-            ],
-            "key_type": "SingleColumn"
+              {
+                "constraint_name": "city_pkey",
+                "key_type": "SingleColumn",
+                "column": "city_id",
+                "u_column": "city_id"
+              }
+            ]
           }
         },
         {
@@ -478,10 +413,13 @@
             "columns": [
               {
                 "constraint_name": "city_country_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "country_id",
+                "u_column": "country_id",
                 "referenced_table": "country",
-                "referenced_column": "country_id"
+                "u_referenced_table": "country",
+                "referenced_column": "country_id",
+                "u_referenced_column": "country_id"
               }
             ]
           }
@@ -503,12 +441,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "city_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -527,21 +460,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "city_pkey",
-              "constraint_value": "PRIMARY KEY (city_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (city_id)"
             },
             "NotNull": {
               "constraint_name": "city_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -569,12 +492,7 @@
             },
             "NotNull": {
               "constraint_name": "country_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -593,12 +511,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -615,11 +528,14 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "country_pkey",
             "columns": [
-              "country_id"
-            ],
-            "key_type": "SingleColumn"
+              {
+                "constraint_name": "country_pkey",
+                "key_type": "SingleColumn",
+                "column": "country_id",
+                "u_column": "country_id"
+              }
+            ]
           }
         }
       ],
@@ -639,12 +555,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "country_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -663,21 +574,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "country_pkey",
-              "constraint_value": "PRIMARY KEY (country_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (country_id)"
             },
             "NotNull": {
               "constraint_name": "country_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -696,12 +597,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -719,22 +615,12 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "customer_pkey",
-            "columns": [
-              "customer_id"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "customer_address_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "address_id",
-                "referenced_table": "address",
-                "referenced_column": "address_id"
+                "constraint_name": "customer_pkey",
+                "key_type": "SingleColumn",
+                "column": "customer_id",
+                "u_column": "customer_id"
               }
             ]
           }
@@ -744,17 +630,23 @@
             "columns": [
               {
                 "constraint_name": "customer_address_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "address_id",
+                "u_column": "address_id",
                 "referenced_table": "address",
-                "referenced_column": "address_id"
+                "u_referenced_table": "address",
+                "referenced_column": "address_id",
+                "u_referenced_column": "address_id"
               },
               {
                 "constraint_name": "customer_store_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "store_id",
+                "u_column": "store_id",
                 "referenced_table": "store",
-                "referenced_column": "store_id"
+                "u_referenced_table": "store",
+                "referenced_column": "store_id",
+                "u_referenced_column": "store_id"
               }
             ]
           }
@@ -790,12 +682,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "activebool_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -823,12 +710,7 @@
             },
             "NotNull": {
               "constraint_name": "address_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -847,12 +729,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "create_date_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -871,21 +748,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "customer_pkey",
-              "constraint_value": "PRIMARY KEY (customer_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (customer_id)"
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -918,12 +785,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "first_name_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -942,12 +804,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_name_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -989,12 +846,7 @@
             },
             "NotNull": {
               "constraint_name": "store_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1012,22 +864,12 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "film_pkey",
-            "columns": [
-              "film_id"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "film_language_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "language_id",
-                "referenced_table": "language",
-                "referenced_column": "language_id"
+                "constraint_name": "film_pkey",
+                "key_type": "SingleColumn",
+                "column": "film_id",
+                "u_column": "film_id"
               }
             ]
           }
@@ -1037,17 +879,23 @@
             "columns": [
               {
                 "constraint_name": "film_language_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "language_id",
+                "u_column": "language_id",
                 "referenced_table": "language",
-                "referenced_column": "language_id"
+                "u_referenced_table": "language",
+                "referenced_column": "language_id",
+                "u_referenced_column": "language_id"
               },
               {
                 "constraint_name": "film_original_language_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "original_language_id",
+                "u_column": "original_language_id",
                 "referenced_table": "language",
-                "referenced_column": "language_id"
+                "u_referenced_table": "language",
+                "referenced_column": "language_id",
+                "u_referenced_column": "language_id"
               }
             ]
           }
@@ -1083,21 +931,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "film_pkey",
-              "constraint_value": "PRIMARY KEY (film_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (film_id)"
             },
             "NotNull": {
               "constraint_name": "film_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1116,12 +954,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "fulltext_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1149,12 +982,7 @@
             },
             "NotNull": {
               "constraint_name": "language_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1173,12 +1001,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1263,12 +1086,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "rental_duration_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1287,12 +1105,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "rental_rate_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1311,12 +1124,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "replacement_cost_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1349,12 +1157,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "title_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1371,32 +1174,18 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "film_actor_pkey",
-            "columns": [
-              "actor_id"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "PrimaryKey": {
-            "constraint_name": "film_actor_pkey",
-            "columns": [
-              "actor_id",
-              "film_id"
-            ],
-            "key_type": "MultiColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "film_actor_actor_id_fkey",
+                "constraint_name": "film_actor_pkey",
                 "key_type": "MultiColumn",
                 "column": "actor_id",
-                "referenced_table": "actor",
-                "referenced_column": "actor_id"
+                "u_column": "actor_id"
+              },
+              {
+                "constraint_name": "film_actor_pkey",
+                "key_type": "MultiColumn",
+                "column": "film_id",
+                "u_column": "film_id"
               }
             ]
           }
@@ -1406,17 +1195,23 @@
             "columns": [
               {
                 "constraint_name": "film_actor_actor_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "actor_id",
+                "u_column": "actor_id",
                 "referenced_table": "actor",
-                "referenced_column": "actor_id"
+                "u_referenced_table": "marianne",
+                "referenced_column": "actor_id",
+                "u_referenced_column": "actor_id"
               },
               {
                 "constraint_name": "film_actor_film_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "film_id",
+                "u_column": "film_id",
                 "referenced_table": "film",
-                "referenced_column": "film_id"
+                "u_referenced_table": "film",
+                "referenced_column": "film_id",
+                "u_referenced_column": "film_id"
               }
             ]
           }
@@ -1438,12 +1233,7 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "film_actor_pkey",
-              "constraint_value": "PRIMARY KEY (actor_id, film_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (actor_id, film_id)"
             },
             "ForeignKey": {
               "constraint_name": "film_actor_actor_id_fkey",
@@ -1456,12 +1246,7 @@
             },
             "NotNull": {
               "constraint_name": "actor_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1480,12 +1265,7 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "film_actor_pkey",
-              "constraint_value": "PRIMARY KEY (actor_id, film_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (actor_id, film_id)"
             },
             "ForeignKey": {
               "constraint_name": "film_actor_film_id_fkey",
@@ -1498,12 +1278,7 @@
             },
             "NotNull": {
               "constraint_name": "film_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1522,12 +1297,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1544,32 +1314,18 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "film_category_pkey",
-            "columns": [
-              "category_id"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "PrimaryKey": {
-            "constraint_name": "film_category_pkey",
-            "columns": [
-              "category_id",
-              "film_id"
-            ],
-            "key_type": "MultiColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "film_category_category_id_fkey",
+                "constraint_name": "film_category_pkey",
                 "key_type": "MultiColumn",
                 "column": "category_id",
-                "referenced_table": "category",
-                "referenced_column": "category_id"
+                "u_column": "category_id"
+              },
+              {
+                "constraint_name": "film_category_pkey",
+                "key_type": "MultiColumn",
+                "column": "film_id",
+                "u_column": "film_id"
               }
             ]
           }
@@ -1579,17 +1335,23 @@
             "columns": [
               {
                 "constraint_name": "film_category_category_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "category_id",
+                "u_column": "category_id",
                 "referenced_table": "category",
-                "referenced_column": "category_id"
+                "u_referenced_table": "category",
+                "referenced_column": "category_id",
+                "u_referenced_column": "category_id"
               },
               {
                 "constraint_name": "film_category_film_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "film_id",
+                "u_column": "film_id",
                 "referenced_table": "film",
-                "referenced_column": "film_id"
+                "u_referenced_table": "film",
+                "referenced_column": "film_id",
+                "u_referenced_column": "film_id"
               }
             ]
           }
@@ -1611,12 +1373,7 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "film_category_pkey",
-              "constraint_value": "PRIMARY KEY (film_id, category_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (film_id, category_id)"
             },
             "ForeignKey": {
               "constraint_name": "film_category_category_id_fkey",
@@ -1629,12 +1386,7 @@
             },
             "NotNull": {
               "constraint_name": "category_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1653,12 +1405,7 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "film_category_pkey",
-              "constraint_value": "PRIMARY KEY (film_id, category_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (film_id, category_id)"
             },
             "ForeignKey": {
               "constraint_name": "film_category_film_id_fkey",
@@ -1671,12 +1418,7 @@
             },
             "NotNull": {
               "constraint_name": "film_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1695,12 +1437,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1717,22 +1454,12 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "inventory_pkey",
-            "columns": [
-              "inventory_id"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "inventory_film_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "film_id",
-                "referenced_table": "film",
-                "referenced_column": "film_id"
+                "constraint_name": "inventory_pkey",
+                "key_type": "SingleColumn",
+                "column": "inventory_id",
+                "u_column": "inventory_id"
               }
             ]
           }
@@ -1742,17 +1469,23 @@
             "columns": [
               {
                 "constraint_name": "inventory_film_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "film_id",
+                "u_column": "film_id",
                 "referenced_table": "film",
-                "referenced_column": "film_id"
+                "u_referenced_table": "film",
+                "referenced_column": "film_id",
+                "u_referenced_column": "film_id"
               },
               {
                 "constraint_name": "inventory_store_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "store_id",
+                "u_column": "store_id",
                 "referenced_table": "store",
-                "referenced_column": "store_id"
+                "u_referenced_table": "store",
+                "referenced_column": "store_id",
+                "u_referenced_column": "store_id"
               }
             ]
           }
@@ -1783,12 +1516,7 @@
             },
             "NotNull": {
               "constraint_name": "film_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1807,21 +1535,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "inventory_pkey",
-              "constraint_value": "PRIMARY KEY (inventory_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (inventory_id)"
             },
             "NotNull": {
               "constraint_name": "inventory_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1840,12 +1558,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1873,12 +1586,7 @@
             },
             "NotNull": {
               "constraint_name": "store_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1895,11 +1603,14 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "language_pkey",
             "columns": [
-              "language_id"
-            ],
-            "key_type": "SingleColumn"
+              {
+                "constraint_name": "language_pkey",
+                "key_type": "SingleColumn",
+                "column": "language_id",
+                "u_column": "language_id"
+              }
+            ]
           }
         }
       ],
@@ -1919,21 +1630,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "language_pkey",
-              "constraint_value": "PRIMARY KEY (language_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (language_id)"
             },
             "NotNull": {
               "constraint_name": "language_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1952,12 +1653,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1976,12 +1672,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "name_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -1998,21 +1689,20 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "payment_pkey",
             "columns": [
-              "payment_date"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "PrimaryKey": {
-            "constraint_name": "payment_pkey",
-            "columns": [
-              "payment_date",
-              "payment_id"
-            ],
-            "key_type": "MultiColumn"
+              {
+                "constraint_name": "payment_pkey",
+                "key_type": "MultiColumn",
+                "column": "payment_date",
+                "u_column": "payment_date"
+              },
+              {
+                "constraint_name": "payment_pkey",
+                "key_type": "MultiColumn",
+                "column": "payment_id",
+                "u_column": "payment_id"
+              }
+            ]
           }
         }
       ],
@@ -2032,12 +1722,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2056,12 +1741,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "customer_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2080,21 +1760,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2113,21 +1783,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2146,12 +1806,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "rental_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2170,12 +1825,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "staff_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2192,32 +1842,18 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "payment_p2022_01_pkey",
-            "columns": [
-              "payment_date"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "PrimaryKey": {
-            "constraint_name": "payment_p2022_01_pkey",
-            "columns": [
-              "payment_date",
-              "payment_id"
-            ],
-            "key_type": "MultiColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "payment_p2022_01_customer_id_fkey",
+                "constraint_name": "payment_p2022_01_pkey",
                 "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "column": "payment_date",
+                "u_column": "payment_date"
+              },
+              {
+                "constraint_name": "payment_p2022_01_pkey",
+                "key_type": "MultiColumn",
+                "column": "payment_id",
+                "u_column": "payment_id"
               }
             ]
           }
@@ -2227,37 +1863,33 @@
             "columns": [
               {
                 "constraint_name": "payment_p2022_01_customer_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "customer_id",
+                "u_column": "customer_id",
                 "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "customer",
+                "referenced_column": "customer_id",
+                "u_referenced_column": "customer_id"
               },
               {
                 "constraint_name": "payment_p2022_01_rental_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "rental_id",
+                "u_column": "rental_id",
                 "referenced_table": "rental",
-                "referenced_column": "rental_id"
-              }
-            ]
-          }
-        },
-        {
-          "ForeignKey": {
-            "columns": [
-              {
-                "constraint_name": "payment_p2022_01_customer_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "rental",
+                "referenced_column": "rental_id",
+                "u_referenced_column": "rental_id"
               },
               {
                 "constraint_name": "payment_p2022_01_staff_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "staff_id",
+                "u_column": "staff_id",
                 "referenced_table": "staff",
-                "referenced_column": "staff_id"
+                "u_referenced_table": "staff",
+                "referenced_column": "staff_id",
+                "u_referenced_column": "staff_id"
               }
             ]
           }
@@ -2279,12 +1911,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2312,12 +1939,7 @@
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2336,21 +1958,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_01_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2369,21 +1981,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_01_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2411,12 +2013,7 @@
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2444,12 +2041,7 @@
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2466,32 +2058,18 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "payment_p2022_02_pkey",
-            "columns": [
-              "payment_date"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "PrimaryKey": {
-            "constraint_name": "payment_p2022_02_pkey",
-            "columns": [
-              "payment_date",
-              "payment_id"
-            ],
-            "key_type": "MultiColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "payment_p2022_02_customer_id_fkey",
+                "constraint_name": "payment_p2022_02_pkey",
                 "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "column": "payment_date",
+                "u_column": "payment_date"
+              },
+              {
+                "constraint_name": "payment_p2022_02_pkey",
+                "key_type": "MultiColumn",
+                "column": "payment_id",
+                "u_column": "payment_id"
               }
             ]
           }
@@ -2501,37 +2079,33 @@
             "columns": [
               {
                 "constraint_name": "payment_p2022_02_customer_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "customer_id",
+                "u_column": "customer_id",
                 "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "customer",
+                "referenced_column": "customer_id",
+                "u_referenced_column": "customer_id"
               },
               {
                 "constraint_name": "payment_p2022_02_rental_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "rental_id",
+                "u_column": "rental_id",
                 "referenced_table": "rental",
-                "referenced_column": "rental_id"
-              }
-            ]
-          }
-        },
-        {
-          "ForeignKey": {
-            "columns": [
-              {
-                "constraint_name": "payment_p2022_02_customer_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "rental",
+                "referenced_column": "rental_id",
+                "u_referenced_column": "rental_id"
               },
               {
                 "constraint_name": "payment_p2022_02_staff_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "staff_id",
+                "u_column": "staff_id",
                 "referenced_table": "staff",
-                "referenced_column": "staff_id"
+                "u_referenced_table": "staff",
+                "referenced_column": "staff_id",
+                "u_referenced_column": "staff_id"
               }
             ]
           }
@@ -2553,12 +2127,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2586,12 +2155,7 @@
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2610,21 +2174,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_02_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2643,21 +2197,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_02_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2685,12 +2229,7 @@
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2718,12 +2257,7 @@
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2740,32 +2274,18 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "payment_p2022_03_pkey",
-            "columns": [
-              "payment_date"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "PrimaryKey": {
-            "constraint_name": "payment_p2022_03_pkey",
-            "columns": [
-              "payment_date",
-              "payment_id"
-            ],
-            "key_type": "MultiColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "payment_p2022_03_customer_id_fkey",
+                "constraint_name": "payment_p2022_03_pkey",
                 "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "column": "payment_date",
+                "u_column": "payment_date"
+              },
+              {
+                "constraint_name": "payment_p2022_03_pkey",
+                "key_type": "MultiColumn",
+                "column": "payment_id",
+                "u_column": "payment_id"
               }
             ]
           }
@@ -2775,37 +2295,33 @@
             "columns": [
               {
                 "constraint_name": "payment_p2022_03_customer_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "customer_id",
+                "u_column": "customer_id",
                 "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "customer",
+                "referenced_column": "customer_id",
+                "u_referenced_column": "customer_id"
               },
               {
                 "constraint_name": "payment_p2022_03_rental_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "rental_id",
+                "u_column": "rental_id",
                 "referenced_table": "rental",
-                "referenced_column": "rental_id"
-              }
-            ]
-          }
-        },
-        {
-          "ForeignKey": {
-            "columns": [
-              {
-                "constraint_name": "payment_p2022_03_customer_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "rental",
+                "referenced_column": "rental_id",
+                "u_referenced_column": "rental_id"
               },
               {
                 "constraint_name": "payment_p2022_03_staff_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "staff_id",
+                "u_column": "staff_id",
                 "referenced_table": "staff",
-                "referenced_column": "staff_id"
+                "u_referenced_table": "staff",
+                "referenced_column": "staff_id",
+                "u_referenced_column": "staff_id"
               }
             ]
           }
@@ -2827,12 +2343,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2860,12 +2371,7 @@
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2884,21 +2390,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_03_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2917,21 +2413,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_03_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2959,12 +2445,7 @@
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -2992,12 +2473,7 @@
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3014,32 +2490,18 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "payment_p2022_04_pkey",
-            "columns": [
-              "payment_date"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "PrimaryKey": {
-            "constraint_name": "payment_p2022_04_pkey",
-            "columns": [
-              "payment_date",
-              "payment_id"
-            ],
-            "key_type": "MultiColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "payment_p2022_04_customer_id_fkey",
+                "constraint_name": "payment_p2022_04_pkey",
                 "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "column": "payment_date",
+                "u_column": "payment_date"
+              },
+              {
+                "constraint_name": "payment_p2022_04_pkey",
+                "key_type": "MultiColumn",
+                "column": "payment_id",
+                "u_column": "payment_id"
               }
             ]
           }
@@ -3049,37 +2511,33 @@
             "columns": [
               {
                 "constraint_name": "payment_p2022_04_customer_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "customer_id",
+                "u_column": "customer_id",
                 "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "customer",
+                "referenced_column": "customer_id",
+                "u_referenced_column": "customer_id"
               },
               {
                 "constraint_name": "payment_p2022_04_rental_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "rental_id",
+                "u_column": "rental_id",
                 "referenced_table": "rental",
-                "referenced_column": "rental_id"
-              }
-            ]
-          }
-        },
-        {
-          "ForeignKey": {
-            "columns": [
-              {
-                "constraint_name": "payment_p2022_04_customer_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "rental",
+                "referenced_column": "rental_id",
+                "u_referenced_column": "rental_id"
               },
               {
                 "constraint_name": "payment_p2022_04_staff_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "staff_id",
+                "u_column": "staff_id",
                 "referenced_table": "staff",
-                "referenced_column": "staff_id"
+                "u_referenced_table": "staff",
+                "referenced_column": "staff_id",
+                "u_referenced_column": "staff_id"
               }
             ]
           }
@@ -3101,12 +2559,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3134,12 +2587,7 @@
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3158,21 +2606,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_04_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3191,21 +2629,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_04_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3233,12 +2661,7 @@
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3266,12 +2689,7 @@
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3288,32 +2706,18 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "payment_p2022_05_pkey",
-            "columns": [
-              "payment_date"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "PrimaryKey": {
-            "constraint_name": "payment_p2022_05_pkey",
-            "columns": [
-              "payment_date",
-              "payment_id"
-            ],
-            "key_type": "MultiColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "payment_p2022_05_customer_id_fkey",
+                "constraint_name": "payment_p2022_05_pkey",
                 "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "column": "payment_date",
+                "u_column": "payment_date"
+              },
+              {
+                "constraint_name": "payment_p2022_05_pkey",
+                "key_type": "MultiColumn",
+                "column": "payment_id",
+                "u_column": "payment_id"
               }
             ]
           }
@@ -3323,37 +2727,33 @@
             "columns": [
               {
                 "constraint_name": "payment_p2022_05_customer_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "customer_id",
+                "u_column": "customer_id",
                 "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "customer",
+                "referenced_column": "customer_id",
+                "u_referenced_column": "customer_id"
               },
               {
                 "constraint_name": "payment_p2022_05_rental_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "rental_id",
+                "u_column": "rental_id",
                 "referenced_table": "rental",
-                "referenced_column": "rental_id"
-              }
-            ]
-          }
-        },
-        {
-          "ForeignKey": {
-            "columns": [
-              {
-                "constraint_name": "payment_p2022_05_customer_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "rental",
+                "referenced_column": "rental_id",
+                "u_referenced_column": "rental_id"
               },
               {
                 "constraint_name": "payment_p2022_05_staff_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "staff_id",
+                "u_column": "staff_id",
                 "referenced_table": "staff",
-                "referenced_column": "staff_id"
+                "u_referenced_table": "staff",
+                "referenced_column": "staff_id",
+                "u_referenced_column": "staff_id"
               }
             ]
           }
@@ -3375,12 +2775,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3408,12 +2803,7 @@
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3432,21 +2822,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_05_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3465,21 +2845,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_05_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3507,12 +2877,7 @@
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3540,12 +2905,7 @@
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3562,32 +2922,18 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "payment_p2022_06_pkey",
-            "columns": [
-              "payment_date"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "PrimaryKey": {
-            "constraint_name": "payment_p2022_06_pkey",
-            "columns": [
-              "payment_date",
-              "payment_id"
-            ],
-            "key_type": "MultiColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "payment_p2022_06_customer_id_fkey",
+                "constraint_name": "payment_p2022_06_pkey",
                 "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "column": "payment_date",
+                "u_column": "payment_date"
+              },
+              {
+                "constraint_name": "payment_p2022_06_pkey",
+                "key_type": "MultiColumn",
+                "column": "payment_id",
+                "u_column": "payment_id"
               }
             ]
           }
@@ -3597,37 +2943,33 @@
             "columns": [
               {
                 "constraint_name": "payment_p2022_06_customer_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "customer_id",
+                "u_column": "customer_id",
                 "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "customer",
+                "referenced_column": "customer_id",
+                "u_referenced_column": "customer_id"
               },
               {
                 "constraint_name": "payment_p2022_06_rental_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "rental_id",
+                "u_column": "rental_id",
                 "referenced_table": "rental",
-                "referenced_column": "rental_id"
-              }
-            ]
-          }
-        },
-        {
-          "ForeignKey": {
-            "columns": [
-              {
-                "constraint_name": "payment_p2022_06_customer_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "rental",
+                "referenced_column": "rental_id",
+                "u_referenced_column": "rental_id"
               },
               {
                 "constraint_name": "payment_p2022_06_staff_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "staff_id",
+                "u_column": "staff_id",
                 "referenced_table": "staff",
-                "referenced_column": "staff_id"
+                "u_referenced_table": "staff",
+                "referenced_column": "staff_id",
+                "u_referenced_column": "staff_id"
               }
             ]
           }
@@ -3649,12 +2991,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3682,12 +3019,7 @@
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3706,21 +3038,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_06_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3739,21 +3061,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_06_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3781,12 +3093,7 @@
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3814,12 +3121,7 @@
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3836,21 +3138,20 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "payment_p2022_07_pkey",
             "columns": [
-              "payment_date"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "PrimaryKey": {
-            "constraint_name": "payment_p2022_07_pkey",
-            "columns": [
-              "payment_date",
-              "payment_id"
-            ],
-            "key_type": "MultiColumn"
+              {
+                "constraint_name": "payment_p2022_07_pkey",
+                "key_type": "MultiColumn",
+                "column": "payment_date",
+                "u_column": "payment_date"
+              },
+              {
+                "constraint_name": "payment_p2022_07_pkey",
+                "key_type": "MultiColumn",
+                "column": "payment_id",
+                "u_column": "payment_id"
+              }
+            ]
           }
         }
       ],
@@ -3870,12 +3171,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "amount_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3894,12 +3190,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "customer_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3918,21 +3209,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_07_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_date_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3951,21 +3232,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "payment_p2022_07_pkey",
-              "constraint_value": "PRIMARY KEY (payment_date, payment_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (payment_date, payment_id)"
             },
             "NotNull": {
               "constraint_name": "payment_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -3984,12 +3255,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "rental_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4008,12 +3274,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "staff_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4030,22 +3291,12 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "rental_pkey",
-            "columns": [
-              "rental_id"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "rental_customer_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "constraint_name": "rental_pkey",
+                "key_type": "SingleColumn",
+                "column": "rental_id",
+                "u_column": "rental_id"
               }
             ]
           }
@@ -4055,37 +3306,33 @@
             "columns": [
               {
                 "constraint_name": "rental_customer_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "customer_id",
+                "u_column": "customer_id",
                 "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "customer",
+                "referenced_column": "customer_id",
+                "u_referenced_column": "customer_id"
               },
               {
                 "constraint_name": "rental_inventory_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "inventory_id",
+                "u_column": "inventory_id",
                 "referenced_table": "inventory",
-                "referenced_column": "inventory_id"
-              }
-            ]
-          }
-        },
-        {
-          "ForeignKey": {
-            "columns": [
-              {
-                "constraint_name": "rental_customer_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "customer_id",
-                "referenced_table": "customer",
-                "referenced_column": "customer_id"
+                "u_referenced_table": "inventory",
+                "referenced_column": "inventory_id",
+                "u_referenced_column": "inventory_id"
               },
               {
                 "constraint_name": "rental_staff_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "staff_id",
+                "u_column": "staff_id",
                 "referenced_table": "staff",
-                "referenced_column": "staff_id"
+                "u_referenced_table": "staff",
+                "referenced_column": "staff_id",
+                "u_referenced_column": "staff_id"
               }
             ]
           }
@@ -4116,12 +3363,7 @@
             },
             "NotNull": {
               "constraint_name": "customer_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4149,12 +3391,7 @@
             },
             "NotNull": {
               "constraint_name": "inventory_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4173,12 +3410,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4197,12 +3429,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "rental_date_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4221,21 +3448,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "rental_pkey",
-              "constraint_value": "PRIMARY KEY (rental_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (rental_id)"
             },
             "NotNull": {
               "constraint_name": "rental_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4277,12 +3494,7 @@
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4299,22 +3511,12 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "staff_pkey",
-            "columns": [
-              "staff_id"
-            ],
-            "key_type": "SingleColumn"
-          }
-        },
-        {
-          "ForeignKey": {
             "columns": [
               {
-                "constraint_name": "staff_address_id_fkey",
-                "key_type": "MultiColumn",
-                "column": "address_id",
-                "referenced_table": "address",
-                "referenced_column": "address_id"
+                "constraint_name": "staff_pkey",
+                "key_type": "SingleColumn",
+                "column": "staff_id",
+                "u_column": "staff_id"
               }
             ]
           }
@@ -4324,17 +3526,23 @@
             "columns": [
               {
                 "constraint_name": "staff_address_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "address_id",
+                "u_column": "address_id",
                 "referenced_table": "address",
-                "referenced_column": "address_id"
+                "u_referenced_table": "address",
+                "referenced_column": "address_id",
+                "u_referenced_column": "address_id"
               },
               {
                 "constraint_name": "staff_store_id_fkey",
                 "key_type": "SingleColumn",
                 "column": "store_id",
+                "u_column": "store_id",
                 "referenced_table": "store",
-                "referenced_column": "store_id"
+                "u_referenced_table": "store",
+                "referenced_column": "store_id",
+                "u_referenced_column": "store_id"
               }
             ]
           }
@@ -4356,12 +3564,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "active_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4389,12 +3592,7 @@
             },
             "NotNull": {
               "constraint_name": "address_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4427,12 +3625,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "first_name_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4451,12 +3644,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_name_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4475,12 +3663,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4527,21 +3710,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "staff_pkey",
-              "constraint_value": "PRIMARY KEY (staff_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (staff_id)"
             },
             "NotNull": {
               "constraint_name": "staff_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4569,12 +3742,7 @@
             },
             "NotNull": {
               "constraint_name": "store_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4593,12 +3761,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "username_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4615,11 +3778,14 @@
       "table_properties": [
         {
           "PrimaryKey": {
-            "constraint_name": "store_pkey",
             "columns": [
-              "store_id"
-            ],
-            "key_type": "SingleColumn"
+              {
+                "constraint_name": "store_pkey",
+                "key_type": "SingleColumn",
+                "column": "store_id",
+                "u_column": "store_id"
+              }
+            ]
           }
         },
         {
@@ -4627,10 +3793,13 @@
             "columns": [
               {
                 "constraint_name": "store_address_id_fkey",
-                "key_type": "MultiColumn",
+                "key_type": "SingleColumn",
                 "column": "address_id",
+                "u_column": "address_id",
                 "referenced_table": "address",
-                "referenced_column": "address_id"
+                "u_referenced_table": "address",
+                "referenced_column": "address_id",
+                "u_referenced_column": "address_id"
               }
             ]
           }
@@ -4661,12 +3830,7 @@
             },
             "NotNull": {
               "constraint_name": "address_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4685,12 +3849,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "last_update_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4709,12 +3868,7 @@
           "constraints": {
             "NotNull": {
               "constraint_name": "manager_staff_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null
@@ -4733,21 +3887,11 @@
           "constraints": {
             "PrimaryKey": {
               "constraint_name": "store_pkey",
-              "constraint_value": "PRIMARY KEY (store_id)",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "PRIMARY KEY (store_id)"
             },
             "NotNull": {
               "constraint_name": "store_id_not_null",
-              "constraint_value": "NOT NULL",
-              "referenced_schema_name": null,
-              "referenced_table": null,
-              "u_referenced_table": null,
-              "referenced_column": null,
-              "u_referenced_column": null
+              "constraint_value": "NOT NULL"
             }
           },
           "comment": null

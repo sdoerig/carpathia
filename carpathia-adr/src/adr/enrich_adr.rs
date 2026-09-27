@@ -1,8 +1,8 @@
 //! This module enriches the AbstractDbRepr with user-defined type mappings
 //! based on the configuration provided by the user.
-use std::collections::BTreeSet;
-
 use log::debug;
+use std::collections::BTreeSet;
+use std::marker::PhantomData;
 
 use crate::adr::abstract_db_repr::{
     AbstractAttribute, AbstractDbRepr, AbstractForeignKey, AbstractPrimaryKey,
@@ -85,16 +85,34 @@ fn map_constraints_to_user_friendly_names(
                         _ => None,
                     })
                     .unwrap_or_else(|| AbstractPrimaryKey {
-                        constraint_name: constraint.constraint_name.clone(),
-                        columns: std::iter::once(attribute.column_name.clone()).collect(),
-                        key_type: KeyType::SingleColumn,
+                        columns: std::iter::once(AbstractReferencedTable {
+                            constraint_name: constraint.constraint_name.clone(),
+                            key_type: KeyType::SingleColumn,
+                            column: attribute.column_name.clone(),
+                            u_column: attribute.u_column_name.clone(),
+                            referenced_table: None,
+                            u_referenced_column: None,
+                            referenced_column: None,
+                            u_referenced_table: None,
+                        })
+                        .collect(),
+                        _marker: PhantomData,
                     });
 
-                atr_tbl_prop.insert(TableProperties::PrimaryKey(
+                atr_tbl_prop.replace(TableProperties::PrimaryKey(
                     pk + AbstractPrimaryKey {
-                        constraint_name: constraint.constraint_name.clone(),
-                        columns: std::iter::once(attribute.column_name.clone()).collect(),
-                        key_type: KeyType::SingleColumn,
+                        columns: std::iter::once(AbstractReferencedTable {
+                            key_type: KeyType::SingleColumn,
+                            constraint_name: constraint.constraint_name.clone(),
+                            column: attribute.column_name.clone(),
+                            u_column: attribute.u_column_name.clone(),
+                            referenced_table: None,
+                            u_referenced_table: None,
+                            referenced_column: None,
+                            u_referenced_column: None,
+                        })
+                        .collect(),
+                        _marker: PhantomData,
                     },
                 ));
             }
@@ -118,6 +136,7 @@ fn map_constraints_to_user_friendly_names(
                             u_referenced_table: constraint.u_referenced_table.clone(),
                         })
                         .collect(),
+                        _marker: PhantomData,
                     });
 
                 atr_tbl_prop.replace(TableProperties::ForeignKey(
@@ -133,6 +152,7 @@ fn map_constraints_to_user_friendly_names(
                             u_referenced_column: constraint.u_referenced_column.clone(),
                         })
                         .collect(),
+                        _marker: PhantomData,
                     },
                 ));
             }
@@ -140,6 +160,5 @@ fn map_constraints_to_user_friendly_names(
                 // Basically anything is selectable.
             }
         };
-        
     }
 }

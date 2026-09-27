@@ -122,7 +122,7 @@ mod tests {
         ABSTRACT_DB_REPR_VERSION, AbstractTableRepr, IsNullable, ObjectType,
     };
     use carpathia_adr::db_type::db_to_user_type_structs::Types;
-    use std::collections::{BTreeMap, BTreeSet};
+    use std::collections::BTreeMap;
     const TEMPLATES: &BTreeMap<String, PathBuf> = &BTreeMap::new();
     fn create_abstract_db_repr(
         table_name: &str,
@@ -162,15 +162,11 @@ mod tests {
                 comment: Some("Primary key for users table".to_string()),
             },
         );
-        AbstractTableRepr {
-            table_name: table_name.to_string(),
-            u_table_name: table_name.to_string(),
+        AbstractTableRepr::new(
             object_type,
-            u_imports: BTreeSet::new(),
-            table_properties: BTreeSet::new(),
-            comment: Some("Test table".to_string()),
-            attributes: abstract_attribte_map,
-        }
+            table_name.to_string(),
+            Some("Test table".to_string()),
+        )
     }
 
     fn get_config_with_cache_modus(cache_modus: CacheModus) -> CarpathiaConfig {
