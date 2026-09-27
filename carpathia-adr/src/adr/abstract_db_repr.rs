@@ -86,10 +86,15 @@ pub struct AbstractAttribute {
 pub struct AbstractConstraint {
     pub constraint_name: String,
     pub constraint_value: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub referenced_schema_name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub referenced_table: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub u_referenced_table: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub referenced_column: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub u_referenced_column: Option<String>,
 }
 
@@ -116,7 +121,7 @@ pub enum KeyType {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct AbstractForeignKey {
+pub(crate) struct AbstractForeignKey {
     pub columns: BTreeSet<AbstractReferencedTable>,
 }
 
@@ -186,8 +191,11 @@ impl Add for AbstractForeignKey {
                 constraint_name: column.constraint_name,
                 key_type: key_type.key_type.clone(),
                 column: column.column,
+                u_column: column.u_column,
                 referenced_table: column.referenced_table,
+                u_referenced_table: column.u_referenced_table,
                 referenced_column: column.referenced_column,
+                u_referenced_column: column.u_referenced_column,
             });
         }
 
@@ -204,8 +212,15 @@ pub struct AbstractReferencedTable {
     pub constraint_name: String,
     pub key_type: KeyType,
     pub column: String,
-    pub referenced_table: String,
-    pub referenced_column: String,
+    pub u_column: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub referenced_table: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub u_referenced_table: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub referenced_column: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub u_referenced_column: Option<String>,
 }
 
 #[derive(
@@ -339,8 +354,11 @@ mod tests {
                 constraint_name: "fk1".to_string(),
                 key_type: KeyType::SingleColumn,
                 column: "column1".to_string(),
-                referenced_table: "ref_table1".to_string(),
-                referenced_column: "ref_column1".to_string(),
+                u_column: "u_column1".to_string(),
+                referenced_table: Some("ref_table1".to_string()),
+                u_referenced_table: None,
+                referenced_column: Some("ref_column1".to_string()),
+                u_referenced_column: None,
             }]),
         };
         assert_eq!(column1.columns.len(), 1);
@@ -373,8 +391,11 @@ mod tests {
                 constraint_name: "fk1".to_string(),
                 key_type: KeyType::SingleColumn,
                 column: "column2".to_string(),
-                referenced_table: "ref_table2".to_string(),
-                referenced_column: "ref_column2".to_string(),
+                u_column: "u_column2".to_string(),
+                referenced_table: Some("ref_table2".to_string()),
+                u_referenced_table: None,
+                referenced_column: Some("ref_column2".to_string()),
+                u_referenced_column: None,
             }]),
         };
 
@@ -414,8 +435,11 @@ mod tests {
                 constraint_name: "fk2".to_string(),
                 key_type: KeyType::SingleColumn,
                 column: "column3".to_string(),
-                referenced_table: "ref_table3".to_string(),
-                referenced_column: "ref_column3".to_string(),
+                u_column: "u_column3".to_string(),
+                referenced_table: Some("ref_table3".to_string()),
+                u_referenced_table: None,
+                referenced_column: Some("ref_column3".to_string()),
+                u_referenced_column: None,
             }]),
         };
 

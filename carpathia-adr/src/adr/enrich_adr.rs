@@ -29,7 +29,6 @@ fn add_to_atr(
         .clone();
 
     for attribute in &mut atr.attributes.values_mut() {
-        map_constraints_to_user_friendly_names(&mut atr.table_properties, db_name_map, attribute);
         // Add a user-friendly mapping for the column name
         // map the user type to the ADR
         let default_type_mapping = TypeMapping {
@@ -52,6 +51,9 @@ fn add_to_atr(
             atr.u_imports.insert(import);
         }
     }
+    for attribute in &mut atr.attributes.values_mut() {
+        map_constraints_to_user_friendly_names(&mut atr.table_properties, db_name_map, attribute);
+    }
 }
 
 fn map_constraints_to_user_friendly_names(
@@ -60,6 +62,20 @@ fn map_constraints_to_user_friendly_names(
     attribute: &mut AbstractAttribute,
 ) {
     for (key, constraint) in attribute.constraints.iter_mut() {
+        if let Some(referenced_table) = &constraint.referenced_table {
+            constraint.u_referenced_table = db_name_map
+                .get(referenced_table)
+                .unwrap_or(referenced_table)
+                .clone()
+                .into();
+        }
+        if let Some(referenced_column) = &constraint.referenced_column {
+            constraint.u_referenced_column = db_name_map
+                .get(referenced_column)
+                .unwrap_or(referenced_column)
+                .clone()
+                .into();
+        }
         match key {
             ConstraintType::PrimaryKey => {
                 let pk: AbstractPrimaryKey = atr_tbl_prop
@@ -94,14 +110,12 @@ fn map_constraints_to_user_friendly_names(
                             constraint_name: constraint.constraint_name.clone(),
                             key_type: KeyType::SingleColumn,
                             column: attribute.column_name.clone(),
-                            referenced_table: constraint
-                                .referenced_table
-                                .clone()
-                                .unwrap_or_default(),
-                            referenced_column: constraint
-                                .referenced_column
-                                .clone()
-                                .unwrap_or_default(),
+                            u_column: attribute.u_column_name.clone(),
+                            referenced_table: constraint.referenced_table.clone(),
+                            u_referenced_column: constraint.u_referenced_column.clone(),
+
+                            referenced_column: constraint.referenced_column.clone(),
+                            u_referenced_table: constraint.u_referenced_table.clone(),
                         })
                         .collect(),
                     });
@@ -112,14 +126,11 @@ fn map_constraints_to_user_friendly_names(
                             key_type: KeyType::SingleColumn,
                             constraint_name: constraint.constraint_name.clone(),
                             column: attribute.column_name.clone(),
-                            referenced_table: constraint
-                                .referenced_table
-                                .clone()
-                                .unwrap_or_default(),
-                            referenced_column: constraint
-                                .referenced_column
-                                .clone()
-                                .unwrap_or_default(),
+                            u_column: attribute.u_column_name.clone(),
+                            referenced_table: constraint.referenced_table.clone(),
+                            u_referenced_table: constraint.u_referenced_table.clone(),
+                            referenced_column: constraint.referenced_column.clone(),
+                            u_referenced_column: constraint.u_referenced_column.clone(),
                         })
                         .collect(),
                     },
@@ -129,19 +140,6 @@ fn map_constraints_to_user_friendly_names(
                 // Basically anything is selectable.
             }
         };
-        if let Some(referenced_table) = &constraint.referenced_table {
-            constraint.u_referenced_table = db_name_map
-                .get(referenced_table)
-                .unwrap_or(referenced_table)
-                .clone()
-                .into();
-        }
-        if let Some(referenced_column) = &constraint.referenced_column {
-            constraint.u_referenced_column = db_name_map
-                .get(referenced_column)
-                .unwrap_or(referenced_column)
-                .clone()
-                .into();
-        }
+        
     }
 }
