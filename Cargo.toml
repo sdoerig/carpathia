@@ -2,5 +2,5 @@
 resolver = "3"
 members = [
 	"carpathia-core",
-	"carpathia-cli", "carpathia-adr",
+	"carpathia-cli", "carpathia-adr", "carpathia-templates",
 ]

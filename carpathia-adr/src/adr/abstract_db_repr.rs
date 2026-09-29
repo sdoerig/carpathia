@@ -96,16 +96,7 @@ pub struct AbstractAttribute {
     pub character_maximum_length: Option<i32>,
     pub numeric_precision: Option<i32>,
     pub numeric_scale: Option<i32>,
-    //pub is_identity: IsIdentity,
-    //pub identity_generation: Option<String>,
-    //pub is_generated: IsGenerated,
-    //pub generation_expression: Option<String>,
     pub constraints: BTreeMap<ConstraintType, AbstractConstraint>,
-    /*pub constraint_name: Option<String>,
-    pub constraint_type: ConstraintType,
-    pub referenced_table: Option<String>,
-    pub referenced_column: Option<String>,
-    */
     pub comment: Option<String>,
 }
 
