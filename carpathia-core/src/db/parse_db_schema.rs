@@ -14,9 +14,6 @@ pub struct DbSchemaParser {
 
 impl DbSchemaParser {
     /// Introspects the schema
-    /// ```rust
-    ///
-    /// ```
     pub async fn parse_schema(config: &CarpathiaConfig) -> Result<AbstractDbRepr, CarpathiaError> {
         match config.db_pool {
             DbPool::Postgres(_) => match PostgresQuerier::get_schema(config).await {

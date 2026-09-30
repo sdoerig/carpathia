@@ -3,6 +3,15 @@
 //! represents a database database in a canonical model. It will be referenced as ADR or
 //! Internal Representation (IR). It can be seen as a contract between the templates and carpathia.
 //!
+//! The version of the ADR - it has nothing to do with the software version of carpathia -
+//! it only references to the ADR itself. Exprect for
+//!
+//! - Mayor changes e.g. 0.1.0 to 1.0.0 changes that will break your templates which worked
+//!   fine under 0.1.0.
+//! - Minor changes e.g. 0.1.0 to 0.2.0 will not break you themplates but allow you to enlarge them if needed.
+//!   A change like this will for example add new attributes to the ADR.
+//! - Patch changes e.g. 0.1.0 to 0.1.1 will just fix bugs e.g. if the database constrant UNIQUE would have ben
+//!   given back as none, fixig it to return unique would be such a change.
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -24,21 +33,25 @@ pub(crate) struct ForeignKeySemantics;
 pub(crate) type AbstractPrimaryKey = AbstractKey<PrimaryKeySemantics>;
 
 pub(crate) type AbstractForeignKey = AbstractKey<ForeignKeySemantics>;
-/// The version of the ADR - it has nothing to do with the software version of carpathia -
-/// it only references to the ADR itself. Exprect for
-///
-/// - Mayor changes e.g. 0.1.0 to 1.0.0 changes that will break your templates which worked
-///   fine under 0.1.0.
-/// - Minor changes e.g. 0.1.0 to 0.2.0 will not break you themplates but allow you to enlarge them if needed.
-///   A change like this will for example add new attributes to the ADR.
-/// - Patch changes e.g. 0.1.0 to 0.1.1 will just fix bugs e.g. if the database constrant UNIQUE would have ben
-///   given back as none, fixig it to return unique would be such a change.
+
+/// Version of the ADR is the same as the crate-version.
 pub const ABSTRACT_DB_REPR_VERSION: &str = env!("CARGO_PKG_VERSION");
 const KEY_TYPE_CHANGE_DEFAULT: &KeyTypeChange = &KeyTypeChange {
     attribute_name: vec![],
     key_type: KeyType::SingleColumn,
 };
-/// Wrapping structure holding the database representation.
+
+/// This struct represents an internal view of the database. It consists of 
+///
+/// - table
+/// - view
+/// - materalized view
+/// 
+/// Keep in mind any attribute prefixed with u_ is handled by (enrich_adr)[crate::adr::enrich_adr::add_user_mapping_to_adr].
+/// So do not attempt to fill in the u_-attibutes when building the ADR.
+/// This representation is core-internal only. It is not the structure, templates are programmed against. The structure 
+/// passed to the templates is definde in (tera_conversion)[crate::adr::tera_conversion]. 
+/// The internal ADR can be viewed using the cli-flag `--print-internal-schema`. 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct AbstractDbRepr {
     /// The version of ADR
@@ -49,11 +62,7 @@ pub struct AbstractDbRepr {
     pub views: BTreeMap<String, AbstractTableRepr>,
 }
 
-/// This struct represents a table-like database object. This can be a
-///
-/// - table
-/// - view
-/// - materalized view
+/// Internal representation of 
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct AbstractTableRepr {
     pub object_type: ObjectType,
@@ -62,12 +71,14 @@ pub struct AbstractTableRepr {
     /// The name of the database object.
     pub table_name: String,
     /// language safe name of the database object. This is the name you will use in your templates to reference the database object.
+    /// filled by (enrich_adr)[crate::adr::enrich_adr::add_user_mapping_to_adr].
     pub u_table_name: String,
     pub(crate) table_properties: BTreeSet<TableProperties>,
     pub comment: Option<String>,
     /// The attributes the database object consists of.
     pub attributes: BTreeMap<String, AbstractAttribute>,
 }
+
 impl AbstractTableRepr {
     pub fn new(object_type: ObjectType, table_name: String, comment: Option<String>) -> Self {
         Self {
