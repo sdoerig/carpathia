@@ -1,3 +1,7 @@
+![Test Status](https://github.com/sdoerig/carpathia/actions/workflows/test.yml/badge.svg)
+[![codecov](https://codecov.io/github/sdoerig/carpathia/graph/badge.svg?token=1OY5DTEXYB)](https://codecov.io/github/sdoerig/carpathia)
+
+
 # carpathia — Generate Code from PostgreSQL Schemas
 
 > **Write templates. Generate code. Never write boilerplate again.**
@@ -77,7 +81,7 @@ Design principle: **engine and contract are separated on purpose.** The engine m
 | Fork or tweak a bundled template pack | [`carpathia-templates` README](./carpathia-templates) — pack layout and maintenance |
 
 
-## Status &amp; roadmap
+## Status & roadmap
 
 carpathia is functional but in beta — use it, test it, and help shape its future! 🚀
 
@@ -91,7 +95,7 @@ carpathia is functional but in beta — use it, test it, and help shape its futu
 Integration tests run against the [Pagila](https://github.com/devrimgunduz/pagila-src) sample schema, a copy of which ships in [`fixtures/`](./fixtures) (with thanks to Devrim Gündüz). They need a reachable PostgreSQL instance — see `.env.test`:
 
 ```bash
-cargo test -- --test-threads=1
+cargo test --features postgres  -- --test-threads=1
 ```
 
 ## License
