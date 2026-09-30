@@ -144,8 +144,9 @@ All ADR fields are available in templates: `{{ table.u_table_name }}`, `{{ attr.
 Integration tests run against the [Pagila](https://github.com/devrimgunduz/pagila-src) sample schema and need a reachable PostgreSQL instance (see `.env.test`):
 
 ```bash
-cargo test -- --test-threads=1
+cargo test --features postgres -- --test-threads=1 
 ```
+If you do not have a PostgreSQL instance, skip `--features postgres` to start with.
 
 ## 📜 License
 
