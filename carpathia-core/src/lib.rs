@@ -16,7 +16,7 @@
 //! - deciding what to do
 //!   - getting the database type mapping
 //!     - (introspect)[crate::db::parse_db_schema] the database
-//!       which delivers the internal model (abstract database represenation)[crate::db::db_schema_structs::AbstractDbRepr]
+//!       which delivers the internal model (abstract database represenation)[carpathia_adr::adr::abstract_db_repr::AbstractDbRepr]
 //!     - (get_db_types)[crate::generator::template_engine::get_db_types]
 //!
 //!   - executing the tera templates

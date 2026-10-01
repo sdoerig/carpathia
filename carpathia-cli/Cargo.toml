@@ -1,6 +1,6 @@
 [package]
 name = "carpathia"
-version = "0.2.1-beta.7"
+version = "0.3.0"
 edition = "2024"
 license = "Apache-2.0"
 authors = ["Stefan Dörig", "sdoerig@bluewin.ch"]
@@ -10,7 +10,7 @@ homepage = "https://github.com/sdoerig/carpathia"
 categories = ["command-line-utilities", "database"]
 
 [dependencies]
-carpathia-core = { path = "../carpathia-core", version = "0.3.0" }
+carpathia-core = { path = "../carpathia-core", version = "0" }
 tokio = {version = "1", features = ["rt-multi-thread", "macros"]}
 serde_json = "1.0"
 clap = { version = "4.4", features = ["derive"] }

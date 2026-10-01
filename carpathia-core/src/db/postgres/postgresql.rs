@@ -121,8 +121,10 @@ WITH cols AS (
     LEFT JOIN pg_attrdef ad 
         ON ad.adrelid = c.oid 
        AND ad.adnum = a.attnum
-    WHERE n.nspname = 'public'
-      AND c.relkind IN ('r','v', 'p')
+    WHERE c.relkind IN ('r', 'v', 'p')
+      -- Filtert System-Schemas und interne Schemas aus:
+      AND n.nspname NOT LIKE 'pg_%'
+      AND n.nspname != 'information_schema'
 ),
 
 pk_constraints AS (
@@ -140,7 +142,6 @@ index_info AS (
         array_agg(pg_get_indexdef(i.indexrelid)) AS index_definitions
     FROM pg_class t
     JOIN pg_index i ON i.indrelid = t.oid
-    WHERE t.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
     GROUP BY t.oid
 ),
 
@@ -154,11 +155,11 @@ trigger_info AS (
     FROM pg_class t
     JOIN pg_trigger tg ON tg.tgrelid = t.oid
     WHERE tg.tgisinternal = false
-      AND t.relnamespace = (SELECT oid FROM pg_namespace WHERE nspname = 'public')
     GROUP BY t.oid
 )
 
 SELECT
+    current_database() AS database_name,
     CASE c.relkind
         WHEN 'r' THEN 'BASE TABLE'
         WHEN 'v' THEN 'VIEW'
@@ -188,13 +189,9 @@ SELECT
     END AS generation_expression,
 
     '' AS constraint_name,
-
     '' AS constraint_type,
     '' AS referenced_table,
     '' AS referenced_column,
-        
-    --rt.relname AS referenced_table,
-    --ra.attname AS referenced_column,
 
     obj_description(col.table_oid) AS table_comment,
     col_description(col.attrelid, col.attnum) AS column_comment,
@@ -217,8 +214,9 @@ LEFT JOIN trigger_info trg ON trg.table_oid = col.table_oid
 
 UNION ALL
 
--- MATERIALIZED VIEWS (keine Indizes/Trigger)
+-- MATERIALIZED VIEWS (ebenfalls ohne System-Schemas)
 SELECT
+    current_database() AS database_name,
     'MATERIALIZED VIEW',
     mat.schemaname,
     mat.matviewname,
@@ -247,10 +245,11 @@ SELECT
 FROM pg_matviews mat
 JOIN pg_attribute a 
     ON a.attrelid = (quote_ident(mat.schemaname) || '.' || quote_ident(mat.matviewname))::regclass
-WHERE mat.schemaname = 'public'
-  AND a.attnum > 0
+WHERE a.attnum > 0
   AND NOT a.attisdropped
-
+  -- Filter für Materialized Views:
+  AND mat.schemaname NOT LIKE 'pg_%'
+  AND mat.schemaname != 'information_schema'
 ORDER BY table_name, column_name
 LIMIT $1
 OFFSET $2;

@@ -1,0 +1,1 @@
+pub const RUST_LIB: &[u8] = include_bytes!("../ressources_archive/tera/rust_lib.tar.gz");

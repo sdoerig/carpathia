@@ -29,7 +29,7 @@ pub struct TableTemplateData<'a> {
     pub u_table_name: &'a str,
     pub comment: Option<&'a str>,
     pub u_imports: Vec<&'a str>,
-    pub(crate) table_properties: Vec<&'a TableProperties>,
+    pub table_properties: Vec<&'a TableProperties>,
     pub attributes: Vec<&'a AbstractAttribute>,
 }
 

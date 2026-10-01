@@ -10,7 +10,8 @@ homepage = "https://github.com/sdoerig/carpathia"
 categories = ["command-line-utilities", "database"]
 
 [dependencies]
-carpathia-adr = { path = "../carpathia-adr", version = "0.1.0"}
+carpathia-adr = { path = "../carpathia-adr", version = "0"}
+carpathia-templates = {path = "../carpathia-templates", version = "0"}
 tokio = {version = "1", features = ["rt-multi-thread", "macros"]}
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

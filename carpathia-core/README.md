@@ -1,127 +1,161 @@
- 
 # carpathia-core — The Engine Behind Code Generation
 
-> A reusable Rust library for parsing PostgreSQL schemas and generating code via Tera templates.
+> A reusable Rust library for parsing PostgreSQL schemas and generating code via Tera templates. No CLI required.
 
-`carpathia-core` is the brain of the `carpathia-cli` tool. It provides a robust, testable, and extensible API to:
+`carpathia-core` is the engine behind the [`carpathia-cli`](https://github.com/sdoerig/carpathia) tool. It introspects your database, builds a canonical schema model, and renders whatever code you describe in Tera templates — in any language, not just Rust.
 
-- Connect to PostgreSQL and extract schema metadata
-- Represent the schema as a canonical `AbstractTemplateRepr` (ATR)
-- Generating oly what has changed
-- Render templates with full context (tables, views, attributes)
-- Support custom type mappings and caching
+Use it directly in your own tools, build scripts, or CI pipelines:
 
-Use it directly in your own tools, CI pipelines, or build systems — no CLI required.
+1. **Introspect** — connect to PostgreSQL and extract schema metadata (tables, views, constraints, comments, user-defined types).
+2. **Represent** — turn the schema into an [`AbstractDbRepr`](https://crates.io/crates/carpathia-adr) (ADR): the canonical, deterministic, serializable contract shared with your templates.
+3. **Render** — execute your Tera templates with full schema context, generating only what has changed.
 
----
+```mermaid
+flowchart LR
+    DB[(PostgreSQL 13–18)] -->|DbSchemaParser| ADR[AbstractDbRepr\ncarpathia-adr]
+    ADR -->|TemplateEngine +\nBlake3 cache| TPL[Tera templates]
+    TPL --> OUT[generated code]
+```
+
+`carpathia` is **not an ORM** and never will be. It is a declarative, language-agnostic code generator: you decide what gets generated and what it looks like.
 
 ## ✅ Features
 
-- ✅ **Schema Extraction**: Full PostgreSQL schema parsing (tables, views, constraints, comments, user-defined datatypes)
-- ✅ **Canonical Representation**: `AbstractDbRepr` as a stable contract between parser and template engine
-- ✅ **Intelligent Caching**: Skip regeneration using file and schema hashes
-- ✅ **Template Engine**: Integrates with [Tera](https://github.com/Keats/tera2) for flexible code generation
-- ✅ **Type Mapping**: Map database types (`text`, `uuid`, etc.) to custom types via JSON
-- ✅ **Extensible**: Add support for new database types via `DatabaseQuerier` trait
+- 🧠 **Schema extraction** — full PostgreSQL introspection: tables, views, constraints, primary and foreign keys, comments, and user-defined types. Tested against PostgreSQL 13–18.
+- 📜 **Canonical representation** — the ADR (provided by the [`carpathia-adr`](https://github.com/sdoerig/carpathia/tree/main/carpathia-adr) crate) is the stable contract between parser and template engine.
+- ⚡ **Delta-aware regeneration** — a Blake3-based cache (`carpathia_cache.json`) stores hashes of each table's/view's schema and each template's content. Only changed entities are re-rendered — and rendered files whose template or database object disappeared are cleaned up.
+- 🧩 **Tera template engine** — render any output: Rust structs, DTOs, SQL, documentation, you name it.
+- 🔄 **Type &amp; name mappings** — map database types (`text` → `String`, `uuid` → `Uuid`) and rename database identifiers to language-safe names (e.g. a table called `match` becomes valid Rust).
+- 📦 **Template bootstrap** — unpack a ready-made example template pack to disk so you don't start from zero.
+- 🔌 **Extensible** — add support for other databases by implementing the `DatabaseQuerier` trait.
 
----
+## 🚀 Quick Start
 
-## 📦 Usage as a Library
+Add it to your `Cargo.toml`:
 
-Example code - printing the Abstract :
+```toml
+[dependencies]
+carpathia-core = "0.3.0"
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+```
+
+Configure, introspect, generate:
 
 ```rust
+use carpathia_core::configuration::carpathia_conf::CarpathiaConfigBuilder;
+use carpathia_core::configuration::conf_enums::{CacheModus, DbType};
+use carpathia_core::db::parse_db_schema::DbSchemaParser;
+use carpathia_core::generator::template_engine::TemplateEngine;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = CarpathiaConfigBuilder::new()
+        .db_type(DbType::Postgres)
         .db_host("localhost")
         .db_port(5432)
         .db_user("postgres")
         .db_password("postgres")
         .db_name("carpathia")
-        .db_type(DbType::Postgres)
         .cache_modus(CacheModus::UseCache)
-        .template_directory(Path::new("./templates/rust_lib"))
-        .output_directory(Path::new("./generated"))
+        .template_directory("./templates/rust_lib")
+        .output_directory("./generated")
         .carpathia_type_mapping("carpathia_type_mapping.json")
         .build()?;
 
-    let schema = DbSchemaParser::parse_schema(&config).await?;
-    TemplateEngine::generate_code(&config, &schema).await?;
+    // Introspect the database -> AbstractDbRepr (async)
+    let adr = DbSchemaParser::parse_schema(&config).await?;
 
-    println!("✅ Code generation completed!");
+    // Render the templates (sync, delta-aware)
+    TemplateEngine::generate_code(&config, &adr)?;
+
+    println!("Code generation completed!");
     Ok(())
 }
-🧩 Customizing the Generator
-You can extend carpathia-core by:
+```
 
-Implementing DatabaseQuerier for MySQL or SQLite
-Adding new TemplateType variants (e.g., Documentation, DTO)
-Enhancing TypeMapping with custom imports or macros
-🧠 Core Concepts
-AbstractDbRepr — The Schema Contract
-All schema data is represented as AbstractDbRepr, a deterministic, serializable structure:
+### First run: build your type mapping
 
-rust
-pub struct AbstractDbRepr {
-    pub version: String,        // ADR version
-    pub tables: BTreeMap<String, AbstractTableRepr>,
-    pub views: BTreeMap<String, AbstractTableRepr>,
-}
+Before you can map database types to your own types, you need to know which types your schema uses. Flip on `print_db_types` (or call `get_db_types`) to get a skeleton mapping file:
 
-pub struct AbstractTableRepr {
-    pub table_name: String,
-    pub object_type: ObjectType,
-    pub attributes: BTreeMap<String, AbstractAttribute>,
-    pub u_imports: BTreeSet<String>, // Custom Rust imports per table
-}
-This structure is exactly what your Tera templates receive — no surprises.
-
-CacheFile — Smart Regeneration
-The cache (carpathia_cache.json) stores hashes of:
-
-Each table’s schema
-Each view’s schema
-Each template file’s content
-Only when any of these change is regeneration triggered.
-
-📂 Template Engine Integration
-The TemplateEngine supports three template types:
-
-Type  Context Output
-tables.*.tera table: AbstractTableRepr  One file per table
-views.*.tera  table: AbstractTableRepr  One file per view
-summary.*.tera  tables: Vec<...>, views: Vec<...> One summary file (e.g., mod.rs)
-Use {{ table.column_name }}, {{ table.u_type }}, {{ table.comment }} — all fields are accessible.
-
-🔧 Configuration
-Use CarpathiaConfigBuilder to build your config:
-
-rust
+```rust
 let config = CarpathiaConfigBuilder::new()
-    .db_host("localhost")
-    .db_port(5432)
-    .db_user("postgres")
-    .db_password("secret")
-    .db_name("mydb")
-    .db_type(DbType::Postgres)
-    .cache_modus(CacheModus::BypassCache)
-    .template_directory("./templates")
-    .output_directory("./src/generated")
+    // ... database settings as above ...
+    .print_db_types(true)   // prints all types found in the schema
+    .execute_templates(false)
     .build()?;
-🧪 Testing
-All components are thoroughly tested. Run:
+```
 
-bash
-cargo test -- --test-threads=1
-Includes integration tests using the Pagila schema.
+Fill in the printed `u_type` / `u_import` pairs, save the file as your type mapping, and point `carpathia_type_mapping` at it.
 
-📜 License
-MIT — See LICENSE for details.
+### Start from a template pack
 
-💬 Support & Contributions
-Questions? Ideas? Bugs?
-Open an issue or PR on GitHub.
+You don't have to write your first templates from scratch. `extract_to_disk` unpacks an embedded example template pack (via `InitTemplate::RustLib`) into your template directory:
 
-“Decouple schema from code. Let templates do the work.” — carpathia-core
+```rust
+use carpathia_core::configuration::conf_enums::CacheModus;
+use carpathia_core::templates::enum_templates::InitTemplate;
+use carpathia_core::templates::init_templates::extract_to_disk;
+
+let config = CarpathiaConfigBuilder::new()
+    // ... database settings as above ...
+    .init_template(InitTemplate::RustLib)
+    .template_directory("./templates")
+    .cache_modus(CacheModus::UseCache)
+    .build()?;
+
+extract_to_disk(&config)?; // one-time bootstrap
+```
+
+## 📂 Template Conventions
+
+The `TemplateEngine` picks up every `*.tera` file in your template directory and dispatches by name prefix:
+
+
+| Template file    | Context                    | Output                   |
+| ---------------- | -------------------------- | ------------------------ |
+| `tables.*.tera`  | one `table` per rendering  | one file per table       |
+| `views.*.tera`   | one `table` per rendering  | one file per view        |
+| `summary.*.tera` | `tables` and `views` lists | one file (e.g. `mod.rs`) |
+
+
+All ADR fields are available in templates: `{{ table.u_table_name }}`, `{{ attr.u_type }}`, `{{ attr.u_column_name }}`, `{{ table.comment }}`, primary and foreign key properties, imports, and more. See the [`carpathia-adr`](https://github.com/sdoerig/carpathia/tree/main/carpathia-adr) README for the full data model.
+
+## 🗂 Module Overview
+
+
+| Module          | Contents                                                                                      |
+| --------------- | --------------------------------------------------------------------------------------------- |
+| `configuration` | `CarpathiaConfigBuilder`, `DbType`, `CacheModus`, `InitTemplate` enums, config file reading   |
+| `db`            | `DbSchemaParser::parse_schema`, the `DatabaseQuerier` trait, PostgreSQL implementation        |
+| `generator`     | `TemplateEngine::generate_code`, template discovery and dispatch (`Template`, `TemplateType`) |
+| `cache`         | `Cache`, hash-based change detection in `carpathia_cache.json`                                |
+| `templates`     | `extract_to_disk`, embedded example template packs                                            |
+| `return_values` | `CarpathiaError` and error numbers                                                            |
+
+
+## 🧩 Extending carpathia-core
+
+- Implement `DatabaseQuerier` for another database (MySQL, SQLite, ...) and wire it into `DbSchemaParser`.
+- Add new `TemplateType` dispatches for new output categories (e.g. documentation, DTOs).
+- Enhance the type mapping with your own imports and macros.
+
+## 🧪 Testing
+
+Integration tests run against the [Pagila](https://github.com/devrimgunduz/pagila-src) sample schema and need a reachable PostgreSQL instance (see `.env.test`):
+
+```bash
+cargo test --features postgres -- --test-threads=1 
+```
+If you do not have a PostgreSQL instance, skip `--features postgres` to start with.
+
+## 📜 License
+
+Licensed under [Apache-2.0](https://github.com/sdoerig/carpathia/blob/main/LICENSE).
+
+## 🤝 Contributing
+
+Contributions follow the [Developer Certificate of Origin](https://github.com/sdoerig/carpathia/blob/main/DCO.md) (DCO 1.1). Sign off your commits with:
+
+```bash
+git commit -s -m "Your commit message"
+```

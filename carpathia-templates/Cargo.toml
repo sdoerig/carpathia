@@ -1,0 +1,14 @@
+[package]
+name = "carpathia-templates"
+version = "0.1.0"  
+edition = "2024"
+license = "Apache-2.0"
+authors = ["Stefan Dörig <sdoerig@bluewin.ch>"]
+description = "Template files for Carpathia projects"
+repository = "https://github.com/sdoerig/carpathia"
+homepage = "https://github.com/sdoerig/carpathia"
+
+[dependencies]
+
+
+[build-dependencies]
