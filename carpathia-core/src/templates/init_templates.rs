@@ -1,13 +1,12 @@
+use carpathia_templates::RUST_LIB;
 use flate2::read::GzDecoder;
 use std::io::Cursor;
 use tar::Archive;
-use carpathia_templates::RUST_LIB;
 
 use crate::{
     configuration::carpathia_conf::CarpathiaConfig,
     return_values::carpathia_errors::CarpathiaError, templates::enum_templates::InitTemplate,
 };
-
 
 pub fn extract_to_disk(conf: &CarpathiaConfig) -> Result<(), CarpathiaError> {
     let tar = match conf.init_template {

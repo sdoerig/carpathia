@@ -41,17 +41,17 @@ const KEY_TYPE_CHANGE_DEFAULT: &KeyTypeChange = &KeyTypeChange {
     key_type: KeyType::SingleColumn,
 };
 
-/// This struct represents an internal view of the database. It consists of 
+/// This struct represents an internal view of the database. It consists of
 ///
 /// - table
 /// - view
 /// - materalized view
-/// 
+///
 /// Keep in mind any attribute prefixed with u_ is handled by (enrich_adr)[crate::adr::enrich_adr::add_user_mapping_to_adr].
 /// So do not attempt to fill in the u_-attibutes when building the ADR.
-/// This representation is core-internal only. It is not the structure, templates are programmed against. The structure 
-/// passed to the templates is definde in (tera_conversion)[crate::adr::tera_conversion]. 
-/// The internal ADR can be viewed using the cli-flag `--print-internal-schema`. 
+/// This representation is core-internal only. It is not the structure, templates are programmed against. The structure
+/// passed to the templates is definde in (tera_conversion)[crate::adr::tera_conversion].
+/// The internal ADR can be viewed using the cli-flag `--print-internal-schema`.
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct AbstractDbRepr {
     /// The version of ADR
@@ -62,7 +62,7 @@ pub struct AbstractDbRepr {
     pub views: BTreeMap<String, AbstractTableRepr>,
 }
 
-/// Internal representation of 
+/// Internal representation of
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct AbstractTableRepr {
     pub object_type: ObjectType,
