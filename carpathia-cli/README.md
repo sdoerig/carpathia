@@ -156,7 +156,7 @@ carpathia execute [OPTIONS] --db-host <HOST> --db-port <PORT> \
 
 ## 📜 License
 
-Licensed under [Apache-2.0](https://github.com/sdoerig/carpathia/blob/main/LICENSE).
+Licensed under [Apache-2.0](./LICENSE-APACHE) and/or [MIT](./LICENSE-MIT). 
 
 ## 🤝 Contributing
 

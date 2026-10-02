@@ -102,7 +102,7 @@ This crate is part of the [carpathia](https://github.com/sdoerig/carpathia) work
 
 ## License
 
-Licensed under [Apache-2.0](https://github.com/sdoerig/carpathia/blob/main/LICENSE).
+Licensed under [Apache-2.0](./LICENSE-APACHE) and/or [MIT](./LICENSE-MIT). 
 
 ## Contributing
 
