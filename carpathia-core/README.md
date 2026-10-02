@@ -150,7 +150,7 @@ If you do not have a PostgreSQL instance, skip `--features postgres` to start wi
 
 ## 📜 License
 
-Licensed under [Apache-2.0](https://github.com/sdoerig/carpathia/blob/main/LICENSE).
+Licensed under [Apache-2.0](./LICENSE-APACHE) and/or [MIT](./LICENSE-MIT). 
 
 ## 🤝 Contributing
 
