@@ -100,7 +100,7 @@ cargo test --features postgres  -- --test-threads=1
 
 ## License
 
-Licensed under [Apache-2.0](./LICENSE-APACHE). All releases are published under Apache-2.0; the project was relicensed early in its alpha phase to provide a robust and widely compatible legal foundation.
+Licensed under [Apache-2.0](./LICENSE-APACHE) and/or [MIT](./LICENSE-MIT). All releases are published under Apache-2.0 and/or MIT; the project was relicensed early in its alpha phase to provide a robust and widely compatible legal foundation.
 
 ## Contributing
 

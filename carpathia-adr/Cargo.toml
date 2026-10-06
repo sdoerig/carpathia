@@ -2,7 +2,7 @@
 name = "carpathia-adr"
 version = "0.1.1"
 edition = "2024"
-license = "Apache-2.0 or MIT"
+license = "Apache-2.0 OR MIT"
 authors = ["Stefan Dörig", "sdoerig@bluewin.ch"]
 description = "Database schema abstract database representation (ADR)"
 repository = "https://github.com/sdoerig/carpathia"
