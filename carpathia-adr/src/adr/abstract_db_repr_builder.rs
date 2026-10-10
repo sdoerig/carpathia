@@ -5,17 +5,17 @@
 //! are filled as usual by `enrich_adr`.
 //!
 //! Note on AI: The builder API in its basic form is AI generated from the ADR.
-//! I think for this kind of code, AI genertion is a good idea but as a matter of 
-//! intellectual fairness, this must be mentioned. 
-//! The code itself is repetitive and the structure is regular and I'm 
-//! not good at writing repetitive code. 
+//! I think for this kind of code, AI genertion is a good idea but as a matter of
+//! intellectual fairness, this must be mentioned.
+//! The code itself is repetitive and the structure is regular and I'm
+//! not good at writing repetitive code.
 //! Moreover, for a less complicated builder one would use e.g. the `derive_builder` crate.
-//! I think using this crate would also be possible but I would have to 
+//! I think using this crate would also be possible but I would have to
 //! write a syntactical sugar layer on top of it to get the same Closure style as here.
 //! -- Stefan Dörig, sdoerig@bluewin.ch, 2026-10-10
-//! 
+//!
 //! Typical usage (Closure style for nesting):
-//! 
+//!
 //! ```ignore
 //! use carpathia_adr::adr::abstract_db_repr::*;
 //! use carpathia_adr::adr::abstract_db_repr::builder::AbstractDbReprBuilder;
@@ -41,13 +41,10 @@
 //! are filled as usual by `enrich_adr`.
 
 use std::collections::{BTreeMap, BTreeSet};
-use std::marker::PhantomData;
 
 use crate::adr::abstract_db_repr::{
     ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractConstraint, AbstractDbRepr,
-    AbstractForeignKey, AbstractKey, AbstractPrimaryKey, AbstractReferencedTable,
-    AbstractTableRepr, ConstraintType, ForeignKeySemantics, IsNullable, KeyType, ObjectType,
-    PrimaryKeySemantics, TableProperties,
+    AbstractTableRepr, ConstraintType, IsNullable, ObjectType, TableProperties,
 };
 
 // ---------------------------------------------------------------------------
@@ -195,49 +192,6 @@ impl AbstractTableReprBuilder {
         self
     }
 
-    /// Set the language-safe name - usually not necessary, `enrich_adr`
-    /// takes care of the mapping.
-    pub fn u_table_name(mut self, u_table_name: impl Into<String>) -> Self {
-        self.u_table_name = u_table_name.into();
-        self
-    }
-
-    /// Add an import (type mapping).
-    pub fn u_import(mut self, u_import: impl Into<String>) -> Self {
-        self.u_imports.insert(u_import.into());
-        self
-    }
-
-    /// Add multiple imports (type mappings).
-    pub fn u_imports<I, S>(mut self, u_imports: I) -> Self
-    where
-        I: IntoIterator<Item = S>,
-        S: Into<String>,
-    {
-        self.u_imports.extend(u_imports.into_iter().map(Into::into));
-        self
-    }
-
-    /// Add a table property (e.g., `TableProperties::Selectable`).
-    pub fn table_property(mut self, property: TableProperties) -> Self {
-        self.table_properties.insert(property);
-        self
-    }
-
-    /// Add a primary key property.
-    pub fn primary_key(mut self, pk: AbstractPrimaryKey) -> Self {
-        self.table_properties
-            .insert(TableProperties::PrimaryKey(pk));
-        self
-    }
-
-    /// Add a foreign key property.
-    pub fn foreign_key(mut self, fk: AbstractForeignKey) -> Self {
-        self.table_properties
-            .insert(TableProperties::ForeignKey(fk));
-        self
-    }
-
     /// Add an attribute via a nested Attribute-Builder
     /// (Closure-Stil).
     pub fn attribute(
@@ -341,12 +295,7 @@ impl AbstractAttributeBuilder {
     /// Set the data type (mandatory field).
     pub fn data_type(mut self, data_type: impl Into<String>) -> Self {
         self.data_type = Some(data_type.into());
-        self
-    }
-
-    /// Set the mapped type according to the type mapping (mandatory field).
-    pub fn u_type(mut self, u_type: impl Into<String>) -> Self {
-        self.u_type = Some(u_type.into());
+        self.u_type = self.data_type.clone();
         self
     }
 
@@ -520,25 +469,14 @@ impl AbstractConstraintBuilder {
     /// Referenced table (including the `u_` variant).
     pub fn referenced_table(mut self, table: impl Into<String>) -> Self {
         self.referenced_table = Some(table.into());
-        self
-    }
-
-    /// Language-safe name of the referenced table (optional,
-    /// usually the responsibility of `enrich_adr`).
-    pub fn u_referenced_table(mut self, u_table: impl Into<String>) -> Self {
-        self.u_referenced_table = Some(u_table.into());
+        self.u_referenced_table = self.referenced_table.clone();
         self
     }
 
     /// Referenced column.
     pub fn referenced_column(mut self, column: impl Into<String>) -> Self {
         self.referenced_column = Some(column.into());
-        self
-    }
-
-    /// Language-safe name of the referenced column (optional).
-    pub fn u_referenced_column(mut self, u_column: impl Into<String>) -> Self {
-        self.u_referenced_column = Some(u_column.into());
+        self.u_referenced_column = self.referenced_column.clone();
         self
     }
 
@@ -553,89 +491,6 @@ impl AbstractConstraintBuilder {
             referenced_column: self.referenced_column,
             u_referenced_column: self.u_referenced_column,
         }
-    }
-}
-
-// ---------------------------------------------------------------------------
-// AbstractKey (Primary / Foreign)
-// ---------------------------------------------------------------------------
-
-/// Builder for [`AbstractPrimaryKey`] and [`AbstractForeignKey`].
-///
-/// A key consists of a set of `AbstractReferencedTable` entries
-/// (columns), which are added here row by row.
-#[derive(Debug, Clone)]
-pub struct AbstractKeyBuilder<K> {
-    columns: BTreeSet<AbstractReferencedTable>,
-    _marker: PhantomData<K>,
-}
-
-/// Builder for a primary key.
-pub type AbstractPrimaryKeyBuilder = AbstractKeyBuilder<PrimaryKeySemantics>;
-/// Builder for a foreign key.
-pub type AbstractForeignKeyBuilder = AbstractKeyBuilder<ForeignKeySemantics>;
-
-impl<K> AbstractKeyBuilder<K> {
-    /// Empty key builder.
-    pub fn new() -> Self {
-        Self {
-            columns: BTreeSet::new(),
-            _marker: PhantomData,
-        }
-    }
-
-    /// Adds a key column. `key_type` is set to `SingleColumn`;
-    /// a subsequent `+` (Add) corrects it to
-    /// `MultiColumn`, as specified in the ADR.
-    pub fn column(mut self, constraint_name: impl Into<String>, column: impl Into<String>) -> Self {
-        let column_name = column.into();
-        self.columns.insert(AbstractReferencedTable {
-            constraint_name: constraint_name.into(),
-            key_type: KeyType::SingleColumn,
-            column: column_name.clone(),
-            u_column: column_name,
-            referenced_table: None,
-            u_referenced_table: None,
-            referenced_column: None,
-            u_referenced_column: None,
-        });
-        self
-    }
-
-    /// Adds a key column including a reference (for Foreign Keys).
-    pub fn referencing_column(
-        mut self,
-        constraint_name: impl Into<String>,
-        column: impl Into<String>,
-        referenced_table: impl Into<String>,
-        referenced_column: impl Into<String>,
-    ) -> Self {
-        let column_name = column.into();
-        self.columns.insert(AbstractReferencedTable {
-            constraint_name: constraint_name.into(),
-            key_type: KeyType::SingleColumn,
-            column: column_name.clone(),
-            u_column: column_name,
-            referenced_table: Some(referenced_table.into()),
-            u_referenced_table: None,
-            referenced_column: Some(referenced_column.into()),
-            u_referenced_column: None,
-        });
-        self
-    }
-
-    /// Builds the key.
-    pub fn build(self) -> AbstractKey<K> {
-        AbstractKey {
-            columns: self.columns,
-            _marker: PhantomData,
-        }
-    }
-}
-
-impl<K> Default for AbstractKeyBuilder<K> {
-    fn default() -> Self {
-        Self::new()
     }
 }
 
@@ -655,7 +510,6 @@ mod tests {
                 t.comment("Users table")
                     .attribute("id", |a| {
                         a.data_type("integer")
-                            .u_type("whatever")
                             .not_nullable()
                             .primary_key()
                             .default("nextval('users_id_seq'::regclass)")
@@ -665,9 +519,7 @@ mod tests {
                                 AbstractConstraintBuilder::new("users_pkey").build(),
                             )
                     })
-                    .attribute("name", |a| {
-                        a.data_type("varchar").u_type("string").nullable()
-                    })
+                    .attribute("name", |a| a.data_type("varchar").nullable())
             })
             .build();
 
@@ -703,62 +555,14 @@ mod tests {
     }
 
     #[test]
-    fn builds_primary_key_property() {
-        let pk = AbstractPrimaryKeyBuilder::new()
-            .column("users_pkey", "id")
-            .build();
-
-        let adr = AbstractDbReprBuilder::new()
-            .table("users", |t| t.primary_key(pk))
-            .build();
-
-        let users = adr.tables.get("users").unwrap();
-        assert!(
-            users
-                .table_properties
-                .iter()
-                .any(|p| matches!(p, TableProperties::PrimaryKey(_)))
-        );
-    }
-
-    #[test]
-    fn builds_foreign_key_property() {
-        let fk = AbstractForeignKeyBuilder::new()
-            .referencing_column("fk_address", "address_id", "addresses", "id")
-            .build();
-
-        assert_eq!(fk.columns.len(), 1);
-        let col = fk.columns.iter().next().unwrap();
-        assert_eq!(col.constraint_name, "fk_address");
-        assert_eq!(col.referenced_table.as_deref(), Some("addresses"));
-        assert_eq!(col.key_type, KeyType::SingleColumn);
-
-        let adr = AbstractDbReprBuilder::new()
-            .table("users", |t| t.foreign_key(fk))
-            .build();
-        let users = adr.tables.get("users").unwrap();
-        assert!(
-            users
-                .table_properties
-                .iter()
-                .any(|p| matches!(p, TableProperties::ForeignKey(_)))
-        );
-    }
-
-    #[test]
     fn try_build_reports_missing_required_fields() {
-        let result = AbstractAttributeBuilder::new("id")
-            .u_type("i32")
-            .try_build();
+        let result = AbstractAttributeBuilder::new("id").try_build();
         assert!(result.is_err());
-        let result = AbstractAttributeBuilder::new("id")
-            .data_type("integer")
-            .try_build();
+        let result = AbstractAttributeBuilder::new("id").try_build();
         assert!(result.is_err());
         assert!(
             AbstractAttributeBuilder::new("id")
                 .data_type("integer")
-                .u_type("i32")
                 .try_build()
                 .is_ok()
         );
@@ -773,16 +577,5 @@ mod tests {
         assert!(t.table_properties.is_empty());
         assert!(t.u_imports.is_empty());
         assert!(t.comment.is_none());
-    }
-
-    #[test]
-    fn key_builder_single_and_multi_column() {
-        let key = AbstractForeignKeyBuilder::new()
-            .column("fk", "a")
-            .column("fk", "b")
-            .build();
-        // Wie im ADR-Add: gleicher Constraint-Name über zwei Spalten
-        let merged = key.clone() + key;
-        assert_eq!(merged.columns.len(), 2);
     }
 }
