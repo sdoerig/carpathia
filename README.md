@@ -86,7 +86,7 @@ Design principle: **engine and contract are separated on purpose.** The engine m
 carpathia is functional but in beta — use it, test it, and help shape its future! 🚀
 
 - ✅ PostgreSQL support, tested against versions 13–18
-- 🚧 Streamlined primary and foreign key handling (composite keys)
+- ✅ Streamlined primary and foreign key handling (composite keys)
 - 📋 Planned: MySQL and SQLite support
 - 📋 Planned: additional template packs and languages
 

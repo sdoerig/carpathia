@@ -4,4 +4,5 @@ members = [
 	"carpathia-core",
 	"carpathia-cli", "carpathia-adr", "carpathia-templates",
 	"carpathia-adr/examples/adr-basic-usage",
+	"carpathia-adr/examples/adr-builder-usage",
 ]
