@@ -1,15 +1,8 @@
-/// This example demonstrates how to use the `carpathia-adr` crate to create an Abstract Database Representation (ADR) in Rust. 
-/// It shows how to define tables, attributes, primary keys, and foreign keys, and how to enrich the ADR with user-defined type mappings.
-/// Keep in mind that this is a simplified example and may not cover all possible scenarios or edge cases.
-/// You also do not want all the unwrap calls in production code, but as the example processes static data, it's fine here.
-/// 
-/// Moreover, in production code, you will most likely have an intermediate representation of your data - e.g. YourDatabaseStruct
-/// and there you will probabliy implement the from trait to convert it into the AbstractDbRepr. 
-/// 
-/// Also I'm using JSON as a reference for the expected output, but in production code, you will probably use the ADR struct directly. 
-/// I used JSON here to make it easier to read and understand the expected output, but in production code, you will most likely use the ADR struct directly.
-/// 
-/// 
+//! Example for basic usage of the ADR. The ADR is built manually - decide by yourself if you want to do it this way or use the builder API.
+//! In my imlementation for PostgreSQL, I have implemtend the From trait. To me constructing the ADR manually is like this
+//! is bothersome, but there are many ways doing this.
+//! - Bulder API (see `carpathia-adr/src/adr/abstract_db_repr_builder.rs`)
+//! - From trait (see (PostgreSQL implementation)[https://github.com/sdoerig/carpathia/blob/main/carpathia-core/src/db/postgres/postgresql_structs.rs]
 use carpathia_adr::adr::abstract_db_repr::{
     AbstractAttribute, AbstractConstraint, AbstractDbRepr, AbstractTableRepr, ConstraintType,
     IsNullable, ObjectType,
