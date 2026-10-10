@@ -8,6 +8,7 @@ use carpathia_adr::adr::abstract_db_repr::{
     IsNullable, ObjectType,
 };
 use carpathia_adr::adr::enrich_adr::add_user_mapping_to_adr;
+use carpathia_adr::adr::tera_conversion::AdrTemplateData;
 use carpathia_adr::db_type::db_to_user_type_structs::{TypeMapping, Types};
 use std::collections::BTreeMap;
 
@@ -143,7 +144,7 @@ fn add_attribute(
         column_name: column_name.to_string(),
         u_column_name: column_name.to_string(),
         data_type: data_type.to_string(),
-        u_type: "whatever".to_string(),
+        u_type: data_type.to_string(),
         is_nullable,
         is_primary_key: false,
         column_default: column_default.map(|s| s.to_string()),
@@ -246,9 +247,13 @@ fn main() {
         "ldap_users",
         "email",
     );
-    println!("ADR before adding user type mapping: {:#?}", adr);
+
+    println!("Internal ADR before adding user type mapping: {:#?}", adr);
     add_user_mapping_to_adr(&build_default_type_mapping(), &mut adr);
-    println!("ADR after adding user type mapping: {:#?}", adr);
+    println!("Internal ADR after adding user type mapping: {:#?}", adr);
+    let adr_template_data = AdrTemplateData::from(&adr);
+    println!("External ADR for the templates: {:#?}", adr_template_data);
+
     let adr_json = serde_json::to_string_pretty(&adr).unwrap();
     let expected_adr: AbstractDbRepr = serde_json::from_str(ADR_JSON).unwrap();
 
@@ -256,7 +261,4 @@ fn main() {
         adr_json,
         serde_json::to_string_pretty(&expected_adr).unwrap()
     );
-
-    
-
 }

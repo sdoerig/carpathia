@@ -1,13 +1,15 @@
 //! Example usage of the `AbstractDbReprBuilder` to build an ADR and enrich it with user type mapping.
 //! Note that the builder API is AI generated from the ADR itself.
-//! 
+//!
+use carpathia_adr::adr::abstract_db_repr::{AbstractDbRepr, ConstraintType};
 use carpathia_adr::adr::abstract_db_repr_builder::{
-    AbstractConstraintBuilder, AbstractDbReprBuilder, 
-    //AbstractForeignKeyBuilder, AbstractPrimaryKeyBuilder, 
+    AbstractConstraintBuilder,
+    AbstractDbReprBuilder,
+    //AbstractForeignKeyBuilder, AbstractPrimaryKeyBuilder,
     AbstractTableReprBuilder as TableBuilder,
 };
-use carpathia_adr::adr::abstract_db_repr::{AbstractDbRepr, ConstraintType};
 use carpathia_adr::adr::enrich_adr::add_user_mapping_to_adr;
+use carpathia_adr::adr::tera_conversion::AdrTemplateData;
 use carpathia_adr::db_type::db_to_user_type_structs::{TypeMapping, Types};
 use std::collections::BTreeMap;
 
@@ -144,7 +146,6 @@ fn main() {
                 // --- attributes -------------------------------------------------
                 .attribute("id", |a| {
                     a.data_type("integer")
-                        .u_type("whatever")
                         .not_nullable()
                         .is_primary_key(true)
                         .default("nextval('users_id_seq'::regclass)")
@@ -157,14 +158,10 @@ fn main() {
                         )
                 })
                 .attribute("name", |a| {
-                    a.data_type("text")
-                        .u_type("whatever")
-                        .nullable()
-                        .comment("Name of the user")
+                    a.data_type("text").nullable().comment("Name of the user")
                 })
                 .attribute("email", |a| {
                     a.data_type("text")
-                        .u_type("whatever")
                         .nullable()
                         .comment("Email of the user")
                         .constraint(
@@ -172,18 +169,19 @@ fn main() {
                             AbstractConstraintBuilder::new("email_fkey")
                                 .value("FOREIGN KEY (email) REFERENCES ldap_users(email)")
                                 .referenced_table("ldap_users")
-                                .u_referenced_table("ldap_users")
                                 .referenced_column("email")
-                                .u_referenced_column("email")
                                 .build(),
                         )
                 })
         })
         .build();
 
-    println!("ADR before adding user type mapping: {:#?}", adr);
+    println!("Internal ADR before adding user type mapping: {:#?}", adr);
     add_user_mapping_to_adr(&build_default_type_mapping(), &mut adr);
-    println!("ADR after adding user type mapping: {:#?}", adr);
+    println!("Internal ADR after adding user type mapping: {:#?}", adr);
+    let adr_template_data = AdrTemplateData::from(&adr);
+    println!("External ADR for the templates: {:#?}", adr_template_data);
+
     let adr_json = serde_json::to_string_pretty(&adr).unwrap();
     let expected_adr: AbstractDbRepr = serde_json::from_str(ADR_JSON).unwrap();
 
