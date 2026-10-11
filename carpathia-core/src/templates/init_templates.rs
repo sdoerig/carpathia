@@ -1,4 +1,4 @@
-use carpathia_templates::RUST_LIB;
+use carpathia_templates::{MARKDOWN, MERMAID, RUST_LIB, SVG};
 use flate2::read::GzDecoder;
 use std::io::Cursor;
 use tar::Archive;
@@ -11,6 +11,9 @@ use crate::{
 pub fn extract_to_disk(conf: &CarpathiaConfig) -> Result<(), CarpathiaError> {
     let tar = match conf.init_template {
         InitTemplate::RustLib => GzDecoder::new(Cursor::new(RUST_LIB)),
+        InitTemplate::Svg => GzDecoder::new(Cursor::new(SVG)),
+        InitTemplate::Markdown => GzDecoder::new(Cursor::new(MARKDOWN)),
+        InitTemplate::Mermaid => GzDecoder::new(Cursor::new(MERMAID)),
         InitTemplate::None => {
             // Having none - do nothing just returning..
             return Ok(());

@@ -131,7 +131,7 @@ carpathia [OPTIONS] [COMMAND]
 --template-directory <DIR>        where your Tera templates live [default: ./tera/rust_lib]
 --carpathia-type-mapping-file <FILE>  type mapping JSON [default: carpathia_type_mapping.json]
 --cache-file <FILE>               hash cache location [default: ./carpathia_cache.json]
---init-template <TEMPLATE>        unpack a bundled template pack [rust-lib, none]
+--init-template <TEMPLATE>        unpack a bundled template pack [rust-lib, mermaid, markdown, svg, none]
 -h, --help                        print help
 -V, --version                     print version
 ```
