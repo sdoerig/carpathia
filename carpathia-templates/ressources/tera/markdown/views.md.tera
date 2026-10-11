@@ -1,0 +1,11 @@
+# {{ view.table_name }}
+
+{{ view.object_type }}
+
+## Columns
+
+| Column | Typ | NULL | Default |
+|--------|-----|------|---------|
+{% for attr in view.attributes %}| {{ attr.column_name }} | {{ attr.data_type }} | {% if attr.is_nullable == "No" %}NOT NULL{% else %}—{% endif %} | {{ attr.column_default | default(value="—") }} |
+{% endfor %}
+
