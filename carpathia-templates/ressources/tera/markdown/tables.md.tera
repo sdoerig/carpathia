@@ -1,0 +1,16 @@
+# {{ table.table_name }}
+
+{{ table.object_type }}
+
+## Spalten
+
+| Spalte | Typ | NULL | Standard | Constraints |
+|--------|-----|------|----------|-------------|
+{% for attr in table.attributes %}| {{ attr.column_name }} | {{ attr.data_type }} | {% if attr.is_nullable == "No" %}NOT NULL{% else %}—{% endif %} | {{ attr.column_default | default(value="—") }} | {% for key, con in attr.constraints %}{% if not loop.first %}, {% endif %}{{ con.constraint_name }}{% endfor %} |
+{% endfor %}
+
+## Referenzierte Tabellen
+
+{% set refCount = 0 %}{% for prop in table.table_properties %}{% if prop.ForeignKey %}{% for fk in prop.ForeignKey.columns %}{% set_global refCount = refCount + 1 %}
+- `{{ fk.column }}` → [{{ fk.referenced_table }}]({{ fk.referenced_table }}.md).{{ fk.referenced_column }}{% if fk.constraint_name %} (`{{ fk.constraint_name }}`){% endif %}{% endfor %}{% endif %}{% endfor %}{% if refCount == 0 %}
+*Keine Fremdschlüssel.{% endif %}

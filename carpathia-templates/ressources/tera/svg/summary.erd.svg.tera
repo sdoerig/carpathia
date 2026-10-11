@@ -1,0 +1,31 @@
+{% set cols = 4 %}{% set cellW = 250 %}{% set cellH = 350 %}{% set boxW = 210 %}{% set pad = 20 %}{% set total = tables | length + views | length %}{% set rows = ((total - 1 - ((total - 1) % cols)) / cols) + 1 %}
+<svg xmlns="http://www.w3.org/2000/svg" width="{{ pad * 2 + cols * cellW }}" height="{{ pad * 2 + rows * cellH }}" font-family="DejaVu Sans Mono, monospace" font-size="8">
+    <defs>
+        <marker id="fk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+        </marker>
+    </defs>
+    <text x="{{ pad }}" y="{{ pad - 6 }}" font-size="12" font-weight="bold">Schema ({{ tables | length }} Tabellen, {{ views | length }} Views)</text>
+    {% for table in tables %}{% set idx = loop.index0 %}{% set x = pad + (idx % cols) * cellW %}{% set y = pad + ((idx - (idx % cols)) / cols) * cellH %}{% set h = 26 + (table.attributes | length) * 16 %}
+    <!-- {{ table.object_type }}: {{ table.table_name }} -->
+    <rect x="{{ x }}" y="{{ y }}" width="{{ boxW }}" height="{{ h }}" rx="3" fill="#eef4fa" stroke="#345"/>
+    <rect x="{{ x }}" y="{{ y }}" width="{{ boxW }}" height="18" rx="3" fill="#345"/>
+    <text x="{{ x + 6 }}" y="{{ y + 12 }}" fill="#fff" font-weight="bold" font-size="9">{{ table.table_name }}</text>
+{% for attr in table.attributes %}{% set type = attr.data_type | replace(from=" ", to="_") %}{% set col = attr.column_name | replace(from=" ", to="_") %}    <text x="{{ x + 6 }}" y="{{ y + 30 + loop.index0 * 16 }}">{% if attr.is_primary_key %}PK {% elif attr.constraints.ForeignKey %}FK {% endif %}{{ col }}: {{ type }}</text>
+{% endfor %}
+{% endfor %}
+    {% set base = tables | length %}
+{% for view in views %}{% set idx = base + loop.index0 %}{% set x = pad + (idx % cols) * cellW %}{% set y = pad + ((idx - (idx % cols)) / cols) * cellH %}{% set h = 26 + (view.attributes | length) * 16 %}
+    <!-- {{ view.object_type }}: {{ view.table_name }} -->
+    <rect x="{{ x }}" y="{{ y }}" width="{{ boxW }}" height="{{ h }}" rx="3" fill="#fbf3e4" stroke="#a67c00" stroke-dasharray="4 2"/>
+    <rect x="{{ x }}" y="{{ y }}" width="{{ boxW }}" height="18" rx="3" fill="#a67c00"/>
+    <text x="{{ x + 6 }}" y="{{ y + 12 }}" fill="#fff" font-weight="bold" font-size="9">{{ view.table_name }}</text>
+{% for attr in view.attributes %}{% set type = attr.data_type | replace(from=" ", to="_") %}{% set col = attr.column_name | replace(from=" ", to="_") %}    <text x="{{ x + 6 }}" y="{{ y + 30 + loop.index0 * 16 }}">{{ col }}: {{ type }}</text>
+{% endfor %}
+{% endfor %}
+{% for table in tables %}{% set cIdx = loop.index0 %}{% set cx = pad + (cIdx % cols) * cellW + boxW / 2 %}{% set cy = pad + ((cIdx - (cIdx % cols)) / cols) * cellH + 13 %}
+{% for prop in table.table_properties %}{% if prop.ForeignKey %}{% for fk in prop.ForeignKey.columns %}{% for t in tables %}{% if t.table_name == fk.referenced_table %}{% set pIdx = loop.index0 %}{% set px = pad + (pIdx % cols) * cellW + boxW / 2 %}{% set py = pad + ((pIdx - (pIdx % cols)) / cols) * cellH + 13 %}
+    <line x1="{{ px }}" y1="{{ py }}" x2="{{ cx }}" y2="{{ cy }}" stroke="#555" stroke-width="1" marker-end="url(#fk)"/>
+{% endif %}{% endfor %}{% endfor %}{% endif %}{% endfor %}
+{% endfor %}
+</svg>

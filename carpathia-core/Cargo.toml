@@ -1,8 +1,8 @@
 [package]
 name = "carpathia-core"
-version = "0.3.1"
+version = "0.3.2"
 edition = "2024"
-license = "Apache-2.0 or MIT"
+license = "Apache-2.0 OR MIT"
 authors = ["Stefan Dörig", "sdoerig@bluewin.ch"]
 description = "Database schema parser and language agnostic generator"
 repository = "https://github.com/sdoerig/carpathia"

@@ -1,0 +1,22 @@
+erDiagram
+    %% -------------------------------------------------------------
+    %% Tabellen (BaseTable, PartitionedTable)
+    %% -------------------------------------------------------------
+{% for table in tables %}    %% {{ table.object_type }}: {{ table.table_name }}{% if table.comment %} -- {{ table.comment }}{% endif %}
+    {{ table.table_name }} {
+{% for attr in table.attributes %}{% set type = attr.data_type | replace(from="(", to="_") | replace(from=")", to="") | replace(from=",", to="_") | replace(from=" ", to="_") %}{% set col = attr.column_name | replace(from=" ", to="_") %}        {{ type }} {{ col }}{% if attr.is_primary_key and attr.constraints.ForeignKey %} PK, FK{% elif attr.is_primary_key %} PK{% elif attr.constraints.ForeignKey %} FK{% endif %}{% if attr.comment %} "{{ attr.comment }}"{% elif attr.is_nullable == "No" %} "NOT NULL"{% endif %}
+{% endfor %}    }
+{% endfor %}
+    %% -------------------------------------------------------------
+    %% Views (View, MaterializedView)
+    %% -------------------------------------------------------------
+{% for view in views %}    %% {{ view.object_type }}: {{ view.table_name }}{% if view.comment %} -- {{ view.comment }}{% endif %}
+    {{ view.table_name }} {
+{% for attr in view.attributes %}{% set type = attr.data_type | replace(from="(", to="_") | replace(from=")", to="") | replace(from=",", to="_") | replace(from=" ", to="_") %}{% set col = attr.column_name | replace(from=" ", to="_") %}        {{ type }} {{ col }}{% if attr.is_primary_key and attr.constraints.ForeignKey %} PK, FK{% elif attr.is_primary_key %} PK{% elif attr.constraints.ForeignKey %} FK{% endif %}{% if attr.comment %} "{{ attr.comment }}"{% elif attr.is_nullable == "No" %} "NOT NULL"{% endif %}
+{% endfor %}    }
+{% endfor %}
+    %% -------------------------------------------------------------
+    %% Beziehungen (Fremdschluessel)
+    %% -------------------------------------------------------------
+{% for table in tables %}{% for prop in table.table_properties %}{% if prop.ForeignKey %}{% for fk in prop.ForeignKey.columns %}    {{ fk.referenced_table }} ||--o{ {{ table.table_name }} : {{ fk.column }}
+{% endfor %}{% endif %}{% endfor %}{% endfor %}

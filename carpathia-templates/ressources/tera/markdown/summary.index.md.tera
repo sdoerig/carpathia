@@ -1,0 +1,22 @@
+# Schema-Übersicht
+
+> {{ tables | length }} Tables and {{ views | length }} Views 
+
+## Tables
+
+| Name | Typ | Spalten | Primärschlüssel | Fremdschlüssel |
+|------|-----|---------|-----------------|-----------------|
+{% for table in tables %}| [{{ table.table_name }}]({{ table.table_name }}.md) | {{ table.object_type }} | {{ table.attributes | length }} | {% for prop in table.table_properties %}{% if prop.PrimaryKey %}{% for c in prop.PrimaryKey.columns %}{% if not loop.first %}, {% endif %}{{ c.column }}{% endfor %}{% endif %}{% endfor %} | {% for prop in table.table_properties %}{% if prop.ForeignKey %}{% for c in prop.ForeignKey.columns %}{% if not loop.first %}, {% endif %}{{ c.column }} → {{ c.referenced_table }}{% endfor %}{% endif %}{% endfor %} |
+{% endfor %}
+
+## Views
+
+| Name | Typ | Spalten |
+|------|-----|---------|
+{% for view in views %}| [{{ view.table_name }}]({{ view.table_name }}.md) | {{ view.object_type }} | {{ view.attributes | length }} |
+{% endfor %}
+
+## Relations
+
+{% for table in tables %}{% for prop in table.table_properties %}{% if prop.ForeignKey %}{% for fk in prop.ForeignKey.columns %}- [{{ table.table_name }}]({{ table.table_name }}.md).{{ fk.column }} → [{{ fk.referenced_table }}]({{ fk.referenced_table }}.md).{{ fk.referenced_column }}
+{% endfor %}{% endif %}{% endfor %}{% endfor %}

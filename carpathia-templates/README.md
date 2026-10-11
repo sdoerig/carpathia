@@ -19,12 +19,18 @@ Template packs are **content, not engine**. They evolve on their own schedule:
 pub const RUST_LIB: &[u8] = include_bytes!("../ressources_archive/tera/rust_lib.tar.gz");
 ```
 
-The crate is intentionally tiny: zero runtime dependencies, one embedded archive per template pack. Each pack is a `tar.gz` that gets unpacked into your template directory on first use.
+The crate is intentionally tiny: zero runtime dependencies, one embedded archive per template pack. Each pack is a `tar.gz` that gets unpacked into your template directory on first use. Currently four packs are bundled:
+
+| Pack       | Renders                                                     |
+| ---------- | ----------------------------------------------------------- |
+| `rust_lib` | Type-safe, sqlx-based Rust data-access library               |
+| `svg`      | Entity-relationship diagram of the schema as standalone SVG |
+| `mermaid`  | Entity-relationship diagram as a Mermaid `erDiagram`        |
+| `markdown` | Markdown documentation: index plus one page per table/view |
 
 ### The `rust_lib` pack
 
 A starting point for generating a type-safe **sqlx-based Rust data-access library** from your schema:
-
 
 | Template              | Renders                                                                                                                                    |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -32,8 +38,33 @@ A starting point for generating a type-safe **sqlx-based Rust data-access librar
 | `views.rs.tera`       | One file per view: a `FromRow` struct plus a builder-style `Filter` with `fetch_all` for dynamic `WHERE` clauses                           |
 | `summary.mod.rs.tera` | One `mod.rs` declaring a module per generated table and view                                                                               |
 
-
 Generated code uses `sqlx` (`QueryBuilder`, `FromRow`, `PgPool`), respects your type mappings (`u_type`, `u_imports`), and handles composite primary and foreign keys.
+
+### The `svg` pack
+
+Renders a **standalone SVG entity-relationship diagram** of your whole schema — tables and views laid out on a grid, with primary/foreign keys marked and arrows along the foreign-key relations. No external tooling needed: the output opens in any browser.
+
+| Template               | Renders                                                                                      |
+| ---------------------- | -------------------------------------------------------------------------------------------- |
+| `summary.erd.svg.tera` | One `erd.svg`: a box per table and view (columns with PK/FK markers) plus FK relation lines   |
+
+### The `mermaid` pack
+
+Renders the schema as a **Mermaid `erDiagram`** — ideal for embedding in Markdown documentation, wikis, or GitHub-flavored Markdown.
+
+| Template               | Renders                                                                                                                        |
+| ---------------------- | ---------------------------------------------------------------------------------------------- |
+| `summary.erd.mmd.tera` | One `erd.mmd`: entities with typed attributes (PK/FK annotated, comments picked up), plus `||--o{` relations for foreign keys |
+
+### The `markdown` pack
+
+Generates **Markdown documentation** for your schema — a linked index page and one documentation page per table and view.
+
+| Template                | Renders                                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------------------------- |
+| `summary.index.md.tera` | One `index.md`: schema overview with tables/views, primary and foreign keys, and linked relations       |
+| `tables.md.tera`        | One page per table: columns (type, NULL, default, constraints) and referenced tables via foreign keys   |
+| `views.md.tera`         | One page per view: columns and type information                                                          |
 
 ## Usage
 
@@ -71,30 +102,40 @@ use carpathia_templates::RUST_LIB;
 
 The template engine in `carpathia-core` dispatches by file-name prefix:
 
-
-| Prefix           | Context                    | Output                   |
-| ---------------- | -------------------------- | ------------------------ |
-| `tables.*.tera`  | one `table` per rendering  | one file per table       |
-| `views.*.tera`   | one `view` per rendering   | one file per view        |
-| `summary.*.tera` | `tables` and `views` lists | one file (e.g. `mod.rs`) |
-
+| Prefix           | Context                    | Output                                        |
+| ---------------- | -------------------------- | --------------------------------------------- |
+| `tables.*.tera`  | one `table` per rendering  | one file per table                            |
+| `views.*.tera`   | one `view` per rendering   | one file per view                             |
+| `summary.*.tera` | `tables` and `views` lists | one file (e.g. `mod.rs`, `erd.svg`, `index.md`) |
 
 The data available inside templates is defined by the [`carpathia-adr`](https://github.com/sdoerig/carpathia/tree/main/carpathia-adr) crate — the contract between your templates and carpathia.
 
-## Layout &amp; Maintenance
+## Layout & Maintenance
 
 ```
 carpathia-templates/
-├── ressources/tera/rust_lib/       # editable template sources
-│   ├── tables.rs.tera
-│   ├── views.rs.tera
-│   └── summary.mod.rs.tera
-├── ressources_archive/tera/       # prebuilt tar.gz, embedded via include_bytes!
-│   └── rust_lib.tar.gz
-└── src/lib.rs                     # re-exports RUST_LIB
+├── ressources/tera/                 # editable template sources
+│   ├── rust_lib/
+│   │   ├── tables.rs.tera
+│   │   ├── views.rs.tera
+│   │   └── summary.mod.rs.tera
+│   ├── svg/
+│   │   └── summary.erd.svg.tera
+│   ├── mermaid/
+│   │   └── summary.erd.mmd.tera
+│   └── markdown/
+│       ├── tables.md.tera
+│       ├── views.md.tera
+│       └── summary.index.md.tera
+├── ressources_archive/tera/         # prebuilt tar.gz, embedded via include_bytes!
+│   ├── rust_lib.tar.gz
+│   ├── svg.tar.gz
+│   ├── mermaid.tar.gz
+│   └── markdown.tar.gz
+└── src/lib.rs                       # re-exports the embedded packs (e.g. RUST_LIB)
 ```
 
-To change a bundled template: edit the source under `ressources/tera/rust_lib/`, re-create the `tar.gz` in `ressources_archive/tera/`, and bump the crate version. The archive is embedded at compile time — no runtime file access needed.
+To change a bundled template: edit the source under `ressources/tera/<pack>/`, re-create the `tar.gz` in `ressources_archive/tera/`, and bump the crate version. The archive is embedded at compile time — no runtime file access needed.
 
 ## Status
 
@@ -102,7 +143,7 @@ This crate is part of the [carpathia](https://github.com/sdoerig/carpathia) work
 
 ## License
 
-Licensed under [Apache-2.0](./LICENSE-APACHE) and/or [MIT](./LICENSE-MIT). 
+Licensed under [Apache-2.0](./LICENSE-APACHE) and/or [MIT](./LICENSE-MIT).
 
 ## Contributing
 

@@ -43,6 +43,9 @@ impl From<DbTypeClap> for DbType {
 #[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum InitTemplateClap {
     RustLib,
+    Mermaid,
+    Markdown,
+    Svg,
     None,
 }
 
@@ -51,6 +54,9 @@ impl From<InitTemplateClap> for InitTemplate {
         match value {
             InitTemplateClap::RustLib => InitTemplate::RustLib,
             InitTemplateClap::None => InitTemplate::None,
+            InitTemplateClap::Mermaid => InitTemplate::Mermaid,
+            InitTemplateClap::Markdown => InitTemplate::Markdown,
+            InitTemplateClap::Svg => InitTemplate::Svg,
         }
     }
 }
@@ -82,8 +88,31 @@ mod tests {
 
     #[test]
     fn test_init_template_conversion() {
-        let clap_value = InitTemplateClap::RustLib;
-        let core_value: InitTemplate = clap_value.into();
-        assert_eq!(core_value, InitTemplate::RustLib);
+        pub(crate) struct ClapToCore {
+            pub clap: InitTemplateClap,
+            pub core: InitTemplate,
+        }
+        let clap_to_core_casting = [
+            ClapToCore {
+                clap: InitTemplateClap::RustLib,
+                core: InitTemplate::RustLib,
+            },
+            ClapToCore {
+                clap: InitTemplateClap::Markdown,
+                core: InitTemplate::Markdown,
+            },
+            ClapToCore {
+                clap: InitTemplateClap::Mermaid,
+                core: InitTemplate::Mermaid,
+            },
+            ClapToCore {
+                clap: InitTemplateClap::Svg,
+                core: InitTemplate::Svg,
+            },
+        ];
+        for ctc in clap_to_core_casting {
+            let core_value: InitTemplate = ctc.clap.into();
+            assert_eq!(core_value, ctc.core);
+        }
     }
 }
