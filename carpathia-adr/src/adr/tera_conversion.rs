@@ -24,6 +24,8 @@ pub struct AdrTemplateData<'a> {
 
 #[derive(Serialize, Clone, Debug, PartialEq, Eq)]
 pub struct TableTemplateData<'a> {
+    pub schema: &'a str,
+    pub database_name: &'a str,
     pub version: &'a str,
     pub object_type: &'a ObjectType,
     pub table_name: &'a str,
@@ -41,20 +43,38 @@ impl<'a> From<&'a AbstractDbRepr> for AdrTemplateData<'a> {
             tables: adr
                 .tables
                 .values()
-                .map(|table| TableTemplateData::from((adr.version.as_str(), table)))
+                .map(|table| {
+                    TableTemplateData::from((
+                        adr.schema.as_str(),
+                        adr.database_name.as_str(),
+                        adr.version.as_str(),
+                        table,
+                    ))
+                })
                 .collect(),
             views: adr
                 .views
                 .values()
-                .map(|view| TableTemplateData::from((adr.version.as_str(), view)))
+                .map(|view| {
+                    TableTemplateData::from((
+                        adr.schema.as_str(),
+                        adr.database_name.as_str(),
+                        adr.version.as_str(),
+                        view,
+                    ))
+                })
                 .collect(),
         }
     }
 }
 
-impl<'a> From<(&'a str, &'a AbstractTableRepr)> for TableTemplateData<'a> {
-    fn from((version, table): (&'a str, &'a AbstractTableRepr)) -> Self {
+impl<'a> From<(&'a str, &'a str, &'a str, &'a AbstractTableRepr)> for TableTemplateData<'a> {
+    fn from(
+        (schema, database_name, version, table): (&'a str, &'a str, &'a str, &'a AbstractTableRepr),
+    ) -> Self {
         Self {
+            schema,
+            database_name,
             version,
             object_type: &table.object_type,
             table_name: &table.table_name,

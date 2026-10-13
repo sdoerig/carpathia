@@ -25,6 +25,8 @@
 //!
 //! fn main() {
 //!     let mut adr = AbstractDbRepr {
+//!         schema: "public".to_string(),
+//!         database_name: "my_database".to_string(),
 //!         version: "0.1.0".to_string(),
 //!         tables: BTreeMap::<String, AbstractTableRepr>::new(),
 //!         views: BTreeMap::<String, AbstractTableRepr>::new(),
@@ -132,7 +134,7 @@ pub struct AbstractDbRepr {
     /// The version of ADR
     pub version: String,
     /// Schema or namespace e.g. in PostgreSQL `public`.
-    /// if not applicable, leave it empty 
+    /// if not applicable, leave it empty
     pub schema: String,
     /// Name of the database introspected.
     pub database_name: String,

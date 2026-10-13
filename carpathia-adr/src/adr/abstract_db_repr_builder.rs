@@ -79,18 +79,13 @@ impl AbstractDbReprBuilder {
         }
     }
 
-    /// New builder with explicit ADR version.
-    pub fn with_version(version: impl Into<String>) -> Self {
-        Self {
-            version: version.into(),
-            tables: BTreeMap::new(),
-            views: BTreeMap::new(),
-        }
+    pub fn schema(mut self, schema: impl Into<String>) -> Self {
+        self.schema = schema.into();
+        self
     }
 
-    /// Override the version.
-    pub fn version(mut self, version: impl Into<String>) -> Self {
-        self.version = version.into();
+    pub fn database_name(mut self, database_name: impl Into<String>) -> Self {
+        self.database_name = database_name.into();
         self
     }
 
@@ -135,6 +130,8 @@ impl AbstractDbReprBuilder {
     /// Build the `AbstractDbRepr`.
     pub fn build(self) -> AbstractDbRepr {
         AbstractDbRepr {
+            schema: self.schema,
+            database_name: self.database_name,
             version: self.version,
             tables: self.tables,
             views: self.views,
@@ -549,7 +546,7 @@ mod tests {
 
     #[test]
     fn builds_views() {
-        let adr = AbstractDbReprBuilder::with_version("0.2.0")
+        let adr = AbstractDbReprBuilder::new()
             .view("v_users", |v| v.comment("all users"))
             .build();
 

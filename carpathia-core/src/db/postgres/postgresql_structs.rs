@@ -7,6 +7,12 @@ use carpathia_adr::adr::abstract_db_repr::{
 use log::debug;
 
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
+pub(crate) struct PgSchemaDbName {
+    pub schema: String,
+    pub database_name: String,
+}
+
+#[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct PgColumnInfo {
     pub object_type: String,
     pub table_schema: String,

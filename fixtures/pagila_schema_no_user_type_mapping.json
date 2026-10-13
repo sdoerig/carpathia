@@ -1,5 +1,7 @@
 {
   "version": "0.1.0",
+  "schema": "public",
+  "database_name": "pagila",
   "tables": {
     "actor": {
       "object_type": "BaseTable",

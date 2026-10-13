@@ -1,7 +1,9 @@
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
 use crate::db::postgres::postgres_enums::PgObjectType;
-use crate::db::postgres::postgresql_structs::{PgColumnInfo, PgConstraintInfo, PgConstraintMap};
+use crate::db::postgres::postgresql_structs::{
+    PgColumnInfo, PgConstraintInfo, PgConstraintMap, PgSchemaDbName,
+};
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
 /// PostgreSQL schema querieer. Currently implemented
@@ -15,6 +17,12 @@ use log::{debug, error, info};
 pub(crate) struct PostgresQuerier;
 
 const LIMIT: i64 = 1000;
+
+const SCHEMA_AND_DB_NAME_QUERY: &str = r"
+    SELECT 
+        current_schema() AS schema,
+        current_database() AS database_name;
+";
 
 const CONSTRAINT_QUERY: &str = r"
 (
@@ -281,6 +289,35 @@ impl PostgresQuerier {
 
         Ok(PgConstraintMap::new(rows))
     }
+
+    async fn get_global_db_info(
+        config: &CarpathiaConfig,
+    ) -> Result<PgSchemaDbName, CarpathiaError> {
+        let pool = match &config.db_pool {
+            DbPool::Postgres(pool) => pool,
+            _ => {
+                return Err(CarpathiaError {
+                    message: "Invalid database pool type for PostgreSQL querier".to_string(),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::InvalidPoolType,
+                });
+            }
+        };
+        let pg_schema_name: PgSchemaDbName =
+            sqlx::query_as::<_, PgSchemaDbName>(SCHEMA_AND_DB_NAME_QUERY)
+                .fetch_one(pool)
+                .await
+                .map_err(|e| {
+                    debug!("Error executing constraint query: {e}");
+                    CarpathiaError {
+                message: format!("Failed to execute constraint query: {e}"),
+                error_type:
+                    crate::return_values::carpathia_errors::ErrorNumber::DatabaseConnectionError,
+            }
+                })?;
+
+        Ok(pg_schema_name)
+    }
 }
 
 impl DatabaseQuerier for PostgresQuerier {
@@ -304,6 +341,7 @@ impl DatabaseQuerier for PostgresQuerier {
                 });
             }
         };
+        let db_schema_name = Self::get_global_db_info(config).await?;
         let constraint_map = Self::get_constraints(config).await?;
         debug!("Constraint map {:?}", constraint_map);
         // let type_map = &config.type_map.type_mapping;
@@ -375,6 +413,8 @@ impl DatabaseQuerier for PostgresQuerier {
         }
 
         Ok(AbstractDbRepr {
+            schema: db_schema_name.schema,
+            database_name: db_schema_name.database_name,
             version: ABSTRACT_DB_REPR_VERSION.to_string(),
             tables: table_info_map,
             views: view_info_map,

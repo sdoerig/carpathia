@@ -203,6 +203,8 @@ fn add_foreign_key(
 
 fn main() {
     let mut adr = AbstractDbRepr {
+        schema: "".to_string(),
+        database_name: "pagila".to_string(),
         version: "0.1.0".to_string(),
         tables: BTreeMap::<String, AbstractTableRepr>::new(),
         views: BTreeMap::<String, AbstractTableRepr>::new(),

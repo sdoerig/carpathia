@@ -139,7 +139,7 @@ fn main() {
     //   mapping is applied afterwards by `add_user_mapping_to_adr`.
     // - Primary/foreign keys are declared directly where they belong - no
     //   `get_mut`-chains, no `if let Some(attr)` helper functions.
-    let mut adr: AbstractDbRepr = AbstractDbReprBuilder::with_version("0.1.0")
+    let mut adr: AbstractDbRepr = AbstractDbReprBuilder::new()
         .table("users", |table: TableBuilder| {
             table
                 .comment("Users table")

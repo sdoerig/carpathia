@@ -131,6 +131,8 @@ mod tests {
     ) -> AbstractDbRepr {
         let atr = create_abstract_selectable(table_name, column_name, object_type);
         let mut db_repr = AbstractDbRepr {
+            schema: "public".to_string(),
+            database_name: "my_fine_db".to_string(),
             version: ABSTRACT_DB_REPR_VERSION.to_string(),
             tables: BTreeMap::new(),
             views: BTreeMap::new(),
