@@ -131,6 +131,11 @@ const KEY_TYPE_CHANGE_DEFAULT: &KeyTypeChange = &KeyTypeChange {
 pub struct AbstractDbRepr {
     /// The version of ADR
     pub version: String,
+    /// Schema or namespace e.g. in PostgreSQL `public`.
+    /// if not applicable, leave it empty 
+    pub schema: String,
+    /// Name of the database introspected.
+    pub database_name: String,
     /// Tables found in the database - they are always in a deterministic order
     pub tables: BTreeMap<String, AbstractTableRepr>,
     /// Views found in the database - always in a deterministic order

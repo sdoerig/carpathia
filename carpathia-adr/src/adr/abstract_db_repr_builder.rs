@@ -55,6 +55,8 @@ use crate::adr::abstract_db_repr::{
 #[derive(Debug, Clone)]
 pub struct AbstractDbReprBuilder {
     version: String,
+    schema: String,
+    database_name: String,
     tables: BTreeMap<String, AbstractTableRepr>,
     views: BTreeMap<String, AbstractTableRepr>,
 }
@@ -69,6 +71,8 @@ impl AbstractDbReprBuilder {
     /// New builder with the current ADR version (`ABSTRACT_DB_REPR_VERSION`).
     pub fn new() -> Self {
         Self {
+            schema: String::new(),
+            database_name: String::new(),
             version: ABSTRACT_DB_REPR_VERSION.to_string(),
             tables: BTreeMap::new(),
             views: BTreeMap::new(),
