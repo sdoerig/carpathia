@@ -24,6 +24,7 @@ impl DbSchemaParser {
                 Err(e) => Err(e),
             },
             DbPool::Dummy => todo!("Dummy database pool not implemented"),
+            DbPool::MySql(_) => todo!("MySQL database to be implemented"),
         }
     }
 }

@@ -11,6 +11,7 @@ use crate::return_values::carpathia_errors::{CarpathiaError, ErrorNumber};
 use crate::templates::enum_templates::InitTemplate;
 use carpathia_adr::db_type::db_to_user_type_structs::Types;
 use log::info;
+use sqlx::mysql::MySqlPoolOptions;
 use sqlx::postgres::PgPoolOptions;
 use std::path::PathBuf;
 
@@ -242,7 +243,17 @@ impl CarpathiaConfigBuilder {
                 DbType::Postgres => DbPool::Postgres(
                     PgPoolOptions::new()
                         .connect_lazy(&format!(
-                            "{db_type}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+                            "{db_type}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}?sslmode=prefer"
+                        ))
+                        .map_err(|e| CarpathiaError {
+                            message: format!("DB error: {e}"),
+                            error_type: ErrorNumber::DatabaseConnectionError,
+                        })?,
+                ),
+                DbType::MySql => DbPool::MySql(
+                    MySqlPoolOptions::new()
+                        .connect_lazy(&format!(
+                            "{db_type}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}?sslmode=prefer"
                         ))
                         .map_err(|e| CarpathiaError {
                             message: format!("DB error: {e}"),

@@ -1,4 +1,4 @@
-use sqlx::{Pool, Postgres};
+use sqlx::{MySql, Pool, Postgres};
 use std::{fmt::Display, str::FromStr};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum CacheModus {
@@ -14,6 +14,7 @@ pub enum CacheModus {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DbType {
     Postgres,
+    MySql,
     Dummy,
 }
 
@@ -22,6 +23,7 @@ impl From<DbType> for i32 {
     fn from(value: DbType) -> i32 {
         match value {
             DbType::Postgres => 5432,
+            DbType::MySql => 3306,
             DbType::Dummy => -1,
         }
     }
@@ -34,6 +36,7 @@ impl FromStr for DbType {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "postgres" => Ok(DbType::Postgres),
+            "mysql" => Ok(DbType::MySql),
             _ => Ok(DbType::Dummy),
         }
     }
@@ -43,6 +46,7 @@ impl Display for DbType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             DbType::Postgres => write!(f, "postgres"),
+            DbType::MySql => write!(f, "mysql"),
             DbType::Dummy => write!(f, "dummy"),
         }
     }
@@ -51,6 +55,7 @@ impl Display for DbType {
 #[derive(Debug, Clone)]
 pub enum DbPool {
     Postgres(Pool<Postgres>),
+    MySql(Pool<MySql>),
     Dummy,
 }
 
