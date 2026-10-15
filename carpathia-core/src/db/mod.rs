@@ -7,7 +7,7 @@
 //!
 
 pub use carpathia_adr::adr::enrich_adr;
+pub mod mysql;
 pub mod parse_db_schema;
 pub mod postgres;
-pub mod mysql;
 pub mod traits;

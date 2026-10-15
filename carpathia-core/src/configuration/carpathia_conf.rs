@@ -253,7 +253,7 @@ impl CarpathiaConfigBuilder {
                 DbType::MySql => DbPool::MySql(
                     MySqlPoolOptions::new()
                         .connect_lazy(&format!(
-                            "{db_type}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}?sslmode=prefer"
+                            "{db_type}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
                         ))
                         .map_err(|e| CarpathiaError {
                             message: format!("DB error: {e}"),

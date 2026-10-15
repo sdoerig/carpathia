@@ -1,5 +1,7 @@
-use crate::{configuration::carpathia_conf::CarpathiaConfig, db::traits::DatabaseQuerier};
+use crate::configuration::conf_enums::DbPool;
+use crate::db::mysql::mysql_structs::MySqlInfo;
 use crate::return_values::carpathia_errors::CarpathiaError;
+use crate::{configuration::carpathia_conf::CarpathiaConfig, db::traits::DatabaseQuerier};
 #[allow(unused_imports)]
 use carpathia_adr::adr::abstract_db_repr::{
     ABSTRACT_DB_REPR_VERSION, AbstractAttribute, AbstractDbRepr, AbstractTableRepr, ObjectType,
@@ -8,82 +10,127 @@ use carpathia_adr::adr::abstract_db_repr_builder::AbstractDbReprBuilder;
 #[allow(unused_imports)]
 use log::{debug, error, info};
 pub(crate) struct MySqlQuerier;
-#[allow(dead_code)]
+
+const LIMIT: i32 = 1000;
 const SCHEMA_QUERY: &str = r"
-SELECT
-    c.TABLE_CATALOG AS database_name,
-    c.TABLE_SCHEMA,
-    c.TABLE_NAME,
-    c.COLUMN_NAME,
-    c.ORDINAL_POSITION AS column_position,
-    c.DATA_TYPE,
-    c.COLUMN_TYPE,
-    c.CHARACTER_MAXIMUM_LENGTH,
-    c.NUMERIC_PRECISION,
-    c.NUMERIC_SCALE,
-    c.DATETIME_PRECISION,
-    c.IS_NULLABLE,
-    c.COLUMN_DEFAULT,
-    c.EXTRA,
-    c.GENERATION_EXPRESSION,
-    c.COLUMN_COMMENT,
-    t.TABLE_TYPE,
-    t.ENGINE,
-    t.TABLE_COLLATION,
-    t.TABLE_COMMENT,
-    tc.CONSTRAINT_NAME,
-    tc.CONSTRAINT_TYPE,
-    kcu.ORDINAL_POSITION AS constraint_column_position,
-    kcu.POSITION_IN_UNIQUE_CONSTRAINT,
-    kcu.REFERENCED_TABLE_SCHEMA,
-    kcu.REFERENCED_TABLE_NAME,
-    kcu.REFERENCED_COLUMN_NAME,
-    rc.UPDATE_RULE,
-    rc.DELETE_RULE,
-    s.INDEX_NAME,
-    s.SEQ_IN_INDEX,
-    s.NON_UNIQUE,
-    s.INDEX_TYPE,
-    chk.CHECK_CLAUSE
-FROM information_schema.COLUMNS c
-JOIN information_schema.TABLES t
-  ON t.TABLE_SCHEMA = c.TABLE_SCHEMA
- AND t.TABLE_NAME = c.TABLE_NAME
-LEFT JOIN information_schema.KEY_COLUMN_USAGE kcu
-  ON kcu.TABLE_SCHEMA = c.TABLE_SCHEMA
- AND kcu.TABLE_NAME = c.TABLE_NAME
- AND kcu.COLUMN_NAME = c.COLUMN_NAME
-LEFT JOIN information_schema.TABLE_CONSTRAINTS tc
-  ON tc.CONSTRAINT_SCHEMA = kcu.CONSTRAINT_SCHEMA
- AND tc.TABLE_NAME = kcu.TABLE_NAME
- AND tc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME
-LEFT JOIN information_schema.REFERENTIAL_CONSTRAINTS rc
-  ON rc.CONSTRAINT_SCHEMA = tc.CONSTRAINT_SCHEMA
- AND rc.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
-LEFT JOIN information_schema.CHECK_CONSTRAINTS chk
-  ON chk.CONSTRAINT_SCHEMA = tc.CONSTRAINT_SCHEMA
- AND chk.CONSTRAINT_NAME = tc.CONSTRAINT_NAME
-LEFT JOIN information_schema.STATISTICS s
-  ON s.TABLE_SCHEMA = c.TABLE_SCHEMA
- AND s.TABLE_NAME = c.TABLE_NAME
- AND s.COLUMN_NAME = c.COLUMN_NAME
-WHERE c.TABLE_SCHEMA NOT IN
+select
+    c.table_catalog as database_name,
+    c.table_schema,
+    c.table_name,
+    c.column_name,
+    c.ordinal_position as column_position,
+    c.data_type,
+    c.column_type,
+    c.character_maximum_length,
+    c.numeric_precision,
+    c.numeric_scale,
+    c.datetime_precision,
+    c.is_nullable,
+    c.column_default,
+    c.extra,
+    c.generation_expression,
+    c.column_comment,
+    t.table_type,
+    t.engine,
+    t.table_collation,
+    t.table_comment,
+    tc.constraint_name,
+    tc.constraint_type,
+    kcu.ordinal_position as constraint_column_position,
+    kcu.position_in_unique_constraint,
+    kcu.referenced_table_schema,
+    kcu.referenced_table_name,
+    kcu.referenced_column_name,
+    rc.update_rule,
+    rc.delete_rule,
+    s.index_name,
+    s.seq_in_index,
+    s.non_unique,
+    s.index_type,
+    chk.check_clause
+from information_schema.columns c
+join information_schema.tables t
+  on t.table_schema = c.table_schema
+ and t.table_name = c.table_name
+left join information_schema.key_column_usage kcu
+  on kcu.table_schema = c.table_schema
+ and kcu.table_name = c.table_name
+ and kcu.column_name = c.column_name
+left join information_schema.table_constraints tc
+  on tc.constraint_schema = kcu.constraint_schema
+ and tc.table_name = kcu.table_name
+ and tc.constraint_name = kcu.constraint_name
+left join information_schema.referential_constraints rc
+  on rc.constraint_schema = tc.constraint_schema
+ and rc.constraint_name = tc.constraint_name
+left join information_schema.check_constraints chk
+  on chk.constraint_schema = tc.constraint_schema
+ and chk.constraint_name = tc.constraint_name
+left join information_schema.statistics s
+  on s.table_schema = c.table_schema
+ and s.table_name = c.table_name
+ and s.column_name = c.column_name
+where c.table_schema not in
 (
     'information_schema',
     'mysql',
     'performance_schema',
     'sys'
 )
-ORDER BY
-    c.TABLE_SCHEMA,
-    c.TABLE_NAME,
-    c.ORDINAL_POSITION,
-    tc.CONSTRAINT_NAME,
-    s.INDEX_NAME,
-    s.SEQ_IN_INDEX;
+order by
+    c.table_schema,
+    c.table_name,
+    c.ordinal_position,
+    tc.constraint_name,
+    s.index_name,
+    s.seq_in_index
+limit ?
+offset ?
+    ;
 ";
 #[allow(dead_code)]
 impl DatabaseQuerier for MySqlQuerier {
-    async fn get_schema(_config: &CarpathiaConfig) -> Result<AbstractDbRepr, CarpathiaError> {
+    async fn get_schema(config: &CarpathiaConfig) -> Result<AbstractDbRepr, CarpathiaError> {
+        #[allow(unused_variables)]
+        let table_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
+            std::collections::BTreeMap::new();
+        #[allow(unused_variables)]   
+        let view_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
+            std::collections::BTreeMap::new();
+        let mut offset = 0;
+        let pool = match config.db_pool {
+            DbPool::MySql(ref pool) => pool,
+            _ => {
+                return Err(CarpathiaError {
+                    message: "Invalid database pool type for PostgreSQL querier".to_string(),
+                    error_type:
+                        crate::return_values::carpathia_errors::ErrorNumber::InvalidPoolType,
+                });
+            }
+        };
+        loop {
+            let rows: Vec<MySqlInfo> = sqlx::query_as::<_, MySqlInfo>(SCHEMA_QUERY)
+                .bind(LIMIT)
+                .bind(offset)
+                .fetch_all(pool)
+                .await
+                .map_err(|e| {
+                    debug!("Error executing schema query: {e}");
+                    CarpathiaError {
+                        message: format!("Failed to execute schema query: {e}"),
+                        error_type: crate::return_values::carpathia_errors::ErrorNumber::DatabaseConnectionError,
+                    }
+                })?;
+            let num_rows = rows.len();
+            debug!("Fetched {num_rows} rows from schema query with offset {offset}");
+            for row in rows {
+                info!("{:#?}", row);
+            }
+            offset += LIMIT;
+            if num_rows < LIMIT as usize {
+                break;
+            }
+        }
         Ok(AbstractDbReprBuilder::new().build())
-    }}
+    }
+}

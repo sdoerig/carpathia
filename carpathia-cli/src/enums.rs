@@ -27,6 +27,7 @@ impl From<CacheModusClap> for CacheModus {
 #[derive(Debug, Clone, Copy, ValueEnum, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DbTypeClap {
     Postgres,
+    Mysql,
     Dummy,
 }
 
@@ -35,6 +36,7 @@ impl From<DbTypeClap> for DbType {
     fn from(value: DbTypeClap) -> DbType {
         match value {
             DbTypeClap::Postgres => DbType::Postgres,
+            DbTypeClap::Mysql => DbType::MySql,
             DbTypeClap::Dummy => DbType::Dummy,
         }
     }

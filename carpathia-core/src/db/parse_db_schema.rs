@@ -4,6 +4,7 @@
 use crate::configuration::carpathia_conf::CarpathiaConfig;
 use crate::configuration::conf_enums::DbPool;
 use crate::db::enrich_adr::add_user_mapping_to_adr;
+use crate::db::mysql::mysqldb::MySqlQuerier;
 use crate::db::postgres::postgresql::PostgresQuerier;
 use crate::db::traits::DatabaseQuerier;
 use crate::return_values::carpathia_errors::CarpathiaError;
@@ -23,8 +24,14 @@ impl DbSchemaParser {
                 }
                 Err(e) => Err(e),
             },
+            DbPool::MySql(_) => match MySqlQuerier::get_schema(config).await {
+                Ok(mut schema) => {
+                    add_user_mapping_to_adr(&config.type_map, &mut schema);
+                    Ok(schema)
+                }
+                Err(e) => Err(e),
+            },
             DbPool::Dummy => todo!("Dummy database pool not implemented"),
-            DbPool::MySql(_) => todo!("MySQL database to be implemented"),
         }
     }
 }
