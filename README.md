@@ -99,7 +99,8 @@ carpathia is functional but in beta — use it, test it, and help shape its futu
 
 - ✅ PostgreSQL support, tested against versions 13–18
 - ✅ Streamlined primary and foreign key handling (composite keys)
-- 📋 Planned: MySQL and SQLite support
+- 🚧 Under construction: MySQL 
+- 📋 Planned SQLite support
 - 📋 Planned: additional template packs and languages
 
 ## Testing
