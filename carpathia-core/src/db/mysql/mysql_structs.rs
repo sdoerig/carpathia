@@ -1,3 +1,7 @@
+use std::collections::BTreeMap;
+
+use carpathia_adr::adr::abstract_db_repr::{AbstractConstraint, ConstraintType};
+
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct MySqlInfo {
     pub database_name: String,
@@ -20,6 +24,7 @@ pub(crate) struct MySqlInfo {
     pub engine: Option<String>,
     pub table_collation: Option<String>,
     pub table_comment: Option<String>,
+    pub is_identity: String,
     pub constraint_name: Option<String>,
     pub constraint_type: Option<String>,
     pub constraint_column_position: Option<i32>,
@@ -34,4 +39,7 @@ pub(crate) struct MySqlInfo {
     pub non_unique: Option<i32>,
     pub index_type: Option<String>,
     pub check_clause: Option<String>,
+    
+    #[sqlx(skip)]
+    pub constraints: BTreeMap<ConstraintType, AbstractConstraint>,
 }

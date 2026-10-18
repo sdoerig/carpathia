@@ -25,7 +25,10 @@ select
     c.numeric_precision,
     c.numeric_scale,
     c.datetime_precision,
-    c.is_nullable,
+    CASE WHEN c.is_nullable = 'YES' 
+        THEN 'is_nullable' 
+        ELSE 'is_not_nullable'
+    END AS is_nullable,
     c.column_default,
     c.extra,
     c.generation_expression,
@@ -34,6 +37,10 @@ select
     t.engine,
     t.table_collation,
     t.table_comment,
+    case when tc.constraint_name = 'PRIMARY'
+        then 'IS_PRIMARY'
+        else 'IS_NOT_PRIMARY'
+    end as is_identity,
     tc.constraint_name,
     tc.constraint_type,
     kcu.ordinal_position as constraint_column_position,
