@@ -14,6 +14,7 @@ pub(crate) struct PgSchemaDbName {
 
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct PgColumnInfo {
+    pub secure_namespace: String,
     pub object_type: String,
     pub table_schema: String,
     pub table_name: String,
@@ -155,6 +156,7 @@ impl PgConstraintMap {
     PartialOrd,
 )]
 pub(crate) struct PgConstraintInfo {
+    pub secure_namespace: String,
     pub schema_name: String,
     pub relation_name: String,
     pub attribute_name: String,

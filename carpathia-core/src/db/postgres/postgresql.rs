@@ -27,6 +27,8 @@ const SCHEMA_AND_DB_NAME_QUERY: &str = r"
 const CONSTRAINT_QUERY: &str = r"
 (
     SELECT
+        concat(current_database(), '::', ns.nspname, '::', tbl.relname) as secure_namespace,
+        current_database() AS database_name,
         ns.nspname AS schema_name,
         tbl.relname AS relation_name,
         att.attname AS attribute_name,
@@ -82,6 +84,8 @@ const CONSTRAINT_QUERY: &str = r"
 UNION ALL
 (
     SELECT
+        concat(current_database(), '::', ns.nspname, '::', tbl.relname) as secure_namespace,
+        current_database() AS database_name,
         ns.nspname,
         tbl.relname,
         att.attname,
@@ -167,6 +171,7 @@ trigger_info AS (
 )
 
 SELECT
+    concat(current_database(), '::', col.table_schema, '::', col.table_name) as secure_namespace,
     current_database() AS database_name,
     CASE c.relkind
         WHEN 'r' THEN 'BASE TABLE'
@@ -224,6 +229,8 @@ UNION ALL
 
 -- MATERIALIZED VIEWS (ebenfalls ohne System-Schemas)
 SELECT
+    concat(current_database(), '::', mat.schemaname, '::', mat.matviewname) as secure_namespace,
+
     current_database() AS database_name,
     'MATERIALIZED VIEW',
     mat.schemaname,
@@ -367,13 +374,14 @@ impl DatabaseQuerier for PostgresQuerier {
                 });
                 row = row.constraint_map(&constraint_map);
                 debug!("Processing column: {}.{}", row.table_name, row.column_name);
+                let secure_namespace = row.secure_namespace.clone();
                 let table_name = row.table_name.clone();
                 let object_type: ObjectType = pg_object_type.into();
                 let attribute = AbstractAttribute::from(row.clone());
                 match object_type {
                     ObjectType::BaseTable | ObjectType::PartitionedTable => {
                         table_info_map
-                            .entry(table_name.clone())
+                            .entry(secure_namespace.clone())
                             .or_insert_with(|| {
                                 AbstractTableRepr::new(
                                     object_type,
@@ -387,7 +395,7 @@ impl DatabaseQuerier for PostgresQuerier {
                     }
                     ObjectType::View | ObjectType::MaterializedView => {
                         view_info_map
-                            .entry(table_name.clone())
+                            .entry(secure_namespace.clone())
                             .or_insert_with(|| {
                                 AbstractTableRepr::new(
                                     object_type,

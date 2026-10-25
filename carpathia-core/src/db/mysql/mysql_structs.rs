@@ -39,7 +39,7 @@ pub(crate) struct MySqlInfo {
     pub non_unique: Option<i32>,
     pub index_type: Option<String>,
     pub check_clause: Option<String>,
-    
+
     #[sqlx(skip)]
     pub constraints: BTreeMap<ConstraintType, AbstractConstraint>,
 }

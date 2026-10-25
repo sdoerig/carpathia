@@ -101,7 +101,7 @@ impl DatabaseQuerier for MySqlQuerier {
         #[allow(unused_variables)]
         let table_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
             std::collections::BTreeMap::new();
-        #[allow(unused_variables)]   
+        #[allow(unused_variables)]
         let view_info_map: std::collections::BTreeMap<String, AbstractTableRepr> =
             std::collections::BTreeMap::new();
         let mut offset = 0;
