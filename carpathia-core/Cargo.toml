@@ -6,7 +6,7 @@ license = "Apache-2.0 OR MIT"
 authors = ["Stefan Dörig", "sdoerig@bluewin.ch"]
 description = "Database schema parser and language agnostic generator"
 repository = "https://github.com/sdoerig/carpathia"
-homepage = "https://github.com/sdoerig/carpathia"
+#homepage = "https://github.com/sdoerig/carpathia"
 categories = ["command-line-utilities", "database"]
 
 [dependencies]
@@ -19,7 +19,7 @@ sqlx = { version = "0.9", features = [ "mysql", "postgres", "runtime-tokio", "tl
 blake3 = "1.8.5"
 hex = "0.4"
 log = "0.4"
-env_logger = "0.10"
+#env_logger = "0.10"
 tera = { version = "2" }
 flate2 = "1"
 tar = "0.4"

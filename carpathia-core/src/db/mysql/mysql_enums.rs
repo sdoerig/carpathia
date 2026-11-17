@@ -35,8 +35,8 @@ impl FromStr for MySqlObjectType {
 }
 
 impl From<&MySqlObjectType> for ObjectType {
-    fn from(pg_object_type: &MySqlObjectType) -> Self {
-        match pg_object_type {
+    fn from(my_object_type: &MySqlObjectType) -> Self {
+        match my_object_type {
             MySqlObjectType::BaseTable => ObjectType::BaseTable,
             MySqlObjectType::PartitionedTable => ObjectType::PartitionedTable,
             MySqlObjectType::View => ObjectType::View,
@@ -47,8 +47,8 @@ impl From<&MySqlObjectType> for ObjectType {
 }
 
 impl From<MySqlObjectType> for ObjectType {
-    fn from(pg_object_type: MySqlObjectType) -> Self {
-        (&pg_object_type).into()
+    fn from(my_object_type: MySqlObjectType) -> Self {
+        (&my_object_type).into()
     }
 }
 
@@ -68,8 +68,8 @@ pub enum MySqlConstraintType {
 }
 
 impl From<&MySqlConstraintType> for ConstraintType {
-    fn from(pg_constraint_type: &MySqlConstraintType) -> Self {
-        match pg_constraint_type {
+    fn from(my_constraint_type: &MySqlConstraintType) -> Self {
+        match my_constraint_type {
             MySqlConstraintType::PrimaryKey => ConstraintType::PrimaryKey,
             MySqlConstraintType::ForeignKey => ConstraintType::ForeignKey,
             MySqlConstraintType::Unique => ConstraintType::Unique,
@@ -84,8 +84,8 @@ impl From<&MySqlConstraintType> for ConstraintType {
 }
 
 impl From<MySqlConstraintType> for ConstraintType {
-    fn from(pg_constraint_type: MySqlConstraintType) -> Self {
-        (&pg_constraint_type).into()
+    fn from(my_constraint_type: MySqlConstraintType) -> Self {
+        (&my_constraint_type).into()
     }
 }
 
@@ -133,8 +133,8 @@ impl FromStr for MySqlIsNullable {
 }
 
 impl From<&MySqlIsNullable> for IsNullable {
-    fn from(pg_is_nullable: &MySqlIsNullable) -> Self {
-        match pg_is_nullable {
+    fn from(my_is_nullable: &MySqlIsNullable) -> Self {
+        match my_is_nullable {
             MySqlIsNullable::Yes => IsNullable::Yes,
             MySqlIsNullable::No => IsNullable::No,
             MySqlIsNullable::Unknown(s) => IsNullable::Unknown(s.to_owned()),
@@ -143,8 +143,8 @@ impl From<&MySqlIsNullable> for IsNullable {
 }
 
 impl From<MySqlIsNullable> for IsNullable {
-    fn from(pg_is_nullable: MySqlIsNullable) -> Self {
-        (&pg_is_nullable).into()
+    fn from(my_is_nullable: MySqlIsNullable) -> Self {
+        (&my_is_nullable).into()
     }
 }
 
@@ -171,8 +171,8 @@ impl FromStr for MySqlIsIdentity {
 }
 
 impl From<&MySqlIsIdentity> for IsIdentity {
-    fn from(pg_is_identity: &MySqlIsIdentity) -> Self {
-        match pg_is_identity {
+    fn from(my_is_identity: &MySqlIsIdentity) -> Self {
+        match my_is_identity {
             MySqlIsIdentity::Yes => IsIdentity::Yes,
             MySqlIsIdentity::No => IsIdentity::No,
             MySqlIsIdentity::Unknown(s) => IsIdentity::Unknown(s.to_owned()),
@@ -181,8 +181,8 @@ impl From<&MySqlIsIdentity> for IsIdentity {
 }
 
 impl From<MySqlIsIdentity> for IsIdentity {
-    fn from(pg_is_identity: MySqlIsIdentity) -> Self {
-        (&pg_is_identity).into()
+    fn from(my_is_identity: MySqlIsIdentity) -> Self {
+        (&my_is_identity).into()
     }
 }
 
@@ -213,8 +213,8 @@ impl FromStr for MySqlIsGenerated {
 }
 
 impl From<&MySqlIsGenerated> for IsGenerated {
-    fn from(pg_is_generated: &MySqlIsGenerated) -> Self {
-        match pg_is_generated {
+    fn from(my_is_generated: &MySqlIsGenerated) -> Self {
+        match my_is_generated {
             MySqlIsGenerated::Always => IsGenerated::Always,
             MySqlIsGenerated::ByDefault => IsGenerated::ByDefault,
             MySqlIsGenerated::ByDefaultOnNull => IsGenerated::ByDefaultOnNull,
@@ -225,8 +225,8 @@ impl From<&MySqlIsGenerated> for IsGenerated {
 }
 
 impl From<MySqlIsGenerated> for IsGenerated {
-    fn from(pg_is_generated: MySqlIsGenerated) -> Self {
-        (&pg_is_generated).into()
+    fn from(my_is_generated: MySqlIsGenerated) -> Self {
+        (&my_is_generated).into()
     }
 }
 
@@ -238,44 +238,44 @@ mod tests {
         // parsing from this string...
         parsed_from: String,
         // must become this enum value...
-        pg_const_type: P,
+        my_const_type: P,
         // must cast into this ADR enum value.
         const_type: I,
     }
 
     #[test]
-    fn test_pg_object_type_from_str() {
+    fn test_my_object_type_from_str() {
         let test_cases = [
             EnumTest {
                 parsed_from: "BASE TABLE".to_string(),
-                pg_const_type: MySqlObjectType::BaseTable,
+                my_const_type: MySqlObjectType::BaseTable,
                 const_type: ObjectType::BaseTable,
             },
             EnumTest {
                 parsed_from: "PARTITIONED TABLE".to_string(),
-                pg_const_type: MySqlObjectType::PartitionedTable,
+                my_const_type: MySqlObjectType::PartitionedTable,
                 const_type: ObjectType::PartitionedTable,
             },
             EnumTest {
                 parsed_from: "VIEW".to_string(),
-                pg_const_type: MySqlObjectType::View,
+                my_const_type: MySqlObjectType::View,
                 const_type: ObjectType::View,
             },
             EnumTest {
                 parsed_from: "MATERIALIZED VIEW".to_string(),
-                pg_const_type: MySqlObjectType::MaterializedView,
+                my_const_type: MySqlObjectType::MaterializedView,
                 const_type: ObjectType::MaterializedView,
             },
             EnumTest {
                 parsed_from: "UNKNOWN".to_string(),
-                pg_const_type: MySqlObjectType::Unknown("UNKNOWN".to_string()),
+                my_const_type: MySqlObjectType::Unknown("UNKNOWN".to_string()),
                 const_type: ObjectType::Unknown("UNKNOWN".to_string()),
             },
         ];
         for enum_test in test_cases.iter() {
-            let pg_object_type: MySqlObjectType = enum_test.parsed_from.parse().unwrap();
-            assert_eq!(pg_object_type, enum_test.pg_const_type);
-            let const_type: ObjectType = (&pg_object_type).into();
+            let my_object_type: MySqlObjectType = enum_test.parsed_from.parse().unwrap();
+            assert_eq!(my_object_type, enum_test.my_const_type);
+            let const_type: ObjectType = (&my_object_type).into();
             assert_eq!(const_type, enum_test.const_type);
         }
     }
@@ -285,150 +285,150 @@ mod tests {
         let enum_variants = [
             EnumTest {
                 parsed_from: "PRIMARY KEY".to_string(),
-                pg_const_type: MySqlConstraintType::PrimaryKey,
+                my_const_type: MySqlConstraintType::PrimaryKey,
                 const_type: ConstraintType::PrimaryKey,
             },
             EnumTest {
                 parsed_from: "UNIQUE".to_string(),
-                pg_const_type: MySqlConstraintType::Unique,
+                my_const_type: MySqlConstraintType::Unique,
                 const_type: ConstraintType::Unique,
             },
             EnumTest {
                 parsed_from: "FOREIGN KEY".to_string(),
-                pg_const_type: MySqlConstraintType::ForeignKey,
+                my_const_type: MySqlConstraintType::ForeignKey,
                 const_type: ConstraintType::ForeignKey,
             },
             EnumTest {
                 parsed_from: "CHECK".to_string(),
-                pg_const_type: MySqlConstraintType::Check,
+                my_const_type: MySqlConstraintType::Check,
                 const_type: ConstraintType::Check,
             },
             EnumTest {
                 parsed_from: "EXCLUSION".to_string(),
-                pg_const_type: MySqlConstraintType::Exclusion,
+                my_const_type: MySqlConstraintType::Exclusion,
                 const_type: ConstraintType::Exclusion,
             },
             EnumTest {
                 parsed_from: "is_not_nullable".to_string(),
-                pg_const_type: MySqlConstraintType::NotNull,
+                my_const_type: MySqlConstraintType::NotNull,
                 const_type: ConstraintType::NotNull,
             },
             EnumTest {
                 parsed_from: "CONSTRAINT TRIGGER".to_string(),
-                pg_const_type: MySqlConstraintType::ConstraintTrigger,
+                my_const_type: MySqlConstraintType::ConstraintTrigger,
                 const_type: ConstraintType::ConstraintTrigger,
             },
             EnumTest {
                 parsed_from: String::new(),
-                pg_const_type: MySqlConstraintType::None,
+                my_const_type: MySqlConstraintType::None,
                 const_type: ConstraintType::None,
             },
             EnumTest {
                 parsed_from: "NONE".to_string(),
-                pg_const_type: MySqlConstraintType::None,
+                my_const_type: MySqlConstraintType::None,
                 const_type: ConstraintType::None,
             },
             EnumTest {
                 parsed_from: "UNKNOWN".to_string(),
-                pg_const_type: MySqlConstraintType::Unknown("UNKNOWN".to_string()),
+                my_const_type: MySqlConstraintType::Unknown("UNKNOWN".to_string()),
                 const_type: ConstraintType::Unknown,
             },
         ];
         for enum_test in enum_variants.iter() {
-            let pg_const_type: MySqlConstraintType = enum_test.parsed_from.parse().unwrap();
-            assert_eq!(pg_const_type, enum_test.pg_const_type);
-            let const_type: ConstraintType = pg_const_type.into();
+            let my_const_type: MySqlConstraintType = enum_test.parsed_from.parse().unwrap();
+            assert_eq!(my_const_type, enum_test.my_const_type);
+            let const_type: ConstraintType = my_const_type.into();
             assert_eq!(const_type, enum_test.const_type);
         }
     }
 
     #[test]
-    fn test_pg_const_type_from_str_and_to_is_nullable() {
+    fn test_my_const_type_from_str_and_to_is_nullable() {
         let enum_variants = [
             EnumTest {
                 parsed_from: "IS_NULLABLE".to_string(),
-                pg_const_type: MySqlIsNullable::Yes,
+                my_const_type: MySqlIsNullable::Yes,
                 const_type: IsNullable::Yes,
             },
             EnumTest {
                 parsed_from: "IS_NOT_NULLABLE".to_string(),
-                pg_const_type: MySqlIsNullable::No,
+                my_const_type: MySqlIsNullable::No,
                 const_type: IsNullable::No,
             },
             EnumTest {
                 parsed_from: "UNKNOWN".to_string(),
-                pg_const_type: MySqlIsNullable::Unknown("UNKNOWN".to_string()),
+                my_const_type: MySqlIsNullable::Unknown("UNKNOWN".to_string()),
                 const_type: IsNullable::Unknown("UNKNOWN".to_string()),
             },
         ];
         for enum_test in enum_variants.iter() {
-            let pg_const_type: MySqlIsNullable = enum_test.parsed_from.parse().unwrap();
-            assert_eq!(pg_const_type, enum_test.pg_const_type);
-            let const_type: IsNullable = pg_const_type.into();
+            let my_const_type: MySqlIsNullable = enum_test.parsed_from.parse().unwrap();
+            assert_eq!(my_const_type, enum_test.my_const_type);
+            let const_type: IsNullable = my_const_type.into();
             assert_eq!(const_type, enum_test.const_type);
         }
     }
 
     #[test]
-    fn test_pg_is_identity_from_str_and_to_is_identity() {
+    fn test_my_is_identity_from_str_and_to_is_identity() {
         let enum_variants = [
             EnumTest {
                 parsed_from: "PRIMARY".to_string(),
-                pg_const_type: MySqlIsIdentity::Yes,
+                my_const_type: MySqlIsIdentity::Yes,
                 const_type: IsIdentity::Yes,
             },
             EnumTest {
                 parsed_from: "not_primary".to_string(),
-                pg_const_type: MySqlIsIdentity::No,
+                my_const_type: MySqlIsIdentity::No,
                 const_type: IsIdentity::No,
             },
             EnumTest {
                 parsed_from: "UNKNOWN".to_string(),
-                pg_const_type: MySqlIsIdentity::Unknown("UNKNOWN".to_string()),
+                my_const_type: MySqlIsIdentity::Unknown("UNKNOWN".to_string()),
                 const_type: IsIdentity::Unknown("UNKNOWN".to_string()),
             },
         ];
         for enum_test in enum_variants.iter() {
-            let pg_const_type: MySqlIsIdentity = enum_test.parsed_from.parse().unwrap();
-            assert_eq!(pg_const_type, enum_test.pg_const_type);
-            let const_type: IsIdentity = pg_const_type.into();
+            let my_const_type: MySqlIsIdentity = enum_test.parsed_from.parse().unwrap();
+            assert_eq!(my_const_type, enum_test.my_const_type);
+            let const_type: IsIdentity = my_const_type.into();
             assert_eq!(const_type, enum_test.const_type);
         }
     }
 
     #[test]
-    fn test_pg_is_generated_from_str_and_to_is_generated() {
+    fn test_my_is_generated_from_str_and_to_is_generated() {
         let enum_variants = [
             EnumTest {
                 parsed_from: "ALWAYS".to_string(),
-                pg_const_type: MySqlIsGenerated::Always,
+                my_const_type: MySqlIsGenerated::Always,
                 const_type: IsGenerated::Always,
             },
             EnumTest {
                 parsed_from: "BY DEFAULT".to_string(),
-                pg_const_type: MySqlIsGenerated::ByDefault,
+                my_const_type: MySqlIsGenerated::ByDefault,
                 const_type: IsGenerated::ByDefault,
             },
             EnumTest {
                 parsed_from: "BY DEFAULT ON NULL".to_string(),
-                pg_const_type: MySqlIsGenerated::ByDefaultOnNull,
+                my_const_type: MySqlIsGenerated::ByDefaultOnNull,
                 const_type: IsGenerated::ByDefaultOnNull,
             },
             EnumTest {
                 parsed_from: "NEVER".to_string(),
-                pg_const_type: MySqlIsGenerated::Never,
+                my_const_type: MySqlIsGenerated::Never,
                 const_type: IsGenerated::Never,
             },
             EnumTest {
                 parsed_from: "UNKNOWN".to_string(),
-                pg_const_type: MySqlIsGenerated::Unknown("UNKNOWN".to_string()),
+                my_const_type: MySqlIsGenerated::Unknown("UNKNOWN".to_string()),
                 const_type: IsGenerated::Unknown("UNKNOWN".to_string()),
             },
         ];
         for enum_test in enum_variants.iter() {
-            let pg_const_type: MySqlIsGenerated = enum_test.parsed_from.parse().unwrap();
-            assert_eq!(pg_const_type, enum_test.pg_const_type);
-            let const_type: IsGenerated = pg_const_type.into();
+            let my_const_type: MySqlIsGenerated = enum_test.parsed_from.parse().unwrap();
+            assert_eq!(my_const_type, enum_test.my_const_type);
+            let const_type: IsGenerated = my_const_type.into();
             assert_eq!(const_type, enum_test.const_type);
         }
     }

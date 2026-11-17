@@ -44,9 +44,9 @@
 //!             is_nullable: IsNullable::No,
 //!             is_primary_key: true,
 //!             column_default: Some("nextval('users_id_seq'::regclass)".to_string()),
-//!             numeric_precision: None::<i32>,
-//!             numeric_scale: None::<i32>,
-//!             character_maximum_length: None::<i32>,
+//!             numeric_precision: None::<i64>,
+//!             numeric_scale: None::<i64>,
+//!             character_maximum_length: None::<i64>,
 //!             constraints: BTreeMap::new(),
 //!             comment: Some("Primary key for users table".to_string()),
 //!         });
@@ -198,9 +198,9 @@ pub struct AbstractAttribute {
     /// Whether the database attribute is a primary key. This is determined by the constraints of the database attribute.
     pub is_primary_key: bool,
     /// The maximum length of the database attribute. This is the maximum length as it is defined in the database. Might be None for some database types.
-    pub character_maximum_length: Option<i32>,
-    pub numeric_precision: Option<i32>,
-    pub numeric_scale: Option<i32>,
+    pub character_maximum_length: Option<i64>,
+    pub numeric_precision: Option<i64>,
+    pub numeric_scale: Option<i64>,
     /// The constraints of the database attribute. This is a set of ConstraintType, which contains information about the database attribute and its constraints.
     pub constraints: BTreeMap<ConstraintType, AbstractConstraint>,
     pub comment: Option<String>,

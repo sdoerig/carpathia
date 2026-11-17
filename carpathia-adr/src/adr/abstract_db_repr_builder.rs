@@ -248,9 +248,9 @@ pub struct AbstractAttributeBuilder {
     is_nullable: IsNullable,
     column_default: Option<String>,
     is_primary_key: bool,
-    character_maximum_length: Option<i32>,
-    numeric_precision: Option<i32>,
-    numeric_scale: Option<i32>,
+    character_maximum_length: Option<i64>,
+    numeric_precision: Option<i64>,
+    numeric_scale: Option<i64>,
     constraints: BTreeMap<ConstraintType, AbstractConstraint>,
     comment: Option<String>,
 }
@@ -343,19 +343,19 @@ impl AbstractAttributeBuilder {
     }
 
     /// Maximum character length.
-    pub fn character_maximum_length(mut self, len: i32) -> Self {
+    pub fn character_maximum_length(mut self, len: i64) -> Self {
         self.character_maximum_length = Some(len);
         self
     }
 
     /// Numeric precision.
-    pub fn numeric_precision(mut self, precision: i32) -> Self {
+    pub fn numeric_precision(mut self, precision: i64) -> Self {
         self.numeric_precision = Some(precision);
         self
     }
 
     /// Numeric scale.
-    pub fn numeric_scale(mut self, scale: i32) -> Self {
+    pub fn numeric_scale(mut self, scale: i64) -> Self {
         self.numeric_scale = Some(scale);
         self
     }

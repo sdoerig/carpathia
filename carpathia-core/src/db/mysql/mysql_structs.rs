@@ -1,6 +1,7 @@
+use crate::db::mysql::mysql_enums::MySqlIsNullable;
 use std::collections::BTreeMap;
 
-use carpathia_adr::adr::abstract_db_repr::{AbstractConstraint, ConstraintType};
+use carpathia_adr::adr::abstract_db_repr::{AbstractAttribute, AbstractConstraint, ConstraintType};
 
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct MySqlInfo {
@@ -42,4 +43,27 @@ pub(crate) struct MySqlInfo {
 
     #[sqlx(skip)]
     pub constraints: BTreeMap<ConstraintType, AbstractConstraint>,
+}
+
+impl From<MySqlInfo> for AbstractAttribute {
+    fn from(info: MySqlInfo) -> Self {
+        let is_nullable: MySqlIsNullable = info
+            .is_nullable
+            .parse()
+            .unwrap_or(MySqlIsNullable::Unknown(info.is_nullable.clone()));
+        AbstractAttribute {
+            column_name: info.column_name,
+            u_column_name: String::new(),
+            data_type: info.data_type,
+            u_type: String::new(),
+            is_nullable: is_nullable.into(),
+            column_default: info.column_default,
+            is_primary_key: info.constraint_type.as_deref() == Some("PRIMARY KEY"),
+            character_maximum_length: info.character_maximum_length.map(|len| len as i64),
+            numeric_precision: info.numeric_precision.map(|prec| prec as i64),
+            numeric_scale: info.numeric_scale.map(|scale| scale as i64),
+            constraints: BTreeMap::new(),
+            comment: None,
+        }
+    }
 }
