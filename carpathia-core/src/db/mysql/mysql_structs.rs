@@ -51,6 +51,74 @@ impl From<MySqlInfo> for AbstractAttribute {
             .is_nullable
             .parse()
             .unwrap_or(MySqlIsNullable::Unknown(info.is_nullable.clone()));
+        let mut constraints: BTreeMap<ConstraintType, AbstractConstraint> = BTreeMap::new();
+        if info.constraint_type.as_deref() == Some("PRIMARY KEY") {
+            constraints.insert(
+                ConstraintType::PrimaryKey,
+                AbstractConstraint {
+                    constraint_name: info.constraint_name.clone().unwrap_or_default(),
+                    constraint_value: info.constraint_type.clone().unwrap_or_default(),
+                    referenced_schema_name: None,
+                    referenced_table: None,
+                    u_referenced_table: None,
+                    referenced_column: None,
+                    u_referenced_column: None,
+                },
+            );
+        } else if info.constraint_type.as_deref() == Some("FOREIGN KEY") {
+            constraints.insert(
+                ConstraintType::ForeignKey,
+                AbstractConstraint {
+                    constraint_name: info.constraint_name.clone().unwrap_or_default(),
+                    constraint_value: info.constraint_type.clone().unwrap_or_default(),
+                    referenced_schema_name: info.referenced_table_schema.clone(),
+                    referenced_table: info.referenced_table_name.clone(),
+                    u_referenced_table: None,
+                    referenced_column: info.referenced_column_name.clone(),
+                    u_referenced_column: None,
+                },
+            );
+        } else if info.constraint_type.as_deref() == Some("UNIQUE") {
+            constraints.insert(
+                ConstraintType::Unique,
+                AbstractConstraint {
+                    constraint_name: info.constraint_name.clone().unwrap_or_default(),
+                    constraint_value: info.constraint_type.clone().unwrap_or_default(),
+                    referenced_schema_name: None,
+                    referenced_table: None,
+                    u_referenced_table: None,
+                    referenced_column: None,
+                    u_referenced_column: None,
+                },
+            );
+        } else if info.constraint_type.as_deref() == Some("CHECK") {
+            constraints.insert(
+                ConstraintType::Check,
+                AbstractConstraint {
+                    constraint_name: info.constraint_name.clone().unwrap_or_default(),
+                    constraint_value: info.constraint_type.clone().unwrap_or_default(),
+                    referenced_schema_name: None,
+                    referenced_table: None,
+                    u_referenced_table: None,
+                    referenced_column: None,
+                    u_referenced_column: None,
+                },
+            );
+        } else if info.is_nullable == "is_not_nullable" {
+            constraints.insert(
+                ConstraintType::NotNull,
+                AbstractConstraint {
+                    constraint_name: info.constraint_name.clone().unwrap_or_default(),
+                    constraint_value: info.constraint_type.clone().unwrap_or_default(),
+                    referenced_schema_name: None,
+                    referenced_table: None,
+                    u_referenced_table: None,
+                    referenced_column: None,
+                    u_referenced_column: None,
+                },
+            );
+        }
+
         AbstractAttribute {
             column_name: info.column_name,
             u_column_name: String::new(),
@@ -62,8 +130,64 @@ impl From<MySqlInfo> for AbstractAttribute {
             character_maximum_length: info.character_maximum_length.map(|len| len as i64),
             numeric_precision: info.numeric_precision.map(|prec| prec as i64),
             numeric_scale: info.numeric_scale.map(|scale| scale as i64),
-            constraints: BTreeMap::new(),
+            constraints,
             comment: None,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::db::mysql::mysql_enums::MySqlIsNullable;
+
+    #[test]
+    fn test_mysql_info_to_abstract_attribute() {
+        let mysql_info = MySqlInfo {
+            database_name: "test_db".to_string(),
+            table_schema: "public".to_string(),
+            table_name: "test_table".to_string(),
+            column_name: "test_column".to_string(),
+            column_position: 1,
+            data_type: "VARCHAR".to_string(),
+            column_type: "VARCHAR(255)".to_string(),
+            character_maximum_length: Some(255),
+            numeric_precision: None,
+            numeric_scale: None,
+            datetime_precision: None,
+            is_nullable: "is_not_nullable".to_string(),
+            column_default: Some("default_value".to_string()),
+            extra: "".to_string(),
+            generation_expression: None,
+            column_comment: Some("This is a test column".to_string()),
+            table_type: "BASE TABLE".to_string(),
+            engine: Some("InnoDB".to_string()),
+            table_collation: Some("utf8_general_ci".to_string()),
+            table_comment: Some("This is a test table".to_string()),
+            is_identity: "NO".to_string(),
+            constraint_name: Some("PRIMARY".to_string()),
+            constraint_type: Some("PRIMARY KEY".to_string()),
+            constraint_column_position: Some(1),
+            position_in_unique_constraint: None,
+            referenced_table_schema: None,
+            referenced_table_name: None,
+            referenced_column_name: None,
+            update_rule: None,
+            delete_rule: None,
+            index_name: None,
+            seq_in_index: None,
+            non_unique: None,
+            index_type: None,
+            check_clause: None,
+            constraints: BTreeMap::new(),
+        };
+        let abstract_attribute: AbstractAttribute = mysql_info.into();
+        assert_eq!(abstract_attribute.column_name, "test_column");
+        assert_eq!(abstract_attribute.data_type, "VARCHAR");
+        assert_eq!(abstract_attribute.is_nullable, MySqlIsNullable::No.into());
+        assert!(abstract_attribute.is_primary_key);
+        assert_eq!(abstract_attribute.character_maximum_length, Some(255));
+        assert_eq!(abstract_attribute.constraints.len(), 1);
+        assert!(abstract_attribute.constraints.contains_key(&ConstraintType::PrimaryKey));
     }
 }

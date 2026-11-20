@@ -1,4 +1,5 @@
 use crate::configuration::conf_enums::DbPool;
+use crate::db::mysql::mysql_enums::MySqlObjectType;
 use crate::db::mysql::mysql_structs::MySqlInfo;
 use crate::return_values::carpathia_errors::CarpathiaError;
 use crate::{configuration::carpathia_conf::CarpathiaConfig, db::traits::DatabaseQuerier};
@@ -131,7 +132,11 @@ impl DatabaseQuerier for MySqlQuerier {
             let num_rows = rows.len();
             debug!("Fetched {num_rows} rows from schema query with offset {offset}");
             for row in rows {
-                info!("{:#?}", row);
+                let mysql_objet_type:MySqlObjectType = row.table_type.parse().unwrap_or(MySqlObjectType::Unknown(row.table_type.clone()));
+                let _object_type:ObjectType = mysql_objet_type.into();
+                debug!("Processing row: {:#?}", row);
+                let abstract_attribute: AbstractAttribute = row.into();
+                info!("{:#?}", abstract_attribute);
             }
             offset += LIMIT;
             if num_rows < LIMIT as usize {
