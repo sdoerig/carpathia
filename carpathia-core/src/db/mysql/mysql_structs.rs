@@ -1,7 +1,9 @@
-use crate::db::mysql::mysql_enums::MySqlIsNullable;
-use std::collections::BTreeMap;
+use crate::db::mysql::mysql_enums::{MySqlIsNullable, MySqlObjectType};
+use std::collections::{BTreeMap, BTreeSet};
 
-use carpathia_adr::adr::abstract_db_repr::{AbstractAttribute, AbstractConstraint, ConstraintType};
+use carpathia_adr::adr::abstract_db_repr::{
+    AbstractAttribute, AbstractConstraint, AbstractTableRepr, ConstraintType,
+};
 
 #[derive(sqlx::FromRow, serde::Serialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub(crate) struct MySqlInfo {
@@ -43,6 +45,25 @@ pub(crate) struct MySqlInfo {
 
     #[sqlx(skip)]
     pub constraints: BTreeMap<ConstraintType, AbstractConstraint>,
+}
+
+impl From<&MySqlInfo> for AbstractTableRepr {
+    fn from(info: &MySqlInfo) -> Self {
+        let abstract_attribute: AbstractAttribute = info.into();
+        AbstractTableRepr {
+            object_type: info
+                .table_type
+                .parse()
+                .unwrap_or(MySqlObjectType::Unknown(info.table_type.clone()))
+                .into(),
+            table_properties: BTreeSet::new(),
+            u_imports: BTreeSet::new(),
+            table_name: abstract_attribute.column_name.clone(),
+            u_table_name: String::new(),
+            attributes: BTreeMap::new(),
+            comment: None,
+        }
+    }
 }
 
 impl From<MySqlInfo> for AbstractAttribute {
@@ -136,6 +157,12 @@ impl From<MySqlInfo> for AbstractAttribute {
     }
 }
 
+impl From<&MySqlInfo> for AbstractAttribute {
+    fn from(info: &MySqlInfo) -> Self {
+        info.clone().into()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -188,6 +215,10 @@ mod tests {
         assert!(abstract_attribute.is_primary_key);
         assert_eq!(abstract_attribute.character_maximum_length, Some(255));
         assert_eq!(abstract_attribute.constraints.len(), 1);
-        assert!(abstract_attribute.constraints.contains_key(&ConstraintType::PrimaryKey));
+        assert!(
+            abstract_attribute
+                .constraints
+                .contains_key(&ConstraintType::PrimaryKey)
+        );
     }
 }

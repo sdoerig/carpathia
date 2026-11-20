@@ -132,8 +132,11 @@ impl DatabaseQuerier for MySqlQuerier {
             let num_rows = rows.len();
             debug!("Fetched {num_rows} rows from schema query with offset {offset}");
             for row in rows {
-                let mysql_objet_type:MySqlObjectType = row.table_type.parse().unwrap_or(MySqlObjectType::Unknown(row.table_type.clone()));
-                let _object_type:ObjectType = mysql_objet_type.into();
+                let mysql_objet_type: MySqlObjectType = row
+                    .table_type
+                    .parse()
+                    .unwrap_or(MySqlObjectType::Unknown(row.table_type.clone()));
+                let _object_type: ObjectType = mysql_objet_type.into();
                 debug!("Processing row: {:#?}", row);
                 let abstract_attribute: AbstractAttribute = row.into();
                 info!("{:#?}", abstract_attribute);

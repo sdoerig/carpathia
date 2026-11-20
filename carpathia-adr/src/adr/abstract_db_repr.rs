@@ -213,7 +213,7 @@ pub struct AbstractAttribute {
 /// This struct represents a constraint of a database attribute.
 /// This values are then used to populate the table_properties.
 /// A constraint is a rule enforced on the data of this attribute.
-/// It can be anything definde by (ConsraintType)[crate::adr::abstract_db_repr::ConstraintType] and is used to determine the properties of the database attribute.
+/// It can be anything defined by (ConsraintType)[crate::adr::abstract_db_repr::ConstraintType] and is used to determine the properties of the database attribute.
 pub struct AbstractConstraint {
     /// The name of the constraint - e.g. users_pkey.
     pub constraint_name: String,
